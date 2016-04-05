@@ -11,7 +11,7 @@ db_is_new = not os.path.exists(db_filename)
 
 chord_dept_data_file = "../chords/ingest/data_out/chord_data.csv"
 chord_dept_sql =	"""
-					insert into chord_department
+					insert into chord_dept_viz
 					(deptid, facultykey, facultydata)
 					values (?, ?, ?)
 					"""

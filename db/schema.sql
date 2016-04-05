@@ -19,7 +19,7 @@ create table department (
 );
 
 drop table if exists chord_department;
-create table chord_department (
+create table chord_dept_viz (
     id integer primary key autoincrement,
     deptid text not null,
     facultykey text not null,
