@@ -1,11 +1,9 @@
 from collections import defaultdict
 import json
 import csv
-import networkx as nx
 
 cnt = defaultdict(lambda : defaultdict(dict))
 rcnt = defaultdict(lambda : defaultdict(dict))
-pool = nx.Graph()
 depts = dict()
 mtxs = []
 
@@ -39,10 +37,6 @@ with open('data_out/chord_data.csv', 'w') as dataout:
 		authDept = depts.get(f, target_dept)
 		for co in fdct.keys():
 			mtx[g.index(f)][g.index(co)] = fdct[co]
-		rabids.append(f)
+		rabids.append([f, authDept])
 	row = [target_dept, rabids, json.dumps(mtx)]
 	wrtr.writerow(row)
-
-# with open('data_out/fac_data.csv', 'w') as facout:
-# 	wrtr = csv.writer(facout)
-# 	wrtr.writerows(facVizAssc)
