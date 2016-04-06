@@ -12,9 +12,8 @@ def index():
 
 @app.route('/chord/dept/<deptid>')
 def showChordDeptViz(deptid):
-	rabid = "\"http://vivo.brown.edu/individual/{0}\"".format(deptid)
+	rabid = "http://vivo.brown.edu/individual/{0}".format(deptid)
 	viz = ChordDeptViz.query.filter_by(deptid=rabid).first()
 	vizkey = json.loads(viz.facultykey)
 	vizdata = json.loads(viz.facultydata)
 	return render_template('chord_dept.html', vizkey=vizkey, vizdata=vizdata)
-	# return ("<html><head><title>Test</title><body><p>"+vizkey+"</p><p>"+vizdata+"</p></body></html>")
