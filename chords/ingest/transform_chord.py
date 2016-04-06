@@ -38,5 +38,6 @@ with open('data_out/chord_data.csv', 'w') as dataout:
 		for co in fdct.keys():
 			mtx[g.index(f)][g.index(co)] = fdct[co]
 		rabids.append([f, authDept])
-	row = [target_dept, rabids, json.dumps(mtx)]
+	data = [ target_dept, rabids, mtx ]
+	row = [ json.dumps(d) for d in data ]
 	wrtr.writerow(row)
