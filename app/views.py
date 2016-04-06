@@ -1,7 +1,7 @@
 from flask import render_template, json
 
 from app import app
-from .models import ChordDeptViz, Faculty
+from .models import ChordDeptViz, Faculty, Department
 
 @app.route('/')
 @app.route('/index')
@@ -16,8 +16,13 @@ def showChordDeptViz(deptid):
 	viz = ChordDeptViz.query.filter_by(deptid=rabid).first()
 	vizkey = json.loads(viz.facultykey)
 	all_faculty = Faculty.query.all()
+	all_depts = Department.query.all()
+	dept_lookup = { d.rabid: d.label for d in all_depts }
 	faculty_lookup = { f.rabid: f.nameabbrev for f in all_faculty }
-	newkey = [ [faculty_lookup[facdata[0]], facdata[1], facdata[0]]
+	newkey = [ [faculty_lookup[facdata[0]], dept_lookup[facdata[1]], facdata[0]]
 					for facdata in vizkey ]
+	legend = list({ n[1] for n in newkey })
 	vizdata = json.loads(viz.facultydata)
-	return render_template('chord_dept.html', vizkey=newkey, vizdata=vizdata)
+	return render_template(
+			'chord_dept.html', legend=legend,
+			vizkey=newkey, vizdata=vizdata)

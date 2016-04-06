@@ -20,6 +20,13 @@ faculty_sql =	"""
 					values (?, ?, ?, ?, ?, ?, ?, ?, ?)
 					"""
 
+dept_data_file 	= "../ingest/depts/data_in/dept_in.csv"
+dept_sql		=	"""
+					insert into department
+					(rabid,label)
+					values (?, ?)
+					"""
+
 with sqlite3.connect(db_filename) as conn:
 		print 'DELETING DATA'
 
@@ -27,7 +34,7 @@ with sqlite3.connect(db_filename) as conn:
 		delete_script = """
 						DELETE FROM {0}
 						"""
-		tables = ["faculty", "chord_dept_viz"]
+		tables = ["faculty", "chord_dept_viz", "department"]
 		for t in tables:
 			cursor.execute(delete_script.format(t))
 		cursor.execute("VACUUM")
@@ -46,5 +53,11 @@ with sqlite3.connect(db_filename) as conn:
 									row[6],row[7],row[8]])
 						for row in csv_reader]
 
+		with open(dept_data_file, 'rt') as csv_file:
+			csv_reader = csv.reader(csv_file)
+			dept_seeds = [ tuple([row[0],row[1]])
+						for row in csv_reader]
+
 		cursor.executemany(chord_dept_sql, chord_dept_seeds)
 		cursor.executemany(faculty_sql, faculty_seeds)
+		cursor.executemany(dept_sql, dept_seeds)
