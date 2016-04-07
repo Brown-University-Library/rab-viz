@@ -22,9 +22,13 @@
         <script type="text/javascript">
             var depts = {{ legend|tojson|safe }};
 
+            var deptURIs = {{ deptMap|tojson|safe }};
+
             var labels = {{ vizkey|tojson|safe }};
 
             var matrix = {{ vizdata|tojson|safe }};
+
+            var chord_uri_base = "http://localhost:8000/chord/dept/";
 
             var chord = d3.layout.chord()
                     .padding(0.05)
@@ -41,7 +45,11 @@
             var legend = d3.legend.color().shape("circle")
                 .shapePadding(10)
                 .scale(fill)
-                .title("Departments");
+                .title("Departments")
+                .on("cellclick", function(d) {
+                    var deptCode = deptURIs[d].substring(33);
+                    window.location.replace(chord_uri_base + deptCode);
+                });
             var svg = d3.select('body').append('svg')
                     .attr('width', svg_width)
                     .attr('height', svg_height);

@@ -22,7 +22,8 @@ def showChordDeptViz(deptid):
 	newkey = [ [faculty_lookup[facdata[0]], dept_lookup[facdata[1]], facdata[0]]
 					for facdata in vizkey ]
 	legend = list({ n[1] for n in newkey })
+	deptMap = { d.label: d.rabid for d in all_depts }
 	vizdata = json.loads(viz.facultydata)
 	return render_template(
-			'chord_dept.html', legend=legend,
+			'chord_dept.html', legend=legend, deptMap=deptMap,
 			vizkey=newkey, vizdata=vizdata)
