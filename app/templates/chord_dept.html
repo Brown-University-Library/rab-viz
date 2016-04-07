@@ -20,6 +20,9 @@
     </head>
     <body>
         <script type="text/javascript">
+
+            var deptLabel = {{ deptLabel|tojson|safe }};
+
             var depts = {{ legend|tojson|safe }};
 
             var deptURIs = {{ deptMap|tojson|safe }};
@@ -63,7 +66,7 @@
             var vizbody = svg.append('g').attr('transform', 'translate(' + (c_width + padding) / 2 + ',' + (c_height+padding) / 2 +')');
 
             svg.append("g").attr("class", "legend")
-                .attr("transform", 'translate(' + (svg_width - (svg_width - (c_width + padding))) + ',' + padding / 2 +')');
+                .attr("transform", 'translate(' + (svg_width - (svg_width - (c_width + padding))) + ',' + ((padding / 2) +30) +')');
 
             vizbody.append('g').selectAll('path').data(chord.groups)
                     .enter()
@@ -72,6 +75,13 @@
                     .attr('d', d3.svg.arc().innerRadius(inner_radius).outerRadius(outer_radius))
                     .on("mouseover", fade(.05))
                     .on("mouseout", fade(.8));
+
+            svg.append("g").append("svg:text")
+                .attr("transform", 'translate(' + (svg_width - (svg_width - (c_width + padding))) + ',' + padding / 2 +')')
+                .attr("style", "font-size: 3em; font-weight:bold;")
+                .text(function(d) {
+                        return deptLabel;
+                    });
 
             var group_ticks = function (d) {
                 var k = (d.endAngle - d.startAngle) / d.value;
@@ -137,7 +147,7 @@
 
             function embiggen(d, size) {
                 d3.select("#"+d.toLowerCase().replace(/[.',\s]/g,""))
-                    .transition()
+                    .transition().duration(100)
                         .style("font-size", size);
             }
         </script>
