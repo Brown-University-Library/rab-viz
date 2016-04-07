@@ -1,7 +1,7 @@
 from flask import render_template, json
 
 from app import app
-from .models import ChordDeptViz, Faculty, Department
+from .models import ChordDeptViz, ChordFacViz, Faculty, Department
 
 @app.route('/')
 @app.route('/index')
@@ -27,4 +27,24 @@ def showChordDeptViz(deptid):
 	vizdata = json.loads(viz.facultydata)
 	return render_template(
 			'chord_dept.html', deptLabel=deptLabel, legend=legend,
+			deptMap=deptMap, vizkey=newkey, vizdata=vizdata)
+
+@app.route('/chord/faculty/<facid>')
+def showChordFacViz(facid):
+	rabid = "http://vivo.brown.edu/individual/{0}".format(facid)
+	viz = ChordFacViz.query.filter_by(facid=rabid).first()
+	vizkey = json.loads(viz.coauthkey)
+	print vizkey
+	all_faculty = Faculty.query.all()
+	all_depts = Department.query.all()
+	dept_lookup = { d.rabid: d.label for d in all_depts }
+	faculty_lookup = { f.rabid: [f.primarydept, f.nameabbrev, f.fullname] for f in all_faculty }
+	newkey = [ [faculty_lookup[uri][1], dept_lookup[faculty_lookup[uri][0]], uri]
+					for uri in vizkey ]
+	legend = list({ n[1] for n in newkey })
+	deptMap = { d.label: d.rabid for d in all_depts }
+	fullname = faculty_lookup[rabid][2]
+	vizdata = json.loads(viz.coauthdata)
+	return render_template(
+			'chord_dept.html', deptLabel=fullname, legend=legend,
 			deptMap=deptMap, vizkey=newkey, vizdata=vizdata)

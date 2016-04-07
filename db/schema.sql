@@ -18,7 +18,7 @@ create table department (
     label text not null
 );
 
-drop table if exists chord_department;
+drop table if exists chord_dept_viz;
 create table chord_dept_viz (
     id integer primary key autoincrement,
     deptid text not null,
@@ -27,14 +27,15 @@ create table chord_dept_viz (
     FOREIGN KEY(deptid) REFERENCES department(rabid)
 );
 
-drop table if exists chord_faculty;
-create table chord_faculty (
+drop table if exists chord_fac_viz;
+create table chord_fac_viz (
     id integer primary key autoincrement,
-    facultyid text not null,
-    key text not null,
-    data text not null,
-    FOREIGN KEY(facultyid) REFERENCES faculty(rabid)
+    facid text not null,
+    coauthkey text not null,
+    coauthdata text not null,
+    FOREIGN KEY(facid) REFERENCES faculty(rabid)
 );
+
 
 drop table if exists force_department;
 create table force_department (

@@ -6,6 +6,12 @@ class ChordDeptViz(db.Model):
 	facultykey = db.Column(db.String())
 	facultydata = db.Column(db.String())
 
+class ChordFacViz(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	facid = db.Column(db.String(), index=True)
+	coauthkey = db.Column(db.String())
+	coauthdata = db.Column(db.String())
+
 class Faculty(db.Model):
 	rabid = db.Column(db.String, primary_key=True)
 	shortid = db.Column(db.String())

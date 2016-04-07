@@ -13,6 +13,13 @@ chord_dept_sql =	"""
 					values (?, ?, ?)
 					"""
 
+chord_fac_data_file = "../ingest/faculty/data_out/fac_chord_data.csv"
+chord_fac_sql =	"""
+					insert into chord_fac_viz
+					(facid, coauthkey, coauthdata)
+					values (?, ?, ?)
+					"""
+
 faculty_data_file = "../ingest/faculty/data_in/faculty_in.csv"
 faculty_sql =	"""
 					insert into faculty
@@ -34,7 +41,7 @@ with sqlite3.connect(db_filename) as conn:
 		delete_script = """
 						DELETE FROM {0}
 						"""
-		tables = ["faculty", "chord_dept_viz", "department"]
+		tables = ["faculty", "chord_dept_viz", "department", "chord_fac_viz"]
 		for t in tables:
 			cursor.execute(delete_script.format(t))
 		cursor.execute("VACUUM")
@@ -44,6 +51,11 @@ with sqlite3.connect(db_filename) as conn:
 		with open(chord_dept_data_file, 'rt') as csv_file:
 			csv_reader = csv.reader(csv_file)
 			chord_dept_seeds = [ tuple([row[0],row[1],row[2]])
+						for row in csv_reader]
+
+		with open(chord_fac_data_file, 'rt') as csv_file:
+			csv_reader = csv.reader(csv_file)
+			chord_fac_seeds = [ tuple([row[0],row[1],row[2]])
 						for row in csv_reader]
 
 		with open(faculty_data_file, 'rt') as csv_file:
@@ -59,5 +71,6 @@ with sqlite3.connect(db_filename) as conn:
 						for row in csv_reader]
 
 		cursor.executemany(chord_dept_sql, chord_dept_seeds)
+		cursor.executemany(chord_fac_sql, chord_fac_seeds)
 		cursor.executemany(faculty_sql, faculty_seeds)
 		cursor.executemany(dept_sql, dept_seeds)
