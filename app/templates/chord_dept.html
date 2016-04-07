@@ -49,6 +49,12 @@
                 .on("cellclick", function(d) {
                     var deptCode = deptURIs[d].substring(33);
                     window.location.replace(chord_uri_base + deptCode);
+                })
+                .on("cellover", function(d) {
+                    embiggen(d,15)
+                })
+                .on("cellout", function(d) {
+                    embiggen(d,10)
                 });
             var svg = d3.select('body').append('svg')
                     .attr('width', svg_width)
@@ -113,6 +119,12 @@
 
             svg.select(".legend")
                 .call(legend);
+
+            d3.selectAll(".legend .cell").each( function(d, i){
+                var label = this.textContent.toLowerCase().replace(/[.',\s]/g,"");
+                d3.select(this).attr("id", label);
+            });
+
                 // Returns an event handler for fading a given chord group.
             function fade(opacity) {
               return function(g, i) {
@@ -121,6 +133,12 @@
                   .transition()
                     .style("opacity", opacity);
               };
+            }
+
+            function embiggen(d, size) {
+                d3.select("#"+d.toLowerCase().replace(/[.',\s]/g,""))
+                    .transition()
+                        .style("font-size", size);
             }
         </script>
     </body>
