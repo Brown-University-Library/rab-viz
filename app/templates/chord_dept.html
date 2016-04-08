@@ -124,8 +124,17 @@
                     .text(function(d) {
                         return labels[d.index][0];
                     })
+                    .attr("id", function(d) {
+                         return labels[d.index][0].toLowerCase().replace(/[.',\s]/g,"")
+                    })
                     .on("mouseover", fade(.05))
-                    .on("mouseout", fade(.8))              
+                    .on("mouseover", function(d) {
+                        embiggen(labels[d.index][0],15)
+                    })
+                    .on("mouseout", fade(.8))
+                    .on("mouseout", function(d) {
+                        embiggen(labels[d.index][0],10)
+                    })
                     .on("click", function(d) {
                         var facCode = labels[d.index][2].substring(33);
                         console.log(facCode);
