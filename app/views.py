@@ -1,7 +1,7 @@
 from flask import render_template, json
 
 from app import app
-from .models import ChordDeptViz, ChordFacViz, Faculty, Department
+from .models import ChordDeptViz, ChordFacViz, ForceFacViz, Faculty, Department
 
 @app.route('/')
 @app.route('/index')
@@ -32,6 +32,8 @@ def showChordDeptViz(deptid):
 @app.route('/chord/faculty/<facid>')
 def showChordFacViz(facid):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(facid)
+	print facid
+	print rabid
 	viz = ChordFacViz.query.filter_by(facid=rabid).first()
 	vizkey = json.loads(viz.coauthkey)
 	all_faculty = Faculty.query.all()
@@ -47,3 +49,27 @@ def showChordFacViz(facid):
 	return render_template(
 			'chord_dept.html', deptLabel=fullname, legend=legend,
 			deptMap=deptMap, vizkey=newkey, vizdata=vizdata)
+
+@app.route('/force/faculty/<facid>')
+def showForceFacViz(facid):
+	rabid = "http://vivo.brown.edu/individual/{0}".format(facid)
+	viz = ForceFacViz.query.filter_by(facid=rabid).first()
+	vizkey = json.loads(viz.nodeuris)
+	all_faculty = Faculty.query.all()
+	all_depts = Department.query.all()
+	dept_lookup = { d.rabid: d.label for d in all_depts }
+	faculty_lookup = { f.rabid: [f.primarydept, f.nameabbrev, f.fullname] for f in all_faculty }
+	newkey = [ [faculty_lookup[uri][1], dept_lookup[faculty_lookup[uri][0]], uri]
+					for uri in vizkey ]
+	nodes = [ {	"name": faculty_lookup[uri][1],
+				"group": dept_lookup[faculty_lookup[uri][0]] }
+					for uri in vizkey ]
+	legend = list({ n["group"] for n in nodes })
+	deptMap = { d.label: d.rabid for d in all_depts }
+	facMap = { f.nameabbrev: f.rabid for f in all_faculty }
+	fullname = faculty_lookup[rabid][2]
+	links = json.loads(viz.links)
+	vizdata = {"nodes": nodes, "links": links}
+	return render_template(
+			'force.html', deptLabel=fullname, legend=legend,
+			deptMap=deptMap, facMap=facMap, vizdata=vizdata)

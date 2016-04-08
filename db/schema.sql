@@ -37,11 +37,11 @@ create table chord_fac_viz (
 );
 
 
-drop table if exists force_department;
-create table force_department (
+drop table if exists force_fac_viz;
+create table force_fac_viz (
     id integer primary key autoincrement,
-    deptid text not null,
-    nodes text not null,
+    facid text not null,
+    nodeuris text not null,
     links text not null,
-    FOREIGN KEY(deptid) REFERENCES department(rabid)
+    FOREIGN KEY(facid) REFERENCES faculty(rabid)
 );

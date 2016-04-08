@@ -19,35 +19,15 @@
     }
 
     </style>
-    <script type="text/javascript" src="js/d3.min.js"></script>
-    <script type="text/javascript" src="js/d3-legend.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/d3-legend.min.js') }}"></script>
   </head>
   <body>
     <script type="text/javascript">
 
-      var depts = [
-        "Medicine",
-        "Health Services, Policy and Practice",
-        "Molecular Biology, Cell Biology and Biochemistry",
-        "Surgery",
-        "Diagnostic Imaging",
-        "Psychiatry and Human Behavior",
-        "Molecular Microbiology and Immunology",
-        "Family Medicine",
-        "Engineering",
-        "Orthopaedics",
-        "Molecular Pharmacology, Physiology and Biotechnology",
-        "Epidemiology",
-        "Biostatistics",
-        "Pediatrics",
-        "Behavioral and Social Sciences",
-        "Ecology and Evolutionary Biology",
-        "Emergency Medicine",
-        "Pathology and Laboratory Medicine",
-        "Radiation Oncology",
-      ];
+      var depts = {{ legend|tojson|safe }};
 
-      var forceData = {{ forceData|tojson|safe }};
+      var graph = {{ vizdata|tojson|safe }};
 
       var width = 1200,
           height = 800;
@@ -55,8 +35,8 @@
       var color = d3.scale.category20().domain(depts);
 
       var force = d3.layout.force()
-          .charge(-120)
-          .linkDistance(30)
+          .charge(-1200)
+          .linkDistance(40)
           .size([(width - 300), height]);
 
       var svg = d3.select("body").append("svg")
@@ -67,9 +47,6 @@
         .shapePadding(10)
         .scale(color)
         .title("Departments");
-
-      d3.json(forceData, function(error, graph) {
-        if (error) throw error;
 
         force
             .nodes(graph.nodes)
@@ -86,7 +63,7 @@
             .data(graph.nodes)
           .enter().append("circle")
             .attr("class", "node")
-            .attr("r", 5)
+            .attr("r", 10)
             .style("fill", function(d) { return color(d.group); })
             .call(force.drag);
 
@@ -102,7 +79,6 @@
           node.attr("cx", function(d) { return d.x; })
               .attr("cy", function(d) { return d.y; });
         });
-      });
 
       svg.append("g").attr("class", "legend")
         .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.15) +')');

@@ -12,6 +12,12 @@ class ChordFacViz(db.Model):
 	coauthkey = db.Column(db.String())
 	coauthdata = db.Column(db.String())
 
+class ForceFacViz(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	facid = db.Column(db.String(), index=True)
+	nodeuris = db.Column(db.String())
+	links = db.Column(db.String())
+
 class Faculty(db.Model):
 	rabid = db.Column(db.String, primary_key=True)
 	shortid = db.Column(db.String())
