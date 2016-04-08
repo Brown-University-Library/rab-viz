@@ -16,17 +16,17 @@ with open("data_in/all_coauths.csv", "r") as f:
 		cnt[row[0]][row[1]] = int(row[2])
 		rcnt[row[1]][row[0]] = int(row[2])
 
-# Necessary for SPARQL query anomalies
 for k, v in rcnt.items():
 	if k in cnt:
 		continue
 	else:
 		cnt[k] = v
 
-with open('data_out/fac_chord_data.csv', 'w') as dataout:
+with open('data_out/fac_force_data.csv', 'w') as dataout:
 	wrtr = csv.writer(dataout)
 	for auth in cnt:
 		rabids = []
+		data = []
 		rabids.append(auth)
 		coauths = cnt[auth].keys()
 		rabids.extend(coauths)
@@ -34,14 +34,17 @@ with open('data_out/fac_chord_data.csv', 'w') as dataout:
 			cocoauths = cnt[coauth].keys()
 			rabids.extend(cocoauths)
 		rabids = list(set(rabids))
-		rabids.insert(0, rabids.pop(rabids.index(auth)))
-		mtx = [[0 for x in range(len(rabids))] for x in range(len(rabids))]
 		for f in rabids:
 			fdct = cnt[f]
 			for co in fdct.keys():
 				try:
-					mtx[rabids.index(f)][rabids.index(co)] = fdct[co]
+					link = {
+							"source": rabids.index(f),
+							"target": rabids.index(co),
+							"value": fdct[co]
+							}
 				except:
 					continue
-		row = [auth, json.dumps(rabids), json.dumps(mtx)]
+				data.append(link)
+		row = [auth, json.dumps(rabids), json.dumps(data)]
 		wrtr.writerow(row)
