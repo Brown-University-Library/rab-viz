@@ -27,6 +27,8 @@
 
       var depts = {{ legend|tojson|safe }};
 
+      var deptLabel = {{ deptLabel|tojson|safe }}
+
       var graph = {{ vizdata|tojson|safe }};
 
       var facURIs = {{ facMap|tojson|safe }};
@@ -67,11 +69,20 @@
             .data(graph.nodes)
           .enter().append("circle")
             .attr("class", "node")
+            .attr("id", function(d) {
+              return d.name.toLowerCase().replace(/[.',\s]/g,"");
+            })
             .attr("r", 10)
             .style("fill", function(d) { return color(d.group); })
             .on("click", function(d) {
                 var facCode = facURIs[d.name].substring(33);
                 window.location.replace(force_uri_base + "faculty/" + facCode);
+            })
+            .on("mouseover", function(d) {
+                d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",25);
+            })
+            .on("mouseout", function(d) {
+                d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",10);
             })
             .call(force.drag);
 
@@ -91,7 +102,19 @@
       svg.append("g").attr("class", "legend")
         .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.15) +')');
 
+      svg.select("g.legend").append("svg:text")
+                .attr("style", "font-size: 3em; font-weight:bold;")
+                .text(function(d) {
+                        return deptLabel;
+                    });
+
       svg.select(".legend").call(legend);
+
+      function embiggen(d, size) {
+                d3.select("#"+d.toLowerCase().replace(/[.',\s]/g,""))
+                    .transition().duration(100)
+                        .style("font-size", size);
+            }
 
     </script>
   </body>
