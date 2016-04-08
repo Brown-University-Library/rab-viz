@@ -34,6 +34,7 @@ with open('data_out/fac_chord_data.csv', 'w') as dataout:
 			cocoauths = cnt[coauth].keys()
 			rabids.extend(cocoauths)
 		rabids = list(set(rabids))
+		rabids.insert(0, rabids.pop(rabids.index(auth)))
 		mtx = [[0 for x in range(len(rabids))] for x in range(len(rabids))]
 		for f in rabids:
 			fdct = cnt[f]

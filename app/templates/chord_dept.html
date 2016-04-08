@@ -31,7 +31,7 @@
 
             var matrix = {{ vizdata|tojson|safe }};
 
-            var chord_uri_base = "http://localhost:8000/chord/dept/";
+            var chord_uri_base = "http://localhost:8000/chord/";
 
             var chord = d3.layout.chord()
                     .padding(0.05)
@@ -51,7 +51,7 @@
                 .title("Departments")
                 .on("cellclick", function(d) {
                     var deptCode = deptURIs[d].substring(33);
-                    window.location.replace(chord_uri_base + deptCode);
+                    window.location.replace(chord_uri_base + "dept/" + deptCode);
                 })
                 .on("cellover", function(d) {
                     embiggen(d,15)
@@ -125,7 +125,12 @@
                         return labels[d.index][0];
                     })
                     .on("mouseover", fade(.05))
-                    .on("mouseout", fade(.8));
+                    .on("mouseout", fade(.8))              
+                    .on("click", function(d) {
+                        var facCode = labels[d.index][2].substring(33);
+                        console.log(facCode);
+                        window.location.replace(chord_uri_base + "faculty/" + facCode);
+                    });
 
             svg.select(".legend")
                 .call(legend);

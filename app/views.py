@@ -34,7 +34,6 @@ def showChordFacViz(facid):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(facid)
 	viz = ChordFacViz.query.filter_by(facid=rabid).first()
 	vizkey = json.loads(viz.coauthkey)
-	print vizkey
 	all_faculty = Faculty.query.all()
 	all_depts = Department.query.all()
 	dept_lookup = { d.rabid: d.label for d in all_depts }
