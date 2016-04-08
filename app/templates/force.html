@@ -79,7 +79,7 @@
                 window.location.replace(force_uri_base + "faculty/" + facCode);
             })
             .on("mouseover", function(d) {
-                d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",25);
+                d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",20);
             })
             .on("mouseout", function(d) {
                 d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",10);
@@ -99,14 +99,15 @@
               .attr("cy", function(d) { return d.y; });
         });
 
-      svg.append("g").attr("class", "legend")
-        .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.15) +')');
-
-      svg.select("g.legend").append("svg:text")
+      svg.append("svg:text")
+        .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.1) +')')
                 .attr("style", "font-size: 3em; font-weight:bold;")
                 .text(function(d) {
                         return deptLabel;
                     });
+
+      svg.append("g").attr("class", "legend")
+        .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.15) +')');
 
       svg.select(".legend").call(legend);
 
