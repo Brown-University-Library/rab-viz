@@ -62,7 +62,13 @@
         .on("cellclick", function(d) {
             var deptCode = deptURIs[d].substring(33);
             window.location.replace(force_uri_base + "dept/" + deptCode);
-        });
+        })
+        .on("cellover", function(d) {
+                    embiggen(d,15)
+                })
+        .on("cellout", function(d) {
+            embiggen(d,10)
+        });;
 
         force
             .nodes(graph.nodes)
