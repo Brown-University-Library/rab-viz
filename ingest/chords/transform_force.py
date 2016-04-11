@@ -7,9 +7,9 @@ rcnt = defaultdict(lambda : defaultdict(dict))
 depts = dict()
 mtxs = []
 
-target_dept = "http://vivo.brown.edu/individual/org-brown-univ-dept84"
+target_dept = "http://vivo.brown.edu/individual/org-brown-univ-dept36"
 
-with open("data_in/medicine_nx.csv", "r") as f:
+with open("data_in/surgery_nx.csv", "r") as f:
 	rdr = csv.reader(f, delimiter=',', quotechar='"')
 	#Skip header
 	head = rdr.next()
