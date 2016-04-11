@@ -59,10 +59,6 @@ def showForceDeptViz(deptid):
 	all_depts = Department.query.all()
 	dept_lookup = { d.rabid: d.label for d in all_depts }
 	faculty_lookup = { f.rabid: [f.primarydept, f.nameabbrev, f.fullname] for f in all_faculty }
-	for uri in vizkey:
-		print uri
-		print faculty_lookup[uri][1]
-		print dept_lookup[faculty_lookup[uri][0]]
 	newkey = [ [faculty_lookup[uri][1], dept_lookup[faculty_lookup[uri][0]], uri]
 					for uri in vizkey ]
 	nodes = [ {	"name": faculty_lookup[uri][1],
@@ -76,7 +72,8 @@ def showForceDeptViz(deptid):
 	vizdata = {"nodes": nodes, "links": links}
 	return render_template(
 			'force.html', deptLabel=fullname, legend=legend,
-			deptMap=deptMap, facMap=facMap, vizdata=vizdata)
+			deptMap=deptMap, facMap=facMap, vizdata=vizdata,
+			linkDist=20, repel=-200)
 
 @app.route('/force/faculty/<facid>')
 def showForceFacViz(facid):
@@ -100,4 +97,5 @@ def showForceFacViz(facid):
 	vizdata = {"nodes": nodes, "links": links}
 	return render_template(
 			'force.html', deptLabel=fullname, legend=legend,
-			deptMap=deptMap, facMap=facMap, vizdata=vizdata)
+			deptMap=deptMap, facMap=facMap, vizdata=vizdata,
+			linkDist=40, repel=-1200)

@@ -33,6 +33,10 @@
 
       var facURIs = {{ facMap|tojson|safe }};
 
+      var linkDist = {{linkDist|tojson|safe}};
+
+      var repel = {{repel|tojson|safe}};
+
       var force_uri_base = "http://localhost:8000/force/";
 
       var width = 1200,
@@ -41,8 +45,8 @@
       var color = d3.scale.category20().domain(depts);
 
       var force = d3.layout.force()
-          .charge(-1200)
-          .linkDistance(40)
+          .charge(repel)
+          .linkDistance(linkDist)
           .size([(width - 300), height]);
 
       var svg = d3.select("body").append("svg")
