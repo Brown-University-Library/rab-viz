@@ -18,6 +18,12 @@ class ForceFacViz(db.Model):
 	nodeuris = db.Column(db.String())
 	links = db.Column(db.String())
 
+class ForceDeptViz(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	deptid = db.Column(db.String(), index=True)
+	nodeuris = db.Column(db.String())
+	links = db.Column(db.String())
+
 class Faculty(db.Model):
 	rabid = db.Column(db.String, primary_key=True)
 	shortid = db.Column(db.String())

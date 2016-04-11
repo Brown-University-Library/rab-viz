@@ -41,6 +41,13 @@ force_fac_sql =		"""
 					values (?, ?, ?)
 					"""
 
+force_dept_data_file = "../ingest/chords/data_out/dept_force_data.csv"
+force_dept_sql =		"""
+					insert into force_dept_viz
+					(deptid, nodeuris, links)
+					values (?, ?, ?)
+					"""
+
 with sqlite3.connect(db_filename) as conn:
 		print 'DELETING DATA'
 
@@ -48,7 +55,7 @@ with sqlite3.connect(db_filename) as conn:
 		delete_script = """
 						DELETE FROM {0}
 						"""
-		tables = ["faculty", "chord_dept_viz", "department", "chord_fac_viz", "force_fac_viz"]
+		tables = ["faculty", "chord_dept_viz", "department", "chord_fac_viz", "force_fac_viz", "force_dept_viz"]
 		for t in tables:
 			cursor.execute(delete_script.format(t))
 		cursor.execute("VACUUM")
@@ -82,8 +89,14 @@ with sqlite3.connect(db_filename) as conn:
 			force_fac_seeds = [ tuple([row[0],row[1],row[2]])
 						for row in csv_reader]
 
+		with open(force_dept_data_file, 'rt') as csv_file:
+			csv_reader = csv.reader(csv_file)
+			force_dept_seeds = [ tuple([row[0],row[1],row[2]])
+						for row in csv_reader]
+
 		cursor.executemany(chord_dept_sql, chord_dept_seeds)
 		cursor.executemany(chord_fac_sql, chord_fac_seeds)
 		cursor.executemany(faculty_sql, faculty_seeds)
 		cursor.executemany(dept_sql, dept_seeds)
 		cursor.executemany(force_fac_sql, force_fac_seeds)
+		cursor.executemany(force_dept_sql, force_dept_seeds)

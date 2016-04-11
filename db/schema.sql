@@ -45,3 +45,12 @@ create table force_fac_viz (
     links text not null,
     FOREIGN KEY(facid) REFERENCES faculty(rabid)
 );
+
+drop table if exists force_dept_viz;
+create table force_dept_viz (
+    id integer primary key autoincrement,
+    deptid text not null,
+    nodeuris text not null,
+    links text not null,
+    FOREIGN KEY(deptid) REFERENCES department(rabid)
+);
