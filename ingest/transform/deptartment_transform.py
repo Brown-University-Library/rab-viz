@@ -6,7 +6,7 @@ def main(inFile, targetDir):
 	if not os.path.exists(targetDir):
 		os.makedirs(targetDir)
 
-	affs = []
+	depts = []
 
 	with open(inFile, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
@@ -14,10 +14,10 @@ def main(inFile, targetDir):
 		head = rdr.next()
 		#Auth1URI, Auth2URI, CitationURI
 		for row in rdr:
-			affs.append((row[0], row[1]))
+			depts.append((row[0], row[1]))
 
 	with open(
-			os.path.join(targetDir,'affiliations_data.csv'),
+			os.path.join(targetDir,'departments_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		wrtr.writerows(affs)
