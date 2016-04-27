@@ -43,13 +43,13 @@ def main(inFile, targetDir):
 			coauth_cnt.append((auth, coauth, cnt))
 
 	with open(
-			os.path.join(targetDir,'coauthor_pairs.csv'),
+			os.path.join(targetDir,'coauthors_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		wrtr.writerows(coauth_cnt)
 
 	with open(
-			os.path.join(targetDir,'author_json.csv'),
+			os.path.join(targetDir,'author_json_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		wrtr.writerows(coauth_json)

@@ -20,7 +20,7 @@ def main(inFile, targetDir):
 			os.path.join(targetDir,'departments_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
-		wrtr.writerows(affs)
+		wrtr.writerows(depts)
 
 if __name__ == "__main__":
 	main(sys.argv[1], sys.argv[2])

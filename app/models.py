@@ -26,15 +26,29 @@ class ForceDeptViz(db.Model):
 
 class Faculty(db.Model):
 	rabid = db.Column(db.String, primary_key=True)
-	shortid = db.Column(db.String())
-	firstname = db.Column(db.String())
 	lastname = db.Column(db.String())
+	firstname = db.Column(db.String())
 	fullname = db.Column(db.String())
-	nameabbrev = db.Column(db.String())
-	preftitle  = db.Column(db.String())
-	email = db.Column(db.String())
-	primarydept = db.Column(db.String(), index=True)
+	abbrev = db.Column(db.String())
+	title  = db.Column(db.String())
+	deptLabel = db.Column(db.String())
 
 class Department(db.Model):
 	rabid = db.Column(db.String, primary_key=True)
 	label = db.Column(db.String())
+
+class Affiliation(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	facid = db.Column(db.String(), index=True)
+	deptid = db.Column(db.String(), index=True)
+
+class Coauthors(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	authid = db.Column(db.String(), index=True)
+	coauthid = db.Column(db.String(), index=True)
+	cnt = db.Column(db.Integer())
+
+class AuthorJson(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	facid = db.Column(db.String(), index=True)
+	authdata = db.Column(db.String())

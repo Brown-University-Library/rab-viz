@@ -46,10 +46,12 @@ def main(inFileFac, inFileDept, inFileAffs, targetDir):
 		wrtr = csv.writer(dataout)
 		for fac in facs:
 			rabid, last, first, name, title = fac
+			abbrev = last + ", " + first[0]
 			if affs.get(rabid):
-				row = (rabid, last, first, name, title, affs[rabid])
+				deptLabel = affs[rabid]
 			else:
-				row = (rabid, last, first, name, title, "None")
+				deptLabel = "None"
+			row = (rabid, last, first, name, abbrev, title, deptLabel)
 			wrtr.writerow(row)
 
 if __name__ == "__main__":

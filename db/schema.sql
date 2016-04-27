@@ -1,56 +1,43 @@
 drop table if exists faculty;
 create table faculty (
     rabid text primary key,
-    shortid text not null,
-    firstname text not null,
     lastname text not null,
+    firstname text not null,
     fullname text not null,
-    nameabbrev text not null,
-    preftitle text not null,    
-    email text not null,
-    primarydept text not null,
-    FOREIGN KEY(primarydept) REFERENCES department(rabid)
+    abbrev text not null,
+    title text not null,    
+    deptLabel text not null
 );
 
-drop table if exists department;
-create table department (
+drop table if exists departments;
+create table departments (
     rabid text primary key,
     label text not null
 );
 
-drop table if exists chord_dept_viz;
-create table chord_dept_viz (
+drop table if exists affiliations;
+create table affiliations (
     id integer primary key autoincrement,
+    facid text not null,
     deptid text not null,
-    facultykey text not null,
-    facultydata text not null,
+    FOREIGN KEY(facid) REFERENCES faculty(rabid),
     FOREIGN KEY(deptid) REFERENCES department(rabid)
 );
 
-drop table if exists chord_fac_viz;
-create table chord_fac_viz (
+drop table if exists coauthors;
+create table coauthors (
     id integer primary key autoincrement,
-    facid text not null,
-    coauthkey text not null,
-    coauthdata text not null,
-    FOREIGN KEY(facid) REFERENCES faculty(rabid)
+    authid text not null,
+    coauthid text not null,
+    cnt integer not null,
+    FOREIGN KEY(authid) REFERENCES faculty(rabid),
+    FOREIGN KEY(coauthid) REFERENCES faculty(rabid)
 );
 
-
-drop table if exists force_fac_viz;
-create table force_fac_viz (
+drop table if exists author_json;
+create table author_json (
     id integer primary key autoincrement,
     facid text not null,
-    nodeuris text not null,
-    links text not null,
+    jsondata text not null,
     FOREIGN KEY(facid) REFERENCES faculty(rabid)
-);
-
-drop table if exists force_dept_viz;
-create table force_dept_viz (
-    id integer primary key autoincrement,
-    deptid text not null,
-    nodeuris text not null,
-    links text not null,
-    FOREIGN KEY(deptid) REFERENCES department(rabid)
 );
