@@ -6,7 +6,7 @@ def main(inFile, targetDir):
 	if not os.path.exists(targetDir):
 		os.makedirs(targetDir)
 
-	depts = []
+	depts = dict()
 
 	with open(inFile, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
@@ -14,7 +14,11 @@ def main(inFile, targetDir):
 		head = rdr.next()
 		#Auth1URI, Auth2URI, CitationURI
 		for row in rdr:
-			depts.append((row[0], row[1]))
+			# Handle departments with more than 1 label
+			if depts.get(row[0]):
+				continue
+			else:
+				depts[row[0]] = row[1]
 
 	with open(
 			os.path.join(targetDir,'departments_data.csv'),

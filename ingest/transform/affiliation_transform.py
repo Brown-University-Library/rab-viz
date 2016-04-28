@@ -12,9 +12,14 @@ def main(inFile, targetDir):
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
 		#Skip header
 		head = rdr.next()
-		#Auth1URI, Auth2URI, CitationURI
+		#facid, deptid, rank
 		for row in rdr:
-			affs.append((row[0], row[1]))
+			# Some positions don't have ranks!!!
+			if not row[2]:
+				rank = 0
+			else:
+				rank = row[2]
+			affs.append((row[0], row[1], rank))
 
 	with open(
 			os.path.join(targetDir,'affiliations_data.csv'),

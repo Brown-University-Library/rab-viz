@@ -37,8 +37,8 @@ author_json_sql =	"""
 affiliations_data_file = "../ingest/transform/transformed/affiliations_data.csv"
 affiliations_sql =	"""
 					insert into affiliations
-					(facid, deptid)
-					values (?, ?)
+					(facid, deptid, rank)
+					values (?, ?, ?)
 					"""
 
 with sqlite3.connect(db_filename) as conn:
@@ -83,7 +83,7 @@ with sqlite3.connect(db_filename) as conn:
 
 		with open(affiliations_data_file, 'rt') as csv_file:
 			csv_reader = csv.reader(csv_file)
-			affiliations_seeds = [ tuple([row[0],row[1]])
+			affiliations_seeds = [ tuple([row[0],row[1], row[2]])
 						for row in csv_reader]
 
 		cursor.executemany(faculty_sql, faculty_seeds)

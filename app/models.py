@@ -33,14 +33,15 @@ class Faculty(db.Model):
 	title  = db.Column(db.String())
 	deptLabel = db.Column(db.String())
 
-class Department(db.Model):
+class Departments(db.Model):
 	rabid = db.Column(db.String, primary_key=True)
 	label = db.Column(db.String())
 
-class Affiliation(db.Model):
+class Affiliations(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	facid = db.Column(db.String(), index=True)
 	deptid = db.Column(db.String(), index=True)
+	rank = db.Column(db.Integer())
 
 class Coauthors(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -51,4 +52,4 @@ class Coauthors(db.Model):
 class AuthorJson(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	facid = db.Column(db.String(), index=True)
-	authdata = db.Column(db.String())
+	jsondata = db.Column(db.String())

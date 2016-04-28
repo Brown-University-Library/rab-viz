@@ -20,6 +20,7 @@ create table affiliations (
     id integer primary key autoincrement,
     facid text not null,
     deptid text not null,
+    rank integer not null,
     FOREIGN KEY(facid) REFERENCES faculty(rabid),
     FOREIGN KEY(deptid) REFERENCES department(rabid)
 );
