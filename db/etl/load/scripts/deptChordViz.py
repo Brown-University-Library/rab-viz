@@ -27,6 +27,9 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 					coauths.add(fac)
 			rosters[row[0]] = list(coauths)
 
+	rosters = { k: v for k, v in rosters.items()
+					if len(v) !=0 }
+
 	for r in rosters:
 		print r, "\t", len(rosters[r])
 

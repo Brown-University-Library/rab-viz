@@ -33,7 +33,7 @@ def main(inFileFac, trnsDept,
 			# Only interested in positions ranked 1
 			# This also skips unranked positions (val=0)
 			if row[2] != '1':
-				print row
+				continue
 			if not affs.get(row[0]):
 				# no affiliations associated with the rabid
 				# in affs dict, so...

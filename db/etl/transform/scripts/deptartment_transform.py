@@ -44,7 +44,7 @@ def main(inDeptFile, inAffsFile, targetDir):
 				continue
 
 	with open(
-			os.path.join(targetDir,'dept_roster_data.csv'),
+			os.path.join(targetDir,'roster_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		for dept, rset in rosters.items():
