@@ -5,23 +5,36 @@ import os
 import sys
 
 
-def main(inFile, targetDir):
+def main(inCoauthFile, facCheckFile, targetDir):
 	if not os.path.exists(targetDir):
 		os.makedirs(targetDir)
 
+	activeFaculty = set()
 	auth_check = []
 	coauth_check = []
 	wx = defaultdict(lambda: defaultdict(lambda: 0))
 
-	with open(inFile, "r") as f:
+	with open(facCheckFile, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
 		#Skip header
 		head = rdr.next()
 		#Auth1URI, Auth2URI, CitationURI
 		for row in rdr:
-			auth_check.append(row[0])
-			coauth_check.append(row[1])
-			wx[row[0]][row[1]] += 1
+			activeFaculty.add(row[0])
+
+	with open(inCoauthFile, "r") as f:
+		rdr = csv.reader(f, delimiter=',', quotechar='"')
+		#Skip header
+		head = rdr.next()
+		#Auth1URI, Auth2URI, CitationURI
+		for row in rdr:
+			if row[0] in activeFaculty and row[1] in activeFaculty:
+				auth_check.append(row[0])
+				coauth_check.append(row[1])
+				wx[row[0]][row[1]] += 1
+			else:
+				continue
+				#print "Bad IDs: either {0} or {1}".format(row[0], row[1])
 
 	# Simple sanity checks
 	# All authors in CSV are keys in coauthor network dictionary
@@ -55,4 +68,4 @@ def main(inFile, targetDir):
 		wrtr.writerows(coauth_json)
 
 if __name__ == "__main__":
-	main(sys.argv[1], sys.argv[2])
+	main(sys.argv[1], sys.argv[2], sys.argv[3])
