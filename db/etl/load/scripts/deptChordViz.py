@@ -10,8 +10,7 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 
 	rosters = dict()
 	coauthData = dict()
-	ntx = dict()
-	matrixes = []
+	deptLegend = dict()
 
 	with open(inFileAuthJson, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
@@ -21,62 +20,36 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 	with open(inFileRosters, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
 		for row in rdr:
-			coauths = set()
+			hasCoauths = set()
 			for fac in json.loads(row[1]):
 				if fac in coauthData:
-					coauths.add(fac)
-			rosters[row[0]] = list(coauths)
+					hasCoauths.add(fac)
+			rosters[row[0]] = list(hasCoauths)
 
 	rosters = { k: v for k, v in rosters.items()
 					if len(v) !=0 }
 
-	for r in rosters:
-		print r, "\t", len(rosters[r])
+	for dept in rosters:
+		deptNet = []
+		for fac in rosters[dept]:
+			deptNet.extend(coauthData[fac].keys())
+			deptNet.append(fac)
+		deptLegend[dept] = list(set(deptNet))
 
-	# with open(inFileFac, "r") as f:
-	# 	rdr = csv.reader(f, delimiter=',', quotechar='"')
-	# 	for row in rdr:
-	# 		facs[row[0]] = row
-
-	# with open(inFileAffs, "r") as f:
-	# 	rdr = csv.reader(f, delimiter=',', quotechar='"')
-	# 	for row in rdr:
-	# 		# Only look up active faculty
-	# 		if facs.get(row[0]):
-	# 			affs[row[1]].add(row[0])
-
-	# for dept, facSet in affs.items():
-	# 	coauths = set()
-	# 	cnt = 0
-	# 	print dept
-	# 	for fac in facSet:
-	# 		cnt +=1
-	# 		print cnt, fac
-	# 		coauths.add(fac)
-	# 		print "\t",authjson[fac].keys(), len(authjson[fac].keys())
-	# 		for k in authjson[fac].keys():
-	# 			coauths.add(k)
-	# 	print coauths, len(coauths)
-	# 		# coauths.update(json.loads(authjson[fac]).keys())
-	# 	ntx[dept] = list(coauths)
-
-	# with open(
-	# 		os.path.join(targetDir,'chordDeptViz.csv'),
-	# 		 'w') as dataout:
-	# 	wrtr = csv.writer(dataout)
-	# 	for dept in ntx:
-	# 		# print dept
-	# 		# print ntx[dept]
-	# 		facList = ntx[dept]
-	# 		mtx = [[0 for x in range(len(facList))] for x in range(len(facList))] 
-	# 		for f in facList:
-	# 			fdct = authjson[f]
-	# 			# print f
-	# 			# print fdct
-	# 			for co in fdct.keys():
-	# 				mtx[facList.index(f)][facList.index(co)] = fdct[co]
-	# 		row = [ dept, json.dumps(facList), json.dumps(mtx) ]
-	# 		wrtr.writerow(row)
+	with open(
+			os.path.join(targetDir,'chordDeptViz.csv'),
+			 'w') as dataout:
+		wrtr = csv.writer(dataout)
+		for dept in deptLegend:
+			legend = deptLegend[dept]
+			mtx = [[0 for x in range(len(legend))] for x in range(len(legend))] 
+			for f in legend:
+				if f in rosters[dept]:
+					fdct = coauthData[f]
+					for co in fdct.keys():
+						mtx[legend.index(f)][legend.index(co)] = fdct[co]
+			row = [ dept, json.dumps(legend), json.dumps(mtx) ]
+			wrtr.writerow(row)
 
 if __name__ == "__main__":
 	main(sys.argv[1], sys.argv[2], sys.argv[3])

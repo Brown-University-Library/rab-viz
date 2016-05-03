@@ -27,6 +27,11 @@ def main(inFileFac, trnsDept,
 			facs.append((row[0], row[1], row[2], row[3], row[4]))
 
 	with open(trnsAffs, "r") as f:
+		#####!!!!!!!!!!!!!!!!!!!!!!!!!! ##########
+		##### ALL OF THIS IS IRRELEVANT ##########
+		##### FIX IN FIS !!!!!!!!!!!!!! ##########
+		#####!!!!!!!!!!!!!!!!!!!!!!!!!! ##########
+
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
 		# facid, deptid, rank(?)
 		for row in rdr:
