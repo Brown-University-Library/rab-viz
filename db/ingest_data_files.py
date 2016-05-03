@@ -5,41 +5,58 @@ import os
 import sqlite3
 
 db_filename = 'visualizations.db'
+load_dir = "/work/viz/db/etl/load"
 
-faculty_data_file = "../ingest/transform/transformed/faculty_data.csv"
-faculty_sql =	"""
-					insert into faculty
-					(rabid,lastname,firstname,fullname,abbrev,title,deptLabel)
-					values (?, ?, ?, ?, ?, ?, ?)
-					"""
+tables = {
+	"faculty": {
+		"file": os.path.join(load_dir,"faculty_data.csv"),
+		"table": "faculty",
+		"columns": ["rabid","lastname","firstname","fullname",
+					"abbrev","title","deptLabel"]
+	},
+	"departments": {
+		"file": os.path.join(load_dir,"departments_data.csv"),
+		"table": "departments",
+		"columns": ["rabid","label"]
+	},
+	"coauthors": {
+		"file": os.path.join(load_dir,"coauthors_data.csv"),
+		"table": "coauthors",
+		"columns": ["authid","coauthid","cnt"]
+	},
+	"authorJson": {
+		"file": os.path.join(load_dir,"author_json_data.csv"),
+		"table": "author_json",
+		"columns": ["facid", "jsondata"]
+	},
+	"affiliations": {
+		"file": os.path.join(load_dir,"affiliations_data.csv"),
+		"table": "affiliations",
+		"columns": ["facid", "deptid", "rank"]
+	},
+	"chordDeptViz": {
+		"file": os.path.join(load_dir,"chordDeptViz_data.csv"),
+		"table": "chord_dept_viz",
+		"columns": ["deptid", "legend", "matrix"]
+	}
+} 
 
-dept_data_file 	= "../ingest/transform/transformed/departments_data.csv"
-dept_sql		=	"""
-					insert into departments
-					(rabid,label)
-					values (?, ?)
-					"""
+def writeSql(tableName, columnList):
+	sql_template = """
+				insert into {0}
+				({1})
+				values ({2})
+				"""
+	cStr = ",".join(columnList)
+	qStr = ",".join(["?" for c in columnList])
+	return sql_template.format(tableName, cStr, qStr)
 
-coauthors_data_file = "../ingest/transform/transformed/coauthors_data.csv"
-coauthors_sql =		"""
-					insert into coauthors
-					(authid, coauthid, cnt)
-					values (?, ?, ?)
-					"""
-
-author_json_data_file = "../ingest/transform/transformed/author_json_data.csv"
-author_json_sql =	"""
-					insert into author_json
-					(facid, jsondata)
-					values (?, ?)
-					"""
-
-affiliations_data_file = "../ingest/transform/transformed/affiliations_data.csv"
-affiliations_sql =	"""
-					insert into affiliations
-					(facid, deptid, rank)
-					values (?, ?, ?)
-					"""
+def updateTable(cursor, tDict):
+	with open(tDict["file"], 'rt') as csv_file:
+		csv_reader = csv.reader(csv_file)
+		seeds = [ tuple(row) for row in csv_reader ]
+	sql = writeSql(tDict['table'],tDict['columns'])
+	cursor.executemany(sql, seeds)
 
 with sqlite3.connect(db_filename) as conn:
 		print 'DELETING DATA'
@@ -48,46 +65,11 @@ with sqlite3.connect(db_filename) as conn:
 		delete_script = """
 						DELETE FROM {0}
 						"""
-		tables = [	"faculty",
-					"departments",
-					"coauthors",
-					"author_json",
-					"affiliations"]
-		for t in tables:
-			cursor.execute(delete_script.format(t))
+		for tDict in tables.values():
+			cursor.execute(delete_script.format(tDict['table']))
 		cursor.execute("VACUUM")
 
 		print "Seeding database"
 
-		with open(faculty_data_file, 'rt') as csv_file:
-			csv_reader = csv.reader(csv_file)
-			faculty_seeds = [ tuple([row[0],row[1],row[2],
-									row[3],row[4],row[5],
-									row[6]])
-						for row in csv_reader]
-
-		with open(dept_data_file, 'rt') as csv_file:
-			csv_reader = csv.reader(csv_file)
-			dept_seeds = [ tuple([row[0],row[1]])
-						for row in csv_reader]
-
-		with open(coauthors_data_file, 'rt') as csv_file:
-			csv_reader = csv.reader(csv_file)
-			coauthors_seeds = [ tuple([row[0],row[1],row[2]])
-						for row in csv_reader]
-
-		with open(author_json_data_file, 'rt') as csv_file:
-			csv_reader = csv.reader(csv_file)
-			author_json_seeds = [ tuple([row[0],row[1]])
-						for row in csv_reader]
-
-		with open(affiliations_data_file, 'rt') as csv_file:
-			csv_reader = csv.reader(csv_file)
-			affiliations_seeds = [ tuple([row[0],row[1], row[2]])
-						for row in csv_reader]
-
-		cursor.executemany(faculty_sql, faculty_seeds)
-		cursor.executemany(dept_sql, dept_seeds)
-		cursor.executemany(coauthors_sql, coauthors_seeds)
-		cursor.executemany(author_json_sql, author_json_seeds)
-		cursor.executemany(affiliations_sql, affiliations_seeds)
+		for tDict in tables.values():
+			updateTable(cursor, tDict)
