@@ -23,14 +23,6 @@ def main(inDeptFile, inAffsFile, targetDir):
 			else:
 				depts[row[0]] = row[1]
 
-	with open(
-			os.path.join(targetDir,'departments_data.csv'),
-			 'w') as dataout:
-		wrtr = csv.writer(dataout)
-		for deptid, label in depts.items():
-			row = (deptid, label)
-			wrtr.writerow(row)
-
 	with open(inAffsFile, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
 		#Skip header
