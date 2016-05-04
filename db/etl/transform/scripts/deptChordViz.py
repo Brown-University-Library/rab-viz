@@ -37,16 +37,16 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 		deptLegend[dept] = list(set(deptNet))
 
 	with open(
-			os.path.join(targetDir,'chordDeptViz.csv'),
+			os.path.join(targetDir,'chordDeptViz_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		for dept in deptLegend:
 			legend = deptLegend[dept]
 			mtx = [[0 for x in range(len(legend))] for x in range(len(legend))] 
 			for f in legend:
-				if f in rosters[dept]:
-					fdct = coauthData[f]
-					for co in fdct.keys():
+				fdct = coauthData[f]
+				for co in fdct.keys():
+					if co in legend: # AuthJson dicts not limited to this dept
 						mtx[legend.index(f)][legend.index(co)] = fdct[co]
 			row = [ dept, json.dumps(legend), json.dumps(mtx) ]
 			wrtr.writerow(row)
