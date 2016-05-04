@@ -1,7 +1,7 @@
 from flask import render_template, json
 
 from app import app
-from .models import Affiliations, Faculty, AuthorJson
+from .models import ChordDeptViz, Faculty, Departments
 # @app.route('/')
 # @app.route('/index')
 # def index():
@@ -104,11 +104,20 @@ def chordDeptViz(deptid):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(deptid)
 	# affiliates = Affiliations.query.with_entities(
 	# 				Affiliations.facid).filter_by(deptid=rabid).all()
-	faculty = AuthorJson.query.\
-		join(Affiliations, AuthorJson.facid==Affiliations.facid).\
-		filter(Affiliations.deptid==rabid).all()
-	print [str(f.jsondata) for f in faculty]
-	return "<code>"+str(len(faculty))+"</code>"
+	# faculty = AuthorJson.query.\
+	# 	join(Affiliations, AuthorJson.facid==Affiliations.facid).\
+	# 	filter(Affiliations.deptid==rabid).all()
+	# print [str(f.jsondata) for f in faculty]
+	# return "<code>"+str(len(faculty))+"</code>"
+	vizData = ChordDeptViz.query.filter_by(deptid=rabid).first()
+	legend = json.loads(vizData.legend)
+	matrix = json.loads(vizData.matrix)
+	all_faculty = Faculty.query.all()
+	all_depts = Departments.query.all()
+	faculty_list = [ [f.abbrev, f.deptLabel, f.rabid]
+						for f in all_faculty
+							if f.rabid in legend  ]
+	return str(faculty_list)
 	# vizkey = json.loads(viz.facultykey)
 	# all_faculty = Faculty.query.all()
 	# all_depts = Department.query.all()

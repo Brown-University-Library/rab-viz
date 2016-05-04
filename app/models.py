@@ -3,8 +3,8 @@ from app import db
 class ChordDeptViz(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	deptid = db.Column(db.String(), index=True)
-	facultykey = db.Column(db.String())
-	facultydata = db.Column(db.String())
+	legend = db.Column(db.String())
+	matrix = db.Column(db.String())
 
 class ChordFacViz(db.Model):
 	id = db.Column(db.Integer, primary_key=True)

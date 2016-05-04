@@ -21,7 +21,7 @@
     <body>
         <script type="text/javascript">
 
-            var deptLabel = {{ deptLabel|tojson|safe }};
+            var pageLabel = {{ pageLabel|tojson|safe }};
 
             var depts = {{ legend|tojson|safe }};
 
@@ -80,7 +80,7 @@
                 .attr("transform", 'translate(' + (svg_width - (svg_width - (c_width + padding))) + ',' + padding / 2 +')')
                 .attr("style", "font-size: 3em; font-weight:bold;")
                 .text(function(d) {
-                        return deptLabel;
+                        return pageLabel;
                     });
 
             var group_ticks = function (d) {
