@@ -102,33 +102,17 @@ from .models import ChordDeptViz, Faculty, Departments
 @app.route('/chord/dept/<deptid>')
 def chordDeptViz(deptid):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(deptid)
-	# affiliates = Affiliations.query.with_entities(
-	# 				Affiliations.facid).filter_by(deptid=rabid).all()
-	# faculty = AuthorJson.query.\
-	# 	join(Affiliations, AuthorJson.facid==Affiliations.facid).\
-	# 	filter(Affiliations.deptid==rabid).all()
-	# print [str(f.jsondata) for f in faculty]
-	# return "<code>"+str(len(faculty))+"</code>"
 	vizData = ChordDeptViz.query.filter_by(deptid=rabid).first()
 	legend = json.loads(vizData.legend)
 	matrix = json.loads(vizData.matrix)
-	all_faculty = Faculty.query.all()
-	all_depts = Departments.query.all()
-	faculty_list = [ [f.abbrev, f.deptLabel, f.rabid]
-						for f in all_faculty
+	allFaculty = Faculty.query.all()
+	allDepts = Departments.query.all()
+	facultyList = [ [f.abbrev, f.deptLabel, f.rabid]
+						for f in allFaculty
 							if f.rabid in legend  ]
-	return str(faculty_list)
-	# vizkey = json.loads(viz.facultykey)
-	# all_faculty = Faculty.query.all()
-	# all_depts = Department.query.all()
-	# dept_lookup = { d.rabid: d.label for d in all_depts }
-	# faculty_lookup = { f.rabid: f.nameabbrev for f in all_faculty }
-	# newkey = [ [faculty_lookup[facdata[0]], dept_lookup[facdata[1]], facdata[0]]
-	# 				for facdata in vizkey ]
-	# legend = list({ n[1] for n in newkey })
-	# deptMap = { d.label: d.rabid for d in all_depts }
-	# deptLabel = dept_lookup[rabid]
-	# vizdata = json.loads(viz.facultydata)
-	# return render_template(
-	# 		'chord_dept.html', deptLabel=deptLabel, legend=legend,
-	# 		deptMap=deptMap, vizkey=newkey, vizdata=vizdata)
+	deptList = list({ f[1] for f in facultyList })
+	deptMap = { d.label: d.rabid for d in allDepts }
+	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
+	return render_template(
+			'chord_dept.html', pageLabel=pageLabel, legend=deptList,
+			deptMap=deptMap, vizkey=facultyList, vizdata=matrix)

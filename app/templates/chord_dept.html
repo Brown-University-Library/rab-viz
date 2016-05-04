@@ -23,7 +23,7 @@
 
             var pageLabel = {{ pageLabel|tojson|safe }};
 
-            var depts = {{ legend|tojson|safe }};
+            var lgnd = {{ legend|tojson|safe }};
 
             var deptURIs = {{ deptMap|tojson|safe }};
 
@@ -44,7 +44,7 @@
             var padding = 175;
             var inner_radius = Math.min(c_width, c_height) * 0.37;
             var outer_radius = Math.min(c_width, c_height) * 0.39;
-            var fill = d3.scale.category20().domain(depts);
+            var fill = d3.scale.category20().domain(lgnd);
             var legend = d3.legend.color().shape("circle")
                 .shapePadding(10)
                 .scale(fill)
