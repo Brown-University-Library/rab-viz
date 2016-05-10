@@ -124,9 +124,8 @@ def chordViz(viztype, rabid):
 	matrix = json.loads(vizData.matrix)
 	allFaculty = Faculty.query.all()
 	allDepts = Departments.query.all()
-	facultyList = [ [f.abbrev, f.deptLabel, f.rabid]
-						for f in allFaculty
-							if f.rabid in legend  ]
+	facultyLookup = { f.rabid: [f.abbrev, f.deptLabel, f.rabid] for f in allFaculty }
+	facultyList = [ facultyLookup[f] for f in legend ]
 	deptList = list({ f[1] for f in facultyList })
 	deptMap = { d.label: d.rabid for d in allDepts }
 	if viztype=='dept':
