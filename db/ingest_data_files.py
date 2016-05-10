@@ -36,8 +36,13 @@ tables = {
 	},
 	"chordDeptViz": {
 		"file": os.path.join(load_dir,"chordDeptViz_data.csv"),
-		"table": "chord_dept_viz",
-		"columns": ["deptid", "legend", "matrix"]
+		"table": "chord_viz",
+		"columns": ["rabid", "legend", "matrix"]
+	},
+	"chordFacViz": {
+		"file": os.path.join(load_dir,"chordFacViz_data.csv"),
+		"table": "chord_viz",
+		"columns": ["rabid", "legend", "matrix"]
 	}
 } 
 

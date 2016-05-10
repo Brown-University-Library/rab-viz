@@ -53,3 +53,9 @@ class AuthorJson(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	facid = db.Column(db.String(), index=True)
 	jsondata = db.Column(db.String())
+
+class ChordViz(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	rabid = db.Column(db.String(), index=True)
+	legend = db.Column(db.String())
+	matrix = db.Column(db.String())

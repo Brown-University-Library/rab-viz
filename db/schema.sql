@@ -43,11 +43,10 @@ create table author_json (
     FOREIGN KEY(facid) REFERENCES faculty(rabid)
 );
 
-drop table if exists chord_dept_viz;
-create table chord_dept_viz (
+drop table if exists chord_viz;
+create table chord_viz (
     id integer primary key autoincrement,
-    deptid text not null,
+    rabid text not null,
     legend text not null,
-    matrix text not null,
-    FOREIGN KEY(deptid) REFERENCES department(rabid)
+    matrix text not null
 );
