@@ -127,7 +127,7 @@ def chordViz(viztype, rabid):
 	facultyLookup = { f.rabid: [f.abbrev, f.deptLabel, f.rabid] for f in allFaculty }
 	facultyList = [ facultyLookup[f] for f in legend ]
 	deptList = list({ f[1] for f in facultyList })
-	deptMap = { d.label: d.rabid for d in allDepts if d.rabid in deptList }
+	deptMap = { l: d.rabid for l in deptList for d in allDepts if l in json.loads(d.useFor)  }
 	if viztype=='dept':
 		pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
 	elif viztype=='faculty':
