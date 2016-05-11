@@ -17,7 +17,7 @@ tables = {
 	"departments": {
 		"file": os.path.join(load_dir,"departments_data.csv"),
 		"table": "departments",
-		"columns": ["rabid","label"]
+		"columns": ["rabid","label","useFor"]
 	},
 	"coauthors": {
 		"file": os.path.join(load_dir,"coauthors_data.csv"),

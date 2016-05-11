@@ -36,6 +36,7 @@ class Faculty(db.Model):
 class Departments(db.Model):
 	rabid = db.Column(db.String, primary_key=True)
 	label = db.Column(db.String())
+	useFor = db.Column(db.String())
 
 class Affiliations(db.Model):
 	id = db.Column(db.Integer, primary_key=True)

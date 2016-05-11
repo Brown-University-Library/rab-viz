@@ -12,7 +12,8 @@ create table faculty (
 drop table if exists departments;
 create table departments (
     rabid text primary key,
-    label text not null
+    label text not null,
+    useFor text not null
 );
 
 drop table if exists affiliations;
