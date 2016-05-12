@@ -99,23 +99,6 @@ from .models import ChordViz, Faculty, Departments
 # 			deptMap=deptMap, facMap=facMap, vizdata=vizdata,
 # 			linkDist=40, repel=-1200)
 
-# @app.route('/chord/dept/<deptid>')
-# def chordDeptViz(deptid):
-# 	rabid = "http://vivo.brown.edu/individual/{0}".format(deptid)
-# 	vizData = ChordDeptViz.query.filter_by(deptid=rabid).first()
-# 	legend = json.loads(vizData.legend)
-# 	matrix = json.loads(vizData.matrix)
-# 	allFaculty = Faculty.query.all()
-# 	allDepts = Departments.query.all()
-# 	facultyList = [ [f.abbrev, f.deptLabel, f.rabid]
-# 						for f in allFaculty
-# 							if f.rabid in legend  ]
-# 	deptList = list({ f[1] for f in facultyList })
-# 	deptMap = { d.label: d.rabid for d in allDepts }
-# 	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
-# 	return render_template(
-# 			'chord.html', pageLabel=pageLabel, legend=deptList,
-# 			deptMap=deptMap, vizkey=facultyList, vizdata=matrix)
 @app.route('/chord/<viztype>/<rabid>')
 def chordViz(viztype, rabid):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)

@@ -125,7 +125,7 @@
                         return labels[d.index][0];
                     })
                     .attr("id", function(d) {
-                         return labels[d.index][0].toLowerCase().replace(/[.',\s]/g,"")
+                         return labels[d.index][0].toLowerCase().replace(/[.'(),\s]/g,"")
                     })
                     .on("mouseover", fade(.05))
                     .on("mouseover", function(d) {
@@ -145,7 +145,7 @@
                 .call(legend);
 
             d3.selectAll(".legend .cell").each( function(d, i){
-                var label = this.textContent.toLowerCase().replace(/[.',\s]/g,"");
+                var label = this.textContent.toLowerCase().replace(/[.'(),\s]/g,"");
                 d3.select(this).attr("id", label);
             });
 
@@ -160,7 +160,7 @@
             }
 
             function embiggen(d, size) {
-                d3.select("#"+d.toLowerCase().replace(/[.',\s]/g,""))
+                d3.select("#"+d.toLowerCase().replace(/[.'(),\s]/g,""))
                     .transition().duration(100)
                         .style("font-size", size);
             }

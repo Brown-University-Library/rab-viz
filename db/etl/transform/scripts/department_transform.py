@@ -37,7 +37,7 @@ def main(inDeptFile, inFacFile, targetDir):
 		"Middle East Studies":
 			"",
 		"Community Health":
-			"http://vivo.brown.edu/individual/org-brown-univ-dept260",
+			"http://vivo.brown.edu/individual/org-brown-univ-dept250",
 		"Population Studies":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept78",
 		"Development Studies":

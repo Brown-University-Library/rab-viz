@@ -31,6 +31,7 @@ def main(inFileAuthJson, targetDir):
 		wrtr = csv.writer(dataout)
 		for fac in legends:
 			legend = legends[fac]
+			legend.insert(0,legend.pop(legend.index(fac)))
 			mtx = [[0 for x in range(len(legend))] for x in range(len(legend))] 
 			for f in legend:
 				fdct = coauthData[f]
