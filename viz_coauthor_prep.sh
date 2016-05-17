@@ -46,7 +46,7 @@ python $TRANSFORM/scripts/viz_chord_dept.py $LOAD/author_json_data.csv $TRANSFOR
 python $TRANSFORM/scripts/viz_force_dept.py $LOAD/author_json_data.csv $TRANSFORM/data/roster_data.csv $LOAD
 
 # SQLite setup
-python $DB/run_viz_db.py
-python $DB/ingest_data_files.py
+python $DB/run_viz_db.py $DB
+python $DB/ingest_data_files.py $DB $LOAD
 #Exit Python venv
 #deactivate
