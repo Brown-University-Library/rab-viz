@@ -12,9 +12,9 @@ vstore = ConjunctiveGraph('SPARQLStore')
 vstore.open(endpoint)
 vstore.namespace_manager = ns_mgr
 
-
 targetDir = "/work/viz/db/etl/extract/data"
 queryTemplate = "SELECT {0} WHERE {{{1}}}"
+
 jobs = [
   {
     "name": "faculty",

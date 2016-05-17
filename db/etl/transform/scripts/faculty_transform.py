@@ -11,8 +11,6 @@ def main(inFileFac, targetDir):
 
 	with open(inFileFac, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
-		#Skip header
-		head = rdr.next()
 		# rabid, last, first, label, title, primaryOU 
 		for row in rdr:
 			if not row[5]:

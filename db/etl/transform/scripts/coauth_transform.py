@@ -16,17 +16,11 @@ def main(inCoauthFile, facCheckFile, targetDir):
 
 	with open(facCheckFile, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
-		#Skip header
-		head = rdr.next()
-		#Auth1URI, Auth2URI, CitationURI
 		for row in rdr:
 			activeFaculty.add(row[0])
 
 	with open(inCoauthFile, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
-		#Skip header
-		head = rdr.next()
-		#Auth1URI, Auth2URI, CitationURI
 		for row in rdr:
 			if row[0] in activeFaculty and row[1] in activeFaculty:
 				auth_check.append(row[0])
@@ -34,7 +28,6 @@ def main(inCoauthFile, facCheckFile, targetDir):
 				wx[row[0]][row[1]] += 1
 			else:
 				continue
-				#print "Bad IDs: either {0} or {1}".format(row[0], row[1])
 
 	# Simple sanity checks
 	# All authors in CSV are keys in coauthor network dictionary

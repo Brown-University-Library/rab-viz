@@ -13,8 +13,6 @@ def main(inDeptFile, inAffsFile, targetDir):
 
 	with open(inDeptFile, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
-		#Skip header
-		head = rdr.next()
 		#Auth1URI, Auth2URI, CitationURI
 		for row in rdr:
 			# Handle departments with more than 1 label
@@ -25,8 +23,6 @@ def main(inDeptFile, inAffsFile, targetDir):
 
 	with open(inAffsFile, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
-		#Skip header
-		head = rdr.next()
 		#Auth1URI, Auth2URI, CitationURI
 		for row in rdr:
 			# Handle departments with more than 1 label

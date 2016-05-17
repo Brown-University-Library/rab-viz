@@ -10,8 +10,6 @@ def main(inFile, targetDir):
 
 	with open(inFile, "r") as f:
 		rdr = csv.reader(f, delimiter=',', quotechar='"')
-		#Skip header
-		head = rdr.next()
 		#facid, deptid, rank
 		for row in rdr:
 			# Some positions don't have ranks!!!
