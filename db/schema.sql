@@ -51,3 +51,11 @@ create table chord_viz (
     legend text not null,
     matrix text not null
 );
+
+drop table if exists force_viz;
+create table force_viz (
+    id integer primary key autoincrement,
+    rabid text not null,
+    legend text not null,
+    links text not null
+);

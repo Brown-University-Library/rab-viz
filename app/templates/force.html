@@ -29,7 +29,7 @@
 
       var deptURIs = {{ deptMap|tojson|safe }};
 
-      var deptLabel = {{ deptLabel|tojson|safe }}
+      var pageLabel = {{ pageLabel|tojson|safe }}
 
       var graph = {{ vizdata|tojson|safe }};
 
@@ -119,7 +119,7 @@
         .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.1) +')')
                 .attr("style", "font-size: 3em; font-weight:bold;")
                 .text(function(d) {
-                        return deptLabel;
+                        return pageLabel;
                     });
 
       svg.append("g").attr("class", "legend")

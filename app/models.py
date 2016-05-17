@@ -60,3 +60,9 @@ class ChordViz(db.Model):
 	rabid = db.Column(db.String(), index=True)
 	legend = db.Column(db.String())
 	matrix = db.Column(db.String())
+
+class ForceViz(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
+	rabid = db.Column(db.String(), index=True)
+	legend = db.Column(db.String())
+	links = db.Column(db.String())
