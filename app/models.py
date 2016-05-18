@@ -1,29 +1,5 @@
 from app import db
 
-class ChordDeptViz(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	deptid = db.Column(db.String(), index=True)
-	legend = db.Column(db.String())
-	matrix = db.Column(db.String())
-
-class ChordFacViz(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	facid = db.Column(db.String(), index=True)
-	coauthkey = db.Column(db.String())
-	coauthdata = db.Column(db.String())
-
-class ForceFacViz(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	facid = db.Column(db.String(), index=True)
-	nodeuris = db.Column(db.String())
-	links = db.Column(db.String())
-
-class ForceDeptViz(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	deptid = db.Column(db.String(), index=True)
-	nodeuris = db.Column(db.String())
-	links = db.Column(db.String())
-
 class Faculty(db.Model):
 	rabid = db.Column(db.String, primary_key=True)
 	lastname = db.Column(db.String())

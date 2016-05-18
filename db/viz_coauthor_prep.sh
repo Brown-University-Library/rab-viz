@@ -1,10 +1,6 @@
 #!/bin/bash
 set -e
 
-# #Necessary for Python
-# LD_LIBRARY_PATH=/usr/local/lib
-# export LD_LIBRARY_PATH
-
 DB=/work/viz/db
 ETL=/work/viz/db/etl
 EXTRACT=/work/viz/db/etl/extract 
@@ -12,14 +8,8 @@ TRANSFORM=/work/viz/db/etl/transform
 LOAD=/work/viz/db/etl/load
 
 HOME=/work/viz/
-# HOME=/opt/local/vivo-maintenance-queries
 
 cd $HOME
-
-# #set env
-# source $HOME/venv/bin/activate
-# #env vars
-# source $HOME/venv/bin/vivoenv.sh
 source $HOME/local-env.sh
 
 #Clean out old data
@@ -50,5 +40,3 @@ python $TRANSFORM/scripts/viz_force_dept.py $LOAD/author_json_data.csv $TRANSFOR
 # SQLite setup
 python $DB/run_viz_db.py $DB
 python $DB/ingest_data_files.py $DB $LOAD
-#Exit Python venv
-#deactivate
