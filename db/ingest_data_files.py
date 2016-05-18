@@ -65,6 +65,11 @@ def main(dbDir, loadDir):
 			"file": os.path.join(loadDir,"viz_force_dept_data.csv"),
 			"table": "force_viz",
 			"columns": ["rabid", "legend", "links"]
+		},
+		"forceFacViz": {
+			"file": os.path.join(loadDir,"viz_force_fac_data.csv"),
+			"table": "force_viz",
+			"columns": ["rabid", "legend", "links"]
 		}
 	} 
 

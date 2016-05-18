@@ -43,6 +43,8 @@ python $TRANSFORM/scripts/roster_transform.py $EXTRACT/data/departments.csv $EXT
 #Visualization tables
 python $TRANSFORM/scripts/viz_chord_fac.py $LOAD/author_json_data.csv $LOAD
 python $TRANSFORM/scripts/viz_chord_dept.py $LOAD/author_json_data.csv $TRANSFORM/data/roster_data.csv $LOAD
+
+python $TRANSFORM/scripts/viz_force_fac.py $LOAD/author_json_data.csv $LOAD
 python $TRANSFORM/scripts/viz_force_dept.py $LOAD/author_json_data.csv $TRANSFORM/data/roster_data.csv $LOAD
 
 # SQLite setup
