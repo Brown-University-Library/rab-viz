@@ -52,8 +52,7 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 		wrtr = csv.writer(dataout)
 		for dept in deptLegend:
 			pagedLegend = deptLegend[dept]
-			allLinks = []
-			for legend in pagedLegend:
+			for page, legend in enumerate(pagedLegend):
 				links = []
 				for f in legend:
 					fdct = coauthData[f]
@@ -65,9 +64,8 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 								"value": fdct[co]
 							}
 						links.append(link)
-				allLinks.append(links)
-			row = [ dept, json.dumps(pagedLegend), json.dumps(allLinks) ]
-			wrtr.writerow(row)
+				row = [ dept, page, json.dumps(legend), json.dumps(links) ]
+				wrtr.writerow(row)
 
 if __name__ == "__main__":
 	main(sys.argv[1], sys.argv[2], sys.argv[3])

@@ -54,22 +54,22 @@ def main(dbDir, loadDir):
 		"chordDeptViz": {
 			"file": os.path.join(loadDir,"viz_chord_dept_data.csv"),
 			"table": "chord_viz",
-			"columns": ["rabid", "legend", "matrix"]
+			"columns": ["rabid", "page", "legend", "matrix"]
 		},
 		"chordFacViz": {
-			"file": os.path.join(loadDir,"cviz_chord_fac_data.csv"),
+			"file": os.path.join(loadDir,"viz_chord_fac_data.csv"),
 			"table": "chord_viz",
-			"columns": ["rabid", "legend", "matrix"]
+			"columns": ["rabid", "page", "legend", "matrix"]
 		},
 		"forceDeptViz": {
 			"file": os.path.join(loadDir,"viz_force_dept_data.csv"),
 			"table": "force_viz",
-			"columns": ["rabid", "legend", "links"]
+			"columns": ["rabid", "page", "legend", "links"]
 		},
 		"forceFacViz": {
 			"file": os.path.join(loadDir,"viz_force_fac_data.csv"),
 			"table": "force_viz",
-			"columns": ["rabid", "legend", "links"]
+			"columns": ["rabid", "page", "legend", "links"]
 		}
 	} 
 

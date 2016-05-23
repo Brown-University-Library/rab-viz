@@ -42,7 +42,7 @@ def main(inFileAuthJson, targetDir):
 							"value": fdct[co]
 						}
 					links.append(link)
-			row = [ fac, json.dumps(legend), json.dumps(links) ]
+			row = [ fac, 0, json.dumps(legend), json.dumps(links) ]
 			wrtr.writerow(row)
 
 if __name__ == "__main__":

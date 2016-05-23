@@ -7,9 +7,9 @@ from .models import ChordViz, ForceViz, Faculty, Departments
 @app.route('/chord/<viztype>/<rabid>/<page>')
 def chordViz(viztype, rabid, page=0):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)
-	vizData = ChordViz.query.filter_by(rabid=rabid).first()
-	legend = json.loads(vizData.legend)[int(page)]
-	matrix = json.loads(vizData.matrix)[int(page)]
+	vizData = ChordViz.query.filter_by(rabid=rabid, page=page).first()
+	legend = json.loads(vizData.legend)
+	matrix = json.loads(vizData.matrix)
 	allFaculty = Faculty.query.all()
 	allDepts = Departments.query.all()
 	facultyLookup = { f.rabid: [f.abbrev, f.deptLabel, f.rabid] for f in allFaculty }
@@ -25,9 +25,10 @@ def chordViz(viztype, rabid, page=0):
 			deptMap=deptMap, vizkey=facultyList, vizdata=matrix)
 
 @app.route('/force/<viztype>/<rabid>')
-def forceViz(viztype, rabid):
+@app.route('/force/<viztype>/<rabid>/<page>')
+def forceViz(viztype, rabid, page=0):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)
-	vizData = ForceViz.query.filter_by(rabid=rabid).first()
+	vizData = ForceViz.query.filter_by(rabid=rabid, page=page).first()
 	legend = json.loads(vizData.legend)
 	allFaculty = Faculty.query.all()
 	allDepts = Departments.query.all()

@@ -53,17 +53,15 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 		wrtr = csv.writer(dataout)
 		for dept in deptLegend:
 			pagedLegend = deptLegend[dept]
-			matrix = []
-			for legend in pagedLegend:
+			for page, legend in enumerate(pagedLegend):
 				mtx = [[0 for x in range(len(legend))] for x in range(len(legend))] 
 				for f in legend:
 					fdct = coauthData[f]
 					for co in fdct.keys():
 						if co in legend: # AuthJson dicts not limited to this dept
 							mtx[legend.index(f)][legend.index(co)] = fdct[co]
-				matrix.append(mtx)
-			row = [ dept, json.dumps(pagedLegend), json.dumps(matrix) ]
-			wrtr.writerow(row)
+				row = [ dept, page, json.dumps(legend), json.dumps(mtx) ]
+				wrtr.writerow(row)
 
 if __name__ == "__main__":
 	main(sys.argv[1], sys.argv[2], sys.argv[3])

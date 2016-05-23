@@ -34,11 +34,13 @@ class AuthorJson(db.Model):
 class ChordViz(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	rabid = db.Column(db.String(), index=True)
+	page = db.Column(db.Integer())
 	legend = db.Column(db.String())
 	matrix = db.Column(db.String())
 
 class ForceViz(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	rabid = db.Column(db.String(), index=True)
+	page = db.Column(db.Integer())
 	legend = db.Column(db.String())
 	links = db.Column(db.String())

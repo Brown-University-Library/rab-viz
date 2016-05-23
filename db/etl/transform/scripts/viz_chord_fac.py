@@ -38,7 +38,7 @@ def main(inFileAuthJson, targetDir):
 				for co in fdct.keys():
 					if co in legend:
 						mtx[legend.index(f)][legend.index(co)] = fdct[co]
-			row = [ fac, json.dumps(legend), json.dumps(mtx) ]
+			row = [ fac, 0, json.dumps(legend), json.dumps(mtx) ]
 			wrtr.writerow(row)
 
 if __name__ == "__main__":
