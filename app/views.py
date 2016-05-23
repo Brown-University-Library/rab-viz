@@ -4,11 +4,12 @@ from app import app
 from .models import ChordViz, ForceViz, Faculty, Departments
 
 @app.route('/chord/<viztype>/<rabid>')
-def chordViz(viztype, rabid):
+@app.route('/chord/<viztype>/<rabid>/<page>')
+def chordViz(viztype, rabid, page=0):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)
 	vizData = ChordViz.query.filter_by(rabid=rabid).first()
-	legend = json.loads(vizData.legend)
-	matrix = json.loads(vizData.matrix)
+	legend = json.loads(vizData.legend)[int(page)]
+	matrix = json.loads(vizData.matrix)[int(page)]
 	allFaculty = Faculty.query.all()
 	allDepts = Departments.query.all()
 	facultyLookup = { f.rabid: [f.abbrev, f.deptLabel, f.rabid] for f in allFaculty }

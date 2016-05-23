@@ -30,24 +30,29 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 					if len(v) !=0 }
 
 	for dept in rosters:
+		bigNet = []
 		deptNet = []
 		for fac in rosters[dept]:
 			deptNet.extend(coauthData[fac].keys())
 			deptNet.append(fac)
-		deptLegend[dept] = list(set(deptNet))
+			if len(list(set(deptNet))) > 20:
+				bigNet.append(list(set(deptNet)))
+				deptNet = []
+		if deptNet:
+			bigNet.append(list(set(deptNet)))
+		if len(bigNet) > 1:
+			fullNet = list(
+				{ name for net in bigNet for name in net }
+				)
+			bigNet.insert(0,fullNet)
+		deptLegend[dept] = bigNet
 
 	with open(
 			os.path.join(targetDir,'chordDeptViz_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		for dept in deptLegend:
-			fullLegend = deptLegend[dept]
-			# http://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks-in-python
-			if len(fullLegend) > 20:
-				pagedLegend = [fullLegend[i:i+20] for i in xrange(0, len(fullLegend), 20)]
-				pagedLegend.insert(0,fullLegend)
-			else:
-				pagedLegend = [fullLegend]
+			pagedLegend = deptLegend[dept]
 			matrix = []
 			for legend in pagedLegend:
 				mtx = [[0 for x in range(len(legend))] for x in range(len(legend))] 
