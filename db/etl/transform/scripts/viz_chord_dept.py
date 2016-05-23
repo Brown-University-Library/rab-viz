@@ -41,14 +41,23 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		for dept in deptLegend:
-			legend = deptLegend[dept]
-			mtx = [[0 for x in range(len(legend))] for x in range(len(legend))] 
-			for f in legend:
-				fdct = coauthData[f]
-				for co in fdct.keys():
-					if co in legend: # AuthJson dicts not limited to this dept
-						mtx[legend.index(f)][legend.index(co)] = fdct[co]
-			row = [ dept, json.dumps(legend), json.dumps(mtx) ]
+			fullLegend = deptLegend[dept]
+			# http://stackoverflow.com/questions/312443/how-do-you-split-a-list-into-evenly-sized-chunks-in-python
+			if len(fullLegend) > 20:
+				pagedLegend = [fullLegend[i:i+20] for i in xrange(0, len(fullLegend), 20)]
+				pagedLegend.insert(0,fullLegend)
+			else:
+				pagedLegend = [fullLegend]
+			matrix = []
+			for legend in pagedLegend:
+				mtx = [[0 for x in range(len(legend))] for x in range(len(legend))] 
+				for f in legend:
+					fdct = coauthData[f]
+					for co in fdct.keys():
+						if co in legend: # AuthJson dicts not limited to this dept
+							mtx[legend.index(f)][legend.index(co)] = fdct[co]
+				matrix.append(mtx)
+			row = [ dept, json.dumps(pagedLegend), json.dumps(matrix) ]
 			wrtr.writerow(row)
 
 if __name__ == "__main__":
