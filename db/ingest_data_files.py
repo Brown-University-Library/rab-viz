@@ -52,12 +52,12 @@ def main(dbDir, loadDir):
 			"columns": ["facid", "deptid", "rank"]
 		},
 		"chordDeptViz": {
-			"file": os.path.join(loadDir,"chordDeptViz_data.csv"),
+			"file": os.path.join(loadDir,"viz_chord_dept_data.csv"),
 			"table": "chord_viz",
 			"columns": ["rabid", "legend", "matrix"]
 		},
 		"chordFacViz": {
-			"file": os.path.join(loadDir,"chordFacViz_data.csv"),
+			"file": os.path.join(loadDir,"cviz_chord_fac_data.csv"),
 			"table": "chord_viz",
 			"columns": ["rabid", "legend", "matrix"]
 		},

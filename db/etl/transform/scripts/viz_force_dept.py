@@ -29,30 +29,44 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 					if len(v) !=0 }
 
 	for dept in rosters:
+		bigNet = []
 		deptNet = []
 		for fac in rosters[dept]:
 			deptNet.extend(coauthData[fac].keys())
 			deptNet.append(fac)
-		deptLegend[dept] = list(set(deptNet))
+			if len(list(set(deptNet))) > 20:
+				bigNet.append(list(set(deptNet)))
+				deptNet = []
+		if deptNet:
+			bigNet.append(list(set(deptNet)))
+		if len(bigNet) > 1:
+			fullNet = list(
+				{ name for net in bigNet for name in net }
+				)
+			bigNet.insert(0,fullNet)
+		deptLegend[dept] = bigNet
 
 	with open(
 			os.path.join(targetDir,'viz_force_dept_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		for dept in deptLegend:
-			links = []
-			legend = deptLegend[dept]
-			for f in legend:
-				fdct = coauthData[f]
-				for co in fdct.keys():
-					if co in legend: # AuthJson dicts not limited to this dept
-						link = {
-							"source": legend.index(f),
-							"target": legend.index(co),
-							"value": fdct[co]
-						}
-					links.append(link)
-			row = [ dept, json.dumps(legend), json.dumps(links) ]
+			pagedLegend = deptLegend[dept]
+			allLinks = []
+			for legend in pagedLegend:
+				links = []
+				for f in legend:
+					fdct = coauthData[f]
+					for co in fdct.keys():
+						if co in legend: # AuthJson dicts not limited to this dept
+							link = {
+								"source": legend.index(f),
+								"target": legend.index(co),
+								"value": fdct[co]
+							}
+						links.append(link)
+				allLinks.append(links)
+			row = [ dept, json.dumps(pagedLegend), json.dumps(allLinks) ]
 			wrtr.writerow(row)
 
 if __name__ == "__main__":

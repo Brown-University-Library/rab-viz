@@ -26,7 +26,7 @@ def main(inFileAuthJson, targetDir):
 	legends = { auth: list(nx2[auth]) for auth in nx2 }
 
 	with open(
-			os.path.join(targetDir,'chordFacViz_data.csv'),
+			os.path.join(targetDir,'viz_chord_fac_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		for fac in legends:

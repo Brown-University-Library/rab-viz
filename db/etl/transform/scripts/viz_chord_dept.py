@@ -48,7 +48,7 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 		deptLegend[dept] = bigNet
 
 	with open(
-			os.path.join(targetDir,'chordDeptViz_data.csv'),
+			os.path.join(targetDir,'viz_chord_dept_data.csv'),
 			 'w') as dataout:
 		wrtr = csv.writer(dataout)
 		for dept in deptLegend:
