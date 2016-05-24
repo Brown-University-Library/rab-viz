@@ -41,7 +41,7 @@ def main(inFileAuthJson, targetDir):
 							"target": legend.index(co),
 							"value": fdct[co]
 						}
-					links.append(link)
+						links.append(link)
 			row = [ fac, 0, json.dumps(legend), json.dumps(links) ]
 			wrtr.writerow(row)
 

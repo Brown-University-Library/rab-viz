@@ -57,7 +57,9 @@ def main(inFileAuthJson, inFileRosters, targetDir):
 				for f in legend:
 					fdct = coauthData[f]
 					for co in fdct.keys():
-						if co in legend: # AuthJson dicts not limited to this dept
+						# Conditional needed for coauthor's coauthors,
+						# who may not be present in the legend
+						if co in legend:
 							link = {
 								"source": legend.index(f),
 								"target": legend.index(co),
