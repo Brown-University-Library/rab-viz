@@ -18,6 +18,31 @@
       stroke-opacity: .6;
     }
 
+    .legendBox table {
+      width: 900px;
+    }
+
+    .legendBox td {
+      width: 30%;
+      height: 1.8em;
+      padding: 0 0 0 2em;
+      font-size: 1.3em;
+      opacity: 0.9;
+      vertical-align: top;
+    }
+
+    .legendBox td.selected {
+      opacity: 1;
+    }
+    
+    .bug {
+      float: left;
+      width: 10px;
+      height: 10px;
+      margin: 0px 5px;
+      border: 1px solid rgba(0, 0, 0, .2);
+    }
+
     </style>
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
@@ -46,12 +71,14 @@
 
       var repel = {{repel|tojson|safe}};
 
+      var crange = {{crange|tojson|safe}};
+
       var force_uri_base = "http://localhost:8000/force/";
 
       var width = 1200,
           height = 800;
 
-      var color = d3.scale.category20().domain(depts);
+      var color = d3.scale.ordinal().domain(depts).range(crange);
 
       console.log("Domain: ", color.domain().length);
       console.log("Range: ", color.range().length);
@@ -144,21 +171,37 @@
                         .style("font-size", size);
             }
 
-      var lBox = $(".legendBox");
-      var tBox = document.createElement("table");
-      var i,j,subd,chunk = 3;
-      for (i=0,j=depts.length; i<j; i+=chunk) {
-          subd = depts.slice(i,i+chunk);
-          var row = document.createElement("tr");
-          subd.forEach(function(dept){
-            var td = document.createElement("td");
-            td.innerHTML = dept;
-            td.setAttribute("style", "background: "+color(dept));
-            row.appendChild(td);
-          });
-          tBox.appendChild(row);
+      function buildLegend(targetDiv) {
+        var lBox = $(targetDiv);
+        var tBox = document.createElement("table");
+        var i,j,subd,chunk = 3;
+        for (i=0,j=depts.length; i<j; i+=chunk) {
+            subd = depts.slice(i,i+chunk);
+            var row = document.createElement("tr");
+            subd.forEach(function(dept){
+              var td = document.createElement("td");
+              var span = document.createElement("span");
+              var bug = document.createElement("span");
+              bug.setAttribute("class", "bug");
+              bug.setAttribute("style", "background: "+color(dept));
+              span.innerHTML = dept;
+              td.appendChild(bug);
+              td.appendChild(span);
+              $(td).on("mouseover", function(e) {
+                $(targetDiv).find("td").removeClass("selected");
+                $(e.target).addClass("selected");
+              });
+              row.appendChild(td);
+            });
+            tBox.appendChild(row);
+        }
+        lBox.append(tBox);
       }
-      lBox.append(tBox);
+      buildLegend(".legendBox");
+
+      function darken(elm) {
+        elm.set
+      }
 
     </script>
   </body>
