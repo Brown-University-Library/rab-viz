@@ -19,10 +19,17 @@
     }
 
     </style>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3-legend.min.js') }}"></script>
   </head>
   <body>
+    <div class="graphBox">
+    </div>
+    <div class="legendBox">
+    </div>
+    <div class="operationsBox">
+    </div>
     <script type="text/javascript">
 
       var depts = {{ legend|tojson|safe }};
@@ -46,14 +53,22 @@
 
       var color = d3.scale.category20().domain(depts);
 
+      console.log("Domain: ", color.domain().length);
+      console.log("Range: ", color.range().length);
+
       var force = d3.layout.force()
           .charge(repel)
           .linkDistance(linkDist)
           .size([(width - 300), height]);
 
-      var svg = d3.select("body").append("svg")
+      var svg = d3.select("div.graphBox").append("svg")
           .attr("width", width)
           .attr("height", height);
+
+      var lgndSvg = d3.select("div.legendBox").append("svg")
+          .attr("width", width)
+          .attr("height", 200)
+          .append("g").attr("class","legend");
 
       var legend = d3.legend.color().shape("circle")
         .shapePadding(10)
@@ -68,7 +83,7 @@
                 })
         .on("cellout", function(d) {
             embiggen(d,10)
-        });;
+        });
 
         force
             .nodes(graph.nodes)
@@ -122,10 +137,10 @@
                         return pageLabel;
                     });
 
-      svg.append("g").attr("class", "legend")
-        .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.15) +')');
+      // svg.append("g").attr("class", "legend")
+      //   .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.15) +')');
 
-      svg.select(".legend").call(legend);
+      lgndSvg.call(legend);
 
       d3.selectAll(".legend .cell").each( function(d, i){
                 var label = this.textContent.toLowerCase().replace(/[.',\s]/g,"");
@@ -137,6 +152,21 @@
                     .transition().duration(100)
                         .style("font-size", size);
             }
+
+      var lBox = $(".legendBox");
+      var tBox = document.createElement("table");
+      var i,j,subd,chunk = 3;
+      for (i=0,j=depts.length; i<j; i+=chunk) {
+          subd = depts.slice(i,i+chunk);
+          var row = document.createElement("tr");
+          subd.forEach(function(dept){
+            var td = document.createElement("td");
+            td.innerHTML = dept;
+            row.appendChild(td);
+          });
+          tBox.appendChild(row);
+      }
+      lBox.append(tBox);
 
     </script>
   </body>
