@@ -55,6 +55,7 @@
 
       console.log("Domain: ", color.domain().length);
       console.log("Range: ", color.range().length);
+      console.log(depts[2],": ", color(depts[2]));
 
       var force = d3.layout.force()
           .charge(repel)
@@ -152,6 +153,7 @@
           subd.forEach(function(dept){
             var td = document.createElement("td");
             td.innerHTML = dept;
+            td.setAttribute("style", "background: "+color(dept));
             row.appendChild(td);
           });
           tBox.appendChild(row);
