@@ -48,4 +48,4 @@ def forceViz(viztype, rabid, page=0):
 	return render_template(
 			'force.html', pageLabel=pageLabel, legend=deptList,
 			deptMap=deptMap, facMap=facMap, vizdata=vizdata,
-			linkDist=40, repel=-1200)
+			linkDist=30, repel=-350)

@@ -65,25 +65,20 @@
           .attr("width", width)
           .attr("height", height);
 
-      var lgndSvg = d3.select("div.legendBox").append("svg")
-          .attr("width", width)
-          .attr("height", 200)
-          .append("g").attr("class","legend");
-
-      var legend = d3.legend.color().shape("circle")
-        .shapePadding(10)
-        .scale(color)
-        .title("Departments")
-        .on("cellclick", function(d) {
-            var deptCode = deptURIs[d].substring(33);
-            window.location.replace(force_uri_base + "dept/" + deptCode);
-        })
-        .on("cellover", function(d) {
-                    embiggen(d,15)
-                })
-        .on("cellout", function(d) {
-            embiggen(d,10)
-        });
+      // var legend = d3.legend.color().shape("circle")
+      //   .shapePadding(10)
+      //   .scale(color)
+      //   .title("Departments")
+      //   .on("cellclick", function(d) {
+      //       var deptCode = deptURIs[d].substring(33);
+      //       window.location.replace(force_uri_base + "dept/" + deptCode);
+      //   })
+      //   .on("cellover", function(d) {
+      //               embiggen(d,15)
+      //           })
+      //   .on("cellout", function(d) {
+      //       embiggen(d,10)
+      //   });
 
         force
             .nodes(graph.nodes)
@@ -136,11 +131,6 @@
                 .text(function(d) {
                         return pageLabel;
                     });
-
-      // svg.append("g").attr("class", "legend")
-      //   .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.15) +')');
-
-      lgndSvg.call(legend);
 
       d3.selectAll(".legend .cell").each( function(d, i){
                 var label = this.textContent.toLowerCase().replace(/[.',\s]/g,"");
