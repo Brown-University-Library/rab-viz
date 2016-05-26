@@ -71,6 +71,11 @@ def forceViz(viztype, rabid, page=0):
 	deptList = list({ n["group"] for n in nodes })
 	deptMap = { l: d.rabid for l in deptList for d in allDepts if l in json.loads(d.useFor)  }
 	facMap = { f.abbrev: f.rabid for f in allFaculty if f.rabid in legend }
+	facObjs = [ {'rabid': f.rabid,
+				'name': f.fullname,
+				'abbv':f.abbrev,
+				'aff':f.deptLabel } for f in allFaculty
+										if f.rabid in legend ]
 	vizdata = {"nodes": nodes, "links": links}
 	if viztype=='dept':
 		pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
@@ -78,5 +83,5 @@ def forceViz(viztype, rabid, page=0):
 		pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
 	return render_template(
 			'force.html', pageLabel=pageLabel, legend=deptList,
-			deptMap=deptMap, facMap=facMap, vizdata=vizdata,
+			deptMap=deptMap, facMap=facMap, faculty=facObjs, vizdata=vizdata,
 			linkDist=30, repel=-350, crange=colorRange)

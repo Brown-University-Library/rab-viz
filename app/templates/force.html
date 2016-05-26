@@ -6,6 +6,8 @@
 
     body {
       font: 10px sans-serif;
+      width: 1200px;
+      margin: 0 auto;
     }
 
     .node {
@@ -29,18 +31,32 @@
       font-size: 1.3em;
       opacity: 0.9;
       vertical-align: top;
+      background-color: #FFF;
     }
 
     .legendBox td.selected {
-      opacity: 1;
+      background-color: rgba(128,128,128,0.3);
     }
     
     .bug {
       float: left;
       width: 10px;
       height: 10px;
-      margin: 0px 5px;
-      border: 1px solid rgba(0, 0, 0, .2);
+      margin: 3px 5px;
+      /*border: 1px solid rgba(0, 0, 0, .2);*/
+    }
+
+    .graphBox {
+      width: 900px;
+    }
+
+    .legendBox {
+      width: 900px;
+    }
+
+    .operationsBox {
+      width: 300px;
+      float: right;
     }
 
     </style>
@@ -49,11 +65,11 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3-legend.min.js') }}"></script>
   </head>
   <body>
+    <div class="operationsBox">
+    </div>
     <div class="graphBox">
     </div>
     <div class="legendBox">
-    </div>
-    <div class="operationsBox">
     </div>
     <script type="text/javascript">
 
@@ -73,16 +89,17 @@
 
       var crange = {{crange|tojson|safe}};
 
+      var facObjs = {{faculty|tojson|safe}};
+
       var force_uri_base = "http://localhost:8000/force/";
 
-      var width = 1200,
+      var width = 900,
           height = 800;
 
       var color = d3.scale.ordinal().domain(depts).range(crange);
 
-      console.log("Domain: ", color.domain().length);
-      console.log("Range: ", color.range().length);
-      console.log(depts[2],": ", color(depts[2]));
+      console.log("facObjs: ", facObjs);
+      console.log("facObjs[1]: ", facObjs[1]);
 
       var force = d3.layout.force()
           .charge(repel)
@@ -153,18 +170,6 @@
               .attr("cy", function(d) { return d.y; });
         });
 
-      svg.append("svg:text")
-        .attr("transform", 'translate(' + (width - 300) + ',' + (height * 0.1) +')')
-                .attr("style", "font-size: 3em; font-weight:bold;")
-                .text(function(d) {
-                        return pageLabel;
-                    });
-
-      d3.selectAll(".legend .cell").each( function(d, i){
-                var label = this.textContent.toLowerCase().replace(/[.',\s]/g,"");
-                d3.select(this).attr("id", label);
-            });
-
       function embiggen(d, size) {
                 d3.select("#"+d.toLowerCase().replace(/[.',\s]/g,""))
                     .transition().duration(100)
@@ -199,9 +204,23 @@
       }
       buildLegend(".legendBox");
 
-      function darken(elm) {
-        elm.set
+      function buildOperations(targetDiv) {
+        var oBox = $(targetDiv);
+        var tBox = document.createElement("table");
+        var i,j,subd,chunk = 2;
+        for (i=0,j=facObjs.length; i<j; i+=chunk) {
+            sub = facObjs.slice(i,i+chunk);
+            var row = document.createElement("tr");
+            sub.forEach(function(fac){
+              var td = document.createElement("td");
+              td.innerHTML = fac.name;
+              row.appendChild(td);
+            });
+            tBox.appendChild(row);
+        }
+        oBox.append(tBox);
       }
+      buildOperations(".operationsBox");
 
     </script>
   </body>
