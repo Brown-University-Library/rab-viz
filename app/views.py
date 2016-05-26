@@ -68,7 +68,7 @@ def forceViz(viztype, rabid, page=0):
 				"group": facultyLookup[uri][1] }
 					for uri in legend ]
 	links = json.loads(vizData.links)
-	deptList = list({ n["group"] for n in nodes })
+	deptList = sorted(list({ n["group"] for n in nodes }))
 	deptMap = { l: d.rabid for l in deptList for d in allDepts if l in json.loads(d.useFor)  }
 	facMap = { f.abbrev: f.rabid for f in allFaculty if f.rabid in legend }
 	facObjs = [ {'rabid': f.rabid,
@@ -76,6 +76,7 @@ def forceViz(viztype, rabid, page=0):
 				'abbv':f.abbrev,
 				'aff':f.deptLabel } for f in allFaculty
 										if f.rabid in legend ]
+	facObjs = sorted(facObjs, key=lambda kv: kv['name'])
 	vizdata = {"nodes": nodes, "links": links}
 	if viztype=='dept':
 		pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]

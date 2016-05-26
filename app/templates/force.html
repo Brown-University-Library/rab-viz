@@ -24,17 +24,19 @@
       width: 900px;
     }
 
-    .legendBox td {
+    .column {
       width: 30%;
-      height: 1.8em;
+    }
+
+    .columnRow {
+      margin: 0 0 5px 0;
       padding: 0 0 0 2em;
       font-size: 1.3em;
-      opacity: 0.9;
       vertical-align: top;
       background-color: #FFF;
     }
 
-    .legendBox td.selected {
+    .legendBox .columnRow.selected {
       background-color: rgba(128,128,128,0.3);
     }
     
@@ -45,6 +47,10 @@
       margin: 3px 5px;
       /*border: 1px solid rgba(0, 0, 0, .2);*/
     }
+
+/*    .legendLabel {
+      float:right;
+    }*/
 
     .graphBox {
       width: 900px;
@@ -57,6 +63,19 @@
     .operationsBox {
       width: 300px;
       float: right;
+    }
+
+    .operationsBox table {
+      width: 300px;
+      font-size: 1.5em;
+    }
+
+    .operationsBox td {
+      vertical-align: top;
+    }
+
+    .column {
+      float: left;
     }
 
     </style>
@@ -178,29 +197,30 @@
 
       function buildLegend(targetDiv) {
         var lBox = $(targetDiv);
-        var tBox = document.createElement("table");
-        var i,j,subd,chunk = 3;
+        var i,j,subd,chunk = Math.ceil(depts.length/3);
         for (i=0,j=depts.length; i<j; i+=chunk) {
             subd = depts.slice(i,i+chunk);
-            var row = document.createElement("tr");
+            var col = document.createElement("div")
+            col.setAttribute("class","column");
             subd.forEach(function(dept){
-              var td = document.createElement("td");
-              var span = document.createElement("span");
+              var cr = document.createElement("div");
+              cr.setAttribute("class","columnRow")
+              var span = document.createElement("span")
+              span.setAttribute("class","legendLabel");
               var bug = document.createElement("span");
               bug.setAttribute("class", "bug");
               bug.setAttribute("style", "background: "+color(dept));
               span.innerHTML = dept;
-              td.appendChild(bug);
-              td.appendChild(span);
-              $(td).on("mouseover", function(e) {
-                $(targetDiv).find("td").removeClass("selected");
-                $(e.target).addClass("selected");
+              cr.appendChild(bug);
+              cr.appendChild(span);
+              $(cr).on("mouseover", function(e) {
+                $(targetDiv).find("div.columnRow").removeClass("selected");
+                $(this).addClass("selected");
               });
-              row.appendChild(td);
+              col.appendChild(cr);
             });
-            tBox.appendChild(row);
+            lBox.append(col);
         }
-        lBox.append(tBox);
       }
       buildLegend(".legendBox");
 
