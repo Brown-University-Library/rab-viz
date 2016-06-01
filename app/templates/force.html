@@ -25,7 +25,7 @@
       stroke-opacity: .6;
     }
 
-    .legendBox table {
+/*    .legendBox table {
       width: 900px;
     }
 
@@ -39,7 +39,7 @@
       font-size: 1.3em;
       vertical-align: top;
       background-color: #FFF;
-    }
+    }*/
 
     .legendBox .columnRow.selected {
       background-color: rgba(128,128,128,0.5);
@@ -87,7 +87,7 @@
       <div class="row">
         <div class="col-md-9">
           <div class="row">
-            <div class="col-md-9 graphBox">
+            <div class="col-md-12 graphBox">
             </div>
           </div>
           <div id="legendColumns" class="row legendBox">
@@ -208,7 +208,7 @@
         for (i=0,j=depts.length; i<j; i+=chunk) {
             subd = depts.slice(i,i+chunk);
             var col = document.createElement("div")
-            col.setAttribute("class","col-md-3");
+            col.setAttribute("class","col-md-4");
             subd.forEach(function(dept){
               var cr = document.createElement("div");
               cr.setAttribute("class","columnRow")
