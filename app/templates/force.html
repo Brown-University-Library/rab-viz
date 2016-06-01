@@ -233,21 +233,27 @@
 
       function buildOperations(targetDiv) {
         var oBox = $(targetDiv);
-        var tBox = document.createElement("table");
-        var i,j,subd,chunk = 2;
+        var i,j,subd,chunk = 10;
         for (i=0,j=facObjs.length; i<j; i+=chunk) {
-            sub = facObjs.slice(i,i+chunk);
-            var row = document.createElement("tr");
-            sub.forEach(function(fac){
-              var td = document.createElement("td");
-              td.innerHTML = fac.name;
-              row.appendChild(td);
+            facSlice = facObjs.slice(i,i+chunk);
+            var col = document.createElement("div")
+            col.setAttribute("class","col-md-6");
+            facSlice.forEach(function(fac){
+              var cr = document.createElement("div");
+              cr.setAttribute("class","columnRow")
+              var span = document.createElement("span")
+              span.innerHTML = fac.abbv + ".";
+              cr.appendChild(span);
+              col.appendChild(cr);
             });
-            tBox.appendChild(row);
+          oBox.append(col);
         }
-        oBox.append(tBox);
-      }
+      }  
       buildOperations(".operationsBox");
+
+      function pageData(klass) {
+        var pages = Math.ceil((facObjs.length/10)/2);
+      }
 
     </script>
   </body>
