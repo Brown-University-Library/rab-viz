@@ -10,6 +10,11 @@
       margin: 0 auto;
     }
 
+    header {
+      background-color: purple;
+      height: 120px;
+    }
+
     .node {
       stroke: #fff;
       stroke-width: 1.5px;
@@ -37,7 +42,7 @@
     }
 
     .legendBox .columnRow.selected {
-      background-color: rgba(128,128,128,0.3);
+      background-color: rgba(128,128,128,0.5);
     }
     
     .bug {
@@ -52,24 +57,19 @@
       float:right;
     }*/
 
-    .graphBox {
+/*    .graphBox {
       width: 900px;
     }
 
     .legendBox {
       width: 900px;
-    }
+    }*/
 
-    .operationsBox {
-      width: 300px;
-      float: right;
-    }
-
-    .operationsBox table {
+/*    .operationsBox table {
       width: 300px;
       font-size: 1.5em;
     }
-
+*/
     .operationsBox td {
       vertical-align: top;
     }
@@ -79,16 +79,19 @@
     }
 
     </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/d3-legend.min.js') }}"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
   </head>
   <body>
-    <div class="operationsBox">
+    <header class="page-header">
+    </header>
+    <div class="col-md-3 sidebar pull-right operationsBox">
     </div>
-    <div class="graphBox">
+    <div class="col-md-9 graphBox">
     </div>
-    <div class="legendBox">
+    <div class="col-md-9 legendBox">
     </div>
     <script type="text/javascript">
 
