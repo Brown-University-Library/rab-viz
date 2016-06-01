@@ -74,10 +74,6 @@
       vertical-align: top;
     }
 
-    .column {
-      float: left;
-    }
-
     </style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
@@ -87,11 +83,19 @@
   <body>
     <header class="page-header">
     </header>
-    <div class="col-md-3 sidebar pull-right operationsBox">
-    </div>
-    <div class="col-md-9 graphBox">
-    </div>
-    <div class="col-md-9 legendBox">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-9">
+          <div class="row">
+            <div class="col-md-9 graphBox">
+            </div>
+          </div>
+          <div id="legendColumns" class="row legendBox">
+          </div>
+        </div>
+        <div class="col-md-3 sidebar operationsBox">
+        </div>
+      </div>
     </div>
     <script type="text/javascript">
 
@@ -204,7 +208,7 @@
         for (i=0,j=depts.length; i<j; i+=chunk) {
             subd = depts.slice(i,i+chunk);
             var col = document.createElement("div")
-            col.setAttribute("class","column");
+            col.setAttribute("class","col-md-3");
             subd.forEach(function(dept){
               var cr = document.createElement("div");
               cr.setAttribute("class","columnRow")
@@ -225,7 +229,7 @@
             lBox.append(col);
         }
       }
-      buildLegend(".legendBox");
+      buildLegend("#legendColumns");
 
       function buildOperations(targetDiv) {
         var oBox = $(targetDiv);
