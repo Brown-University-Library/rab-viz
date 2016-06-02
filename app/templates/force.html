@@ -242,42 +242,119 @@
       }
       buildLegend("#legendColumns");
 
-      function buildOperations(targetDiv) {
-        var oBox = $(targetDiv);
-        var tabCtrl = oBox.find("ul");
-        var i,j,subd,chunk = 20;
-        for (i=0,j=facObjs.length; i<j; i+=chunk) {
-            facSlice = facObjs.slice(i,i+chunk);
-            var tab = document.createElement("li");
-            var tabId = "tabs-"+((i/chunk)+1).toString();
-            var tabLink = document.createElement("a");
-            var tabLabel;
-            var alpha1 = facSlice[0].name.charAt(0);
-            var alpha2 = facSlice[9].name.charAt(0);
-            if (alpha1 === alpha2) {
-              tabLabel = alpha1;
-            } else {
-              tabLabel = alpha1 + " - " + alpha2;
-            }
-            tabLink.setAttribute("href", "#"+tabId);
-            tabLink.innerHTML = tabLabel;
-            tab.appendChild(tabLink);
+      // function buildOperations(targetDiv) {
+      //   var oBox = $(targetDiv);
+      //   var tabCtrl = oBox.find("ul");
+      //   var i,j,subd,chunk = 20;
+      //   for (i=0,j=facObjs.length; i<j; i+=chunk) {
+      //       facSlice = facObjs.slice(i,i+chunk);
+      //       var tab = document.createElement("li");
+      //       var tabId = "tabs-"+((i/chunk)+1).toString();
+      //       var tabLink = document.createElement("a");
+      //       var tabLabel;
+      //       var alpha1 = facSlice[0].name.charAt(0);
+      //       var alpha2 = facSlice[9].name.charAt(0);
+      //       if (alpha1 === alpha2) {
+      //         tabLabel = alpha1;
+      //       } else {
+      //         tabLabel = alpha1 + " - " + alpha2;
+      //       }
+      //       tabLink.setAttribute("href", "#"+tabId);
+      //       tabLink.innerHTML = tabLabel;
+      //       tab.appendChild(tabLink);
+      //       var col = document.createElement("div");
+      //       col.setAttribute("class","col-md-6");
+      //       col.setAttribute("id", tabId);
+      //       facSlice.forEach(function(fac){
+      //         var cr = document.createElement("div");
+      //         cr.setAttribute("class","columnRow")
+      //         var span = document.createElement("span");
+      //         span.innerHTML = fac.abbv + ".";
+      //         cr.appendChild(span);
+      //         col.appendChild(cr);
+      //       });
+      //     tabCtrl.append(tab);
+      //     oBox.append(col);
+      //   }
+      // }  
+      // buildOperations("#tabs");
+
+      function chunkList(list, chunkLen) {
+        var chunkedList = [];
+        for (i=0,j=list.length; i<j; i+=chunkLen) {
+          var chunk = list.slice(i,i+chunkLen);
+          chunkedList.push(chunk);
+        }
+        return chunkedList;
+      }
+
+      function addRowsToColumn(list, col, rowMaker) {
+        list.forEach(function(item) {
+          var row = rowMaker(item);
+          col.appendChild(row);
+        })
+        return col;
+      }
+
+      function makeLegendRow(data) {
+        var cr = document.createElement("div");
+        cr.setAttribute("class","legendRow")
+        var span = document.createElement("span")
+        span.setAttribute("class","legendLabel");
+        var bug = document.createElement("span");
+        bug.setAttribute("class", "legendBug");
+        // bug.setAttribute("style", "background: " + color(data));
+        span.innerHTML = data;
+        cr.appendChild(bug);
+        cr.appendChild(span);
+        return cr;
+      }
+
+      function makeFacultyRow(facObj) {
+        var cr = document.createElement("div");
+        cr.setAttribute("class","facultyRow")
+        var span = document.createElement("span");
+        span.innerHTML = facObj.abbv + ".";
+        cr.appendChild(span);
+        return cr;
+      }
+
+      function buildFacultyTabs(targetDiv, facultyList) {
+        var fBox = $(targetDiv);
+        var tabCtrl = fBox.find("ul");
+        var chunkedFaculty = chunkList(facultyList, 20);
+        var facultyStacks = chunkList(chunkedFaculty, 2);
+        facultyStacks.forEach(function(stack) {
+          var tab = document.createElement("li");
+          var tabId = "tabs-"+facultyStacks.indexOf(stack).toString();
+          var tabLink = document.createElement("a");
+          var tabLabel;
+          var alpha1 = stack[0][0].name.charAt(0);
+          var alpha2 = stack[1][19].name.charAt(0);
+          if (alpha1 === alpha2) {
+            tabLabel = alpha1;
+          } else {
+            tabLabel = alpha1 + " - " + alpha2;
+          }
+          tabLink.setAttribute("href", "#"+tabId);
+          tabLink.innerHTML = tabLabel;
+          tab.appendChild(tabLink);
+          tabCtrl.append(tab);
+          var stackDiv = document.createElement("div");
+          stackDiv.setAttribute("class","col-md-12");
+          stackDiv.setAttribute("id", tabId);
+          stack.forEach(function(colData) {
             var col = document.createElement("div");
             col.setAttribute("class","col-md-6");
             col.setAttribute("id", tabId);
-            facSlice.forEach(function(fac){
-              var cr = document.createElement("div");
-              cr.setAttribute("class","columnRow")
-              var span = document.createElement("span");
-              span.innerHTML = fac.abbv + ".";
-              cr.appendChild(span);
-              col.appendChild(cr);
-            });
-          tabCtrl.append(tab);
-          oBox.append(col);
-        }
-      }  
-      buildOperations("#tabs");
+            col = addRowsToColumn(colData, col, makeFacultyRow);
+            stackDiv.appendChild(col);
+          });
+          fBox.append(stackDiv);
+        });
+      }
+
+      buildFacultyTabs("#tabs", facObjs);
 
     </script>
   </body>
