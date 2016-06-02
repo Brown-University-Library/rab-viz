@@ -76,8 +76,11 @@
 
     </style>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<!--     <link rel="stylesheet" src="{{ url_for('static', filename='css/jquery-ui.structure.min.css') }}"></script> -->
+
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
   </head>
   <body>
@@ -94,6 +97,10 @@
           </div>
         </div>
         <div class="col-md-3 sidebar operationsBox">
+          <div id="tabs">
+            <ul>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -196,6 +203,10 @@
               .attr("cy", function(d) { return d.y; });
         });
 
+      $(function() {
+        $( "#tabs" ).tabs();
+      });
+
       function embiggen(d, size) {
                 d3.select("#"+d.toLowerCase().replace(/[.',\s]/g,""))
                     .transition().duration(100)
@@ -233,27 +244,40 @@
 
       function buildOperations(targetDiv) {
         var oBox = $(targetDiv);
-        var i,j,subd,chunk = 10;
+        var tabCtrl = oBox.find("ul");
+        var i,j,subd,chunk = 20;
         for (i=0,j=facObjs.length; i<j; i+=chunk) {
             facSlice = facObjs.slice(i,i+chunk);
-            var col = document.createElement("div")
+            var tab = document.createElement("li");
+            var tabId = "tabs-"+((i/chunk)+1).toString();
+            var tabLink = document.createElement("a");
+            var tabLabel;
+            var alpha1 = facSlice[0].name.charAt(0);
+            var alpha2 = facSlice[9].name.charAt(0);
+            if (alpha1 === alpha2) {
+              tabLabel = alpha1;
+            } else {
+              tabLabel = alpha1 + " - " + alpha2;
+            }
+            tabLink.setAttribute("href", "#"+tabId);
+            tabLink.innerHTML = tabLabel;
+            tab.appendChild(tabLink);
+            var col = document.createElement("div");
             col.setAttribute("class","col-md-6");
+            col.setAttribute("id", tabId);
             facSlice.forEach(function(fac){
               var cr = document.createElement("div");
               cr.setAttribute("class","columnRow")
-              var span = document.createElement("span")
+              var span = document.createElement("span");
               span.innerHTML = fac.abbv + ".";
               cr.appendChild(span);
               col.appendChild(cr);
             });
+          tabCtrl.append(tab);
           oBox.append(col);
         }
       }  
-      buildOperations(".operationsBox");
-
-      function pageData(klass) {
-        var pages = Math.ceil((facObjs.length/10)/2);
-      }
+      buildOperations("#tabs");
 
     </script>
   </body>
