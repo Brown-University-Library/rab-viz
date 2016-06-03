@@ -247,9 +247,11 @@
       function makeFacultyRow(facObj) {
         var cr = document.createElement("div");
         cr.setAttribute("class","facultyRow")
-        var span = document.createElement("span");
-        span.innerHTML = facObj.abbv + ".";
-        cr.appendChild(span);
+        var link = document.createElement("a");
+        var linkTarget = force_uri_base + "faculty/" + facObj.rabid.substring(33);
+        link.setAttribute("href", linkTarget);
+        link.innerHTML = facObj.abbv + ".";
+        cr.appendChild(link);
         return cr;
       }
 
