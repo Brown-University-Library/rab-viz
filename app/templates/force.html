@@ -140,21 +140,6 @@
           .attr("width", width)
           .attr("height", height);
 
-      // var legend = d3.legend.color().shape("circle")
-      //   .shapePadding(10)
-      //   .scale(color)
-      //   .title("Departments")
-      //   .on("cellclick", function(d) {
-      //       var deptCode = deptURIs[d].substring(33);
-      //       window.location.replace(force_uri_base + "dept/" + deptCode);
-      //   })
-      //   .on("cellover", function(d) {
-      //               embiggen(d,15)
-      //           })
-      //   .on("cellout", function(d) {
-      //       embiggen(d,10)
-      //   });
-
         force
             .nodes(graph.nodes)
             .links(graph.links)
@@ -303,8 +288,6 @@
           lBox.append(col);
         });
       }
-      console.log(depts);
-      console.log(deptURIs);
       buildLegend("#legendColumns", depts);
 
     </script>

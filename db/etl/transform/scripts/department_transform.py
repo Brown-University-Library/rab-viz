@@ -44,8 +44,8 @@ def main(inDeptFile, inFacFile, targetDir):
 			"",
 		"Physiology":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept55",
-		"Medical Science":
-			"",
+		"Medical Science": #Pointed at Medicine
+			"http://vivo.brown.edu/individual/org-brown-univ-dept84",
 		"None":
 			"",
 		"Renaissance and Early Modern Studies":
