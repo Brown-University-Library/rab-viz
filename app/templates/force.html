@@ -108,7 +108,7 @@
 
       var depts = {{ legend|tojson|safe }};
 
-      var deptURIs = {{ deptMap|tojson|safe }};
+      var deptObjs = {{ departments|tojson|safe }};
 
       var pageLabel = {{ pageLabel|tojson|safe }}
 
@@ -212,18 +212,18 @@
         return col;
       }
 
-      function makeLegendRow(data) {
+      function makeLegendRow(deptObj) {
         var cr = document.createElement("div");
         cr.setAttribute("class","legendRow")
         var link = document.createElement("a");
-        var linkTarget = force_uri_base + "dept/" + deptURIs[data].substring(33);
+        var linkTarget = force_uri_base + "dept/" + deptObj.rabid.substring(33);
         link.setAttribute("href", linkTarget);
         var span = document.createElement("span")
         span.setAttribute("class","legendLabel");
         var bug = document.createElement("span");
         bug.setAttribute("class", "legendBug");
-        bug.setAttribute("style", "background: " + color(data));
-        span.innerHTML = data;
+        // bug.setAttribute("style", "background: " + color(data));
+        span.innerHTML = deptObj.name;
         link.appendChild(bug);
         link.appendChild(span);
         cr.appendChild(link);
@@ -288,7 +288,7 @@
           lBox.append(col);
         });
       }
-      buildLegend("#legendColumns", depts);
+      buildLegend("#legendColumns", deptObjs);
 
     </script>
   </body>

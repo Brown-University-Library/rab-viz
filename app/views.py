@@ -10,30 +10,6 @@ colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(49,130,189)','rgb(49,163,84)','rgb(158,154,200)','rgb(253,141,60)',
 'rgb(116,196,118)','rgb(189,158,57)']
 
-# colorRange = [
-# 			"rgba(23,190,207,1)",
-# 			"rgba(188,189,34,1)",
-# 			"rgba(227,119,194)",
-# 			"rgb(148,103,189,1)",
-# 			"rgba(214,39,40,1)",
-# 			"rgba(44,160,44,1)",
-# 			"rgba(255,127,14,1)",
-# 			"rgba(31,119,180,1)",
-# 			"rgba(214,97,107,1)",
-# 			"rgba(206,109,189,1)",
-# 			"rgba(214,97,107,1)",
-# 			"rgba(231,186,82,1)",
-# 			"rgba(181,207,107,1)",
-# 			"rgba(107,110,207,1)",
-# 			"rgba(230,85,13,1)",
-# 			"rgba(49,130,189,1)",
-# 			"rgba(49,163,84,1)",
-# 			"rgba(158,154,200,1)",
-# 			"rgba(253,141,60,1)",
-# 			"rgba(116,196,118,1)",
-# 			"rgba(189,158,57,1)"
-# 			]
-
 @app.route('/chord/<viztype>/<rabid>')
 @app.route('/chord/<viztype>/<rabid>/<page>')
 def chordViz(viztype, rabid, page=0):
@@ -70,7 +46,10 @@ def forceViz(viztype, rabid, page=0):
 					for uri in legend ]
 	links = json.loads(vizData.links)
 	deptList = sorted(list({ n["group"] for n in nodes }))
-	deptMap = { l: d.rabid for l in deptList for d in allDepts if l in json.loads(d.useFor)  }
+	deptObjs = [ {'rabid': d.rabid,
+				 'name': l} for l in deptList
+				 				for d in allDepts
+				 					if l in json.loads(d.useFor) ]
 	facMap = { f.abbrev: f.rabid for f in allFaculty if f.rabid in legend }
 	facObjs = [ {'rabid': f.rabid,
 				'name': f.fullname,
@@ -85,5 +64,5 @@ def forceViz(viztype, rabid, page=0):
 		pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
 	return render_template(
 			'force.html', pageLabel=pageLabel, legend=deptList,
-			deptMap=deptMap, facMap=facMap, faculty=facObjs, vizdata=vizdata,
+			departments=deptObjs, facMap=facMap, faculty=facObjs, vizdata=vizdata,
 			linkDist=30, repel=-350, crange=colorRange)
