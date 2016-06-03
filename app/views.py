@@ -65,7 +65,8 @@ def forceViz(viztype, rabid, page=0):
 	allDepts = Departments.query.all()
 	facultyLookup = { f.rabid: [f.abbrev, f.deptLabel, f.rabid] for f in allFaculty }
 	nodes = [ {	"name": facultyLookup[uri][0],
-				"group": facultyLookup[uri][1] }
+				"group": facultyLookup[uri][1],
+				"rabid": facultyLookup[uri][2] }
 					for uri in legend ]
 	links = json.loads(vizData.links)
 	deptList = sorted(list({ n["group"] for n in nodes }))

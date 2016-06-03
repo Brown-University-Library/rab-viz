@@ -154,9 +154,9 @@
         var node = svg.selectAll(".node")
             .data(graph.nodes)
           .enter().append("circle")
-            .attr("class", "node")
-            .attr("id", function(d) {
-              return d.name.toLowerCase().replace(/[.',\s]/g,"");
+            // .attr("class", "node")
+            .attr("class", function(d) {
+              return "node "+d.rabid.substring(33);
             })
             .attr("r", 10)
             .style("fill", function(d) { return color(d.group); })
