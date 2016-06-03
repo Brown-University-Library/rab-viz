@@ -131,9 +131,6 @@
 
       var color = d3.scale.ordinal().domain(depts).range(crange);
 
-      console.log("facObjs: ", facObjs);
-      console.log("facObjs[1]: ", facObjs[1]);
-
       var force = d3.layout.force()
           .charge(repel)
           .linkDistance(linkDist)
@@ -233,14 +230,18 @@
       function makeLegendRow(data) {
         var cr = document.createElement("div");
         cr.setAttribute("class","legendRow")
+        var link = document.createElement("a");
+        var linkTarget = force_uri_base + "dept/" + deptURIs[data].substring(33);
+        link.setAttribute("href", linkTarget);
         var span = document.createElement("span")
         span.setAttribute("class","legendLabel");
         var bug = document.createElement("span");
         bug.setAttribute("class", "legendBug");
         bug.setAttribute("style", "background: " + color(data));
         span.innerHTML = data;
-        cr.appendChild(bug);
-        cr.appendChild(span);
+        link.appendChild(bug);
+        link.appendChild(span);
+        cr.appendChild(link);
         return cr;
       }
 
@@ -302,6 +303,8 @@
           lBox.append(col);
         });
       }
+      console.log(depts);
+      console.log(deptURIs);
       buildLegend("#legendColumns", depts);
 
     </script>

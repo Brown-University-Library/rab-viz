@@ -26,8 +26,8 @@ def main(inDeptFile, inFacFile, targetDir):
 			"http://vivo.brown.edu/individual/org-brown-univ-dept280",
 		"Egyptology and Ancient Western Asian Studies":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept668",
-		"Sheridan Center":
-			"",
+		"Sheridan Center": #Just a stub for now, pointing at Engineering
+			"http://vivo.brown.edu/individual/org-brown-univ-dept75",
 		"Clin Neurosciences (Neurology)":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept235",
 		"Cognitive, Linguistic and Psychological Sciences":
