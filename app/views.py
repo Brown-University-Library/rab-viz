@@ -3,6 +3,10 @@ from flask import render_template, json
 from app import app
 from .models import ChordViz, ForceViz, Faculty, Departments
 
+@app.route('/')
+def index():
+	return render_template('index.html')
+
 @app.route('/chord/<viztype>/<rabid>')
 @app.route('/chord/<viztype>/<rabid>/<page>')
 def chordViz(viztype, rabid, page=0):
