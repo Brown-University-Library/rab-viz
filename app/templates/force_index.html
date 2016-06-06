@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Index</h1>
+  <ul>
+  	{% for fac in faculty %}
+  	<li>{{fac}}</li>
+  	{% endfor %}
+  </ul>
+  <ul>
+  	{% for dept in depts %}
+  	<li>{{dept}}</li>
+  	{% endfor %}
+  </ul>
+{% endblock %}

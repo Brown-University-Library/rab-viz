@@ -28,6 +28,14 @@ def chordViz(viztype, rabid, page=0):
 			'chord.html', pageLabel=pageLabel, legend=deptList,
 			deptMap=deptMap, vizkey=facultyList, vizdata=matrix)
 
+@app.route('/force')
+def forceIndex():
+	allViz = ForceViz.query.all()
+	forceFac = [f.rabid for f in allViz if 'org-brown' not in f.rabid]
+	forceDept = [f.rabid for f in allViz if 'org-brown' in f.rabid]
+	return render_template('force_index.html',
+							faculty=forceFac, depts=forceDept)
+
 @app.route('/force/<viztype>/<rabid>')
 @app.route('/force/<viztype>/<rabid>/<page>')
 def forceViz(viztype, rabid, page=0):
