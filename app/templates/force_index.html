@@ -27,11 +27,20 @@
       </div>
   	{% endfor %}
   </div>
-  <ul>
-  	{% for dept in depts |sort%}
-  	<li>{{dept}}</li>
-  	{% endfor %}
-  </ul>
+  <div id="depttabs">
+    <ul>
+      {% for deptChunk in depts %}
+        <li><a href="#dept-{{loop.index}}">{{loop.index}}</a></li>
+      {% endfor %}
+    </ul>
+    {% for deptChunk in depts %}
+      <div id="dept-{{loop.index}}">
+        {% for dept in deptChunk %}
+          <a href="{{dept.graphurl}}">{{dept.name}}</a><br/>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
 {% endblock %}
 {% block pagejs %}
   <script>
@@ -40,6 +49,9 @@
     });
     $(function() {
       $("[id^=factab").tabs();
+    });
+    $(function() {
+      $("#depttabs").tabs();
     });
   </script>
 {% endblock %}
