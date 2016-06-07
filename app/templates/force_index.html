@@ -5,12 +5,17 @@
   	{% for alpha, facList in faculty|dictsort %}
   	<li>
         <h3>{{alpha}}</h3>
+        <ul>
+          {% for facChunk in facList %}
+            <li><a href="#factab-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
+          {% endfor %}
+        </ul>
         {% for facChunk in facList %}
-          <p>
+          <div id="factab-{{alpha|lower}}-{{loop.index}}">
             {% for fac in facChunk %}
               <span>{{fac.name}}</span><br/>
             {% endfor %}
-          </p>
+          </div>
         {% endfor %}
     </li>
   	{% endfor %}
@@ -20,4 +25,11 @@
   	<li>{{dept}}</li>
   	{% endfor %}
   </ul>
+{% endblock %}
+{% block pagejs %}
+  <script>
+    // $(function() {
+    //   $( "#tabs" ).tabs();
+    // });
+  </script>
 {% endblock %}
