@@ -4,19 +4,21 @@
   <ul>
   	{% for alpha, facList in faculty|dictsort %}
   	<li>
+      <div id="factab-alpha-{{alpha|lower}}">
         <h3>{{alpha}}</h3>
         <ul>
           {% for facChunk in facList %}
-            <li><a href="#factab-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
+            <li><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
           {% endfor %}
         </ul>
         {% for facChunk in facList %}
-          <div id="factab-{{alpha|lower}}-{{loop.index}}">
+          <div id="fac-{{alpha|lower}}-{{loop.index}}">
             {% for fac in facChunk %}
               <span>{{fac.name}}</span><br/>
             {% endfor %}
           </div>
         {% endfor %}
+      </div>
     </li>
   	{% endfor %}
   </ul>
@@ -28,8 +30,8 @@
 {% endblock %}
 {% block pagejs %}
   <script>
-    // $(function() {
-    //   $( "#tabs" ).tabs();
-    // });
+    $(function() {
+      $("[id^=factab").tabs();
+    });
   </script>
 {% endblock %}
