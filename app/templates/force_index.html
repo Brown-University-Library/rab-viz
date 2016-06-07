@@ -2,8 +2,13 @@
 {% block content %}
   <h1>Index</h1>
   <ul>
-  	{% for fac in faculty %}
-  	<li>{{fac}}</li>
+  	{% for alpha, facList in faculty|dictsort %}
+  	<li>
+        <h3>{{alpha}}</h3>
+        {% for fac in facList %}
+        <p>{{ fac.name}}</p>
+        {% endfor %}
+    </li>
   	{% endfor %}
   </ul>
   <ul>

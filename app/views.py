@@ -3,6 +3,8 @@ from flask import render_template, json
 from app import app
 from .models import ChordViz, ForceViz, Faculty, Departments
 
+from collections import defaultdict
+
 @app.route('/')
 def index():
 	return render_template('index.html')
@@ -31,10 +33,16 @@ def chordViz(viztype, rabid, page=0):
 @app.route('/force')
 def forceIndex():
 	allViz = ForceViz.query.all()
-	forceFac = [f.rabid for f in allViz if 'org-brown' not in f.rabid]
+	forceFac = [ f.rabid for f in allViz if 'org-brown' not in f.rabid]
+	faculty = Faculty.query.filter(Faculty.rabid.in_(forceFac)).all()
 	forceDept = [f.rabid for f in allViz if 'org-brown' in f.rabid]
+	depts = Departments.query.filter(Departments.rabid.in_(forceDept)).all()
+	alphaFac = defaultdict(list)
+	for f in faculty:
+		alphaFac[f.fullname[0].upper()].append({"rabid":f.rabid, "name":f.fullname})
+	dname = [d.label for d in depts ]
 	return render_template('force_index.html',
-							faculty=forceFac, depts=forceDept)
+							faculty=alphaFac, depts=dname)
 
 @app.route('/force/<viztype>/<rabid>')
 @app.route('/force/<viztype>/<rabid>/<page>')
