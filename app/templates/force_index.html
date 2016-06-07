@@ -1,27 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
   <h1>Index</h1>
-  <ul>
+  <div id="facultytabs">
+    <ul>
+      {% for alpha in faculty.keys()|sort %}
+        <li><a href="#fac-{{alpha|lower}}">{{alpha}}</a></li>
+      {% endfor %}
+    </ul>
   	{% for alpha, facList in faculty|dictsort %}
-  	<li>
-      <div id="factab-alpha-{{alpha|lower}}">
-        <h3>{{alpha}}</h3>
-        <ul>
-          {% for facChunk in facList %}
-            <li><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
-          {% endfor %}
-        </ul>
-        {% for facChunk in facList %}
-          <div id="fac-{{alpha|lower}}-{{loop.index}}">
-            {% for fac in facChunk %}
-              <span>{{fac.name}}</span><br/>
+    	<div id="fac-{{alpha|lower}}">
+        <div id="factab-alpha-{{alpha|lower}}">
+          <h3>{{alpha}}</h3>
+          <ul>
+            {% for facChunk in facList %}
+              <li><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
             {% endfor %}
-          </div>
-        {% endfor %}
+          </ul>
+          {% for facChunk in facList %}
+            <div id="fac-{{alpha|lower}}-{{loop.index}}">
+              {% for fac in facChunk %}
+                <span>{{fac.name}}</span><br/>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
       </div>
-    </li>
   	{% endfor %}
-  </ul>
+  </div>
   <ul>
   	{% for dept in depts |sort%}
   	<li>{{dept}}</li>
@@ -30,6 +35,9 @@
 {% endblock %}
 {% block pagejs %}
   <script>
+    $(function() {
+      $("#facultytabs").tabs();
+    });
     $(function() {
       $("[id^=factab").tabs();
     });
