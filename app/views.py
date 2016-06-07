@@ -42,6 +42,8 @@ def forceIndex():
 	for f in faculty:
 		alphaFac[f.fullname[0].upper()].append({"rabid":f.rabid, "name":f.fullname})
 	sortedFac = { k: sorted(v, key=lambda fac: fac["name"]) for k,v in alphaFac.items() }
+	for k, l in sortedFac.items():
+		sortedFac[k] = [ l[i:i+20] for i in range(0, len(l), 20) ]
 	dname = [d.label for d in depts ]
 	return render_template('force_index.html',
 							faculty=sortedFac, depts=dname)

@@ -5,8 +5,12 @@
   	{% for alpha, facList in faculty|dictsort %}
   	<li>
         <h3>{{alpha}}</h3>
-        {% for fac in facList %}
-        <p>{{ fac.name}}</p>
+        {% for facChunk in facList %}
+          <p>
+            {% for fac in facChunk %}
+              <span>{{fac.name}}</span><br/>
+            {% endfor %}
+          </p>
         {% endfor %}
     </li>
   	{% endfor %}
