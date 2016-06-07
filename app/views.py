@@ -41,9 +41,10 @@ def forceIndex():
 	alphaFac = defaultdict(list)
 	for f in faculty:
 		alphaFac[f.fullname[0].upper()].append({"rabid":f.rabid, "name":f.fullname})
+	sortedFac = { k: sorted(v, key=lambda fac: fac["name"]) for k,v in alphaFac.items() }
 	dname = [d.label for d in depts ]
 	return render_template('force_index.html',
-							faculty=alphaFac, depts=dname)
+							faculty=sortedFac, depts=dname)
 
 @app.route('/force/<viztype>/<rabid>')
 @app.route('/force/<viztype>/<rabid>/<page>')
