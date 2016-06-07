@@ -19,7 +19,7 @@
           {% for facChunk in facList %}
             <div id="fac-{{alpha|lower}}-{{loop.index}}">
               {% for fac in facChunk %}
-                <span>{{fac.name}}</span><br/>
+                <a href="{{fac.graphurl}}">{{fac.name}}</a><br/>
               {% endfor %}
             </div>
           {% endfor %}

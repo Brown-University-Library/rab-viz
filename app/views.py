@@ -40,7 +40,8 @@ def forceIndex():
 	depts = Departments.query.filter(Departments.rabid.in_(forceDept)).all()
 	alphaFac = defaultdict(list)
 	for f in faculty:
-		alphaFac[f.fullname[0].upper()].append({"rabid":f.rabid, "name":f.fullname})
+		graphurl = "http://localhost:8000/force/faculty/" + f.rabid[33:]
+		alphaFac[f.fullname[0].upper()].append({"graphurl":graphurl, "name":f.fullname})
 	sortedFac = { k: sorted(v, key=lambda fac: fac["name"]) for k,v in alphaFac.items() }
 	for k, l in sortedFac.items():
 		sortedFac[k] = [ l[i:i+20] for i in range(0, len(l), 20) ]
