@@ -31,6 +31,7 @@ def chordViz(viztype, rabid, page=0):
 			deptMap=deptMap, vizkey=facultyList, vizdata=matrix)
 
 @app.route('/force')
+@app.route('/force/')
 def forceIndex():
 	allViz = ForceViz.query.all()
 	forceFac = [ f.rabid for f in allViz if 'org-brown' not in f.rabid]

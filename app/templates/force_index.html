@@ -5,14 +5,14 @@
   	{% for alpha, facList in faculty|dictsort %}
   	<li>
         <h3>{{alpha}}</h3>
-        {% for fac in facList %}
+        {% for fac in facList |sort(attribute="name") %}
         <p>{{ fac.name}}</p>
         {% endfor %}
     </li>
   	{% endfor %}
   </ul>
   <ul>
-  	{% for dept in depts %}
+  	{% for dept in depts |sort%}
   	<li>{{dept}}</li>
   	{% endfor %}
   </ul>
