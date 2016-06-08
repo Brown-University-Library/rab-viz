@@ -2,9 +2,12 @@
 <html>
   <head>
     {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/rab.css') }}">
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.min.css') }}"> -->
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/vitro.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/menupage.css') }}">
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/rab.css') }}">
+    {% block pagecss %}
+    {% endblock %}
     <title>R@B Visualizations</title>
     {% endblock %}
   </head>

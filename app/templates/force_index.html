@@ -1,13 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
+<div id="wrapper-content" role="main">
+  <section id="menupage-intro" role="region">
+      <h2>Force Graphs</h2>
+  </section>
+  <section id="browse-by" role="region">
+  <nav role="navigation">
   <div id="ubertabs">
-    <ul>
+    <ul id="browse-classes">
       <li><a href="#peopletab">People</a></li>
       <li><a href="#orgtab">Organizations</a></li>
     </ul>
     <div id="peopletab">
       <div id="facultytabs">
-        <ul>
+        <ul id="alpha-browse-individuals">
           {% for alpha in faculty.keys()|sort %}
             <li><a href="#fac-{{alpha|lower}}">{{alpha}}</a></li>
           {% endfor %}
@@ -23,11 +29,14 @@
                   {% endfor %}
                 </div>
               {% endfor %}
-              <ul>
-                {% for facChunk in facList %}
-                  <li><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
-                {% endfor %}
-              </ul>
+              <div class="pagination menupage">
+                <h3>page</h3>
+                <ul>
+                  {% for facChunk in facList %}
+                    <li class="round"><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
             </div>
           </div>
       	{% endfor %}
@@ -42,14 +51,20 @@
             {% endfor %}
           </div>
         {% endfor %}
-        <ul>
-          {% for deptChunk in depts %}
-            <li><a href="#dept-{{loop.index}}">{{loop.index}}</a></li>
-          {% endfor %}
-        </ul>
+        <div class="pagination menupage">
+          <h3>page</h3>
+          <ul>
+            {% for deptChunk in depts %}
+              <li><a href="#dept-{{loop.index}}">{{loop.index}}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
     </div>
   </div>
+</nav>
+</section>
+</div>
 {% endblock %}
 {% block pagejs %}
   <script>
