@@ -5,44 +5,62 @@
       <h2>Force Graphs</h2>
   </section>
   <section id="browse-by" role="region">
-  <nav role="navigation">
   <div id="ubertabs">
-    <ul id="browse-classes">
-      <li><a href="#peopletab">People</a></li>
-      <li><a href="#orgtab">Organizations</a></li>
-    </ul>
+    <nav role="navigation">
+      <ul id="browse-classes">
+        <li><a href="#peopletab">People</a></li>
+        <li><a href="#orgtab">Organizations</a></li>
+      </ul>
+    </nav>
     <div id="peopletab">
       <div id="facultytabs">
-        <ul id="alpha-browse-individuals">
-          {% for alpha in faculty.keys()|sort %}
-            <li><a href="#fac-{{alpha|lower}}">{{alpha}}</a></li>
-          {% endfor %}
-        </ul>
+        <nav id="alpha-browse-container" role="navigation">
+          <h3 class="selected-class">People</h3>
+          <ul id="alpha-browse-individuals">
+            {% for alpha in faculty.keys()|sort %}
+              <li><a href="#fac-{{alpha|lower}}">{{alpha}}</a></li>
+            {% endfor %}
+          </ul>
+        </nav>
       	{% for alpha, facList in faculty|dictsort %}
         	<div id="fac-{{alpha|lower}}">
             <div id="factab-alpha-{{alpha|lower}}">
-              <h3>{{alpha}}</h3>
-              {% for facChunk in facList %}
-                <div id="fac-{{alpha|lower}}-{{loop.index}}">
-                  {% for fac in facChunk %}
-                    <a href="{{fac.graphurl}}">{{fac.name}}</a><br/>
-                  {% endfor %}
+              <section id="individuals-in-class" role="region">
+                <div class="pagination menupage">
+                  <h3>page</h3>
+                  <ul>
+                    {% for facChunk in facList %}
+                      <li class="round"><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
+                    {% endfor %}
+                  </ul>
                 </div>
-              {% endfor %}
-              <div class="pagination menupage">
-                <h3>page</h3>
-                <ul>
-                  {% for facChunk in facList %}
-                    <li class="round"><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
-                  {% endfor %}
-                </ul>
-              </div>
+                {% for facChunk in facList %}
+                  <div id="fac-{{alpha|lower}}-{{loop.index}}">
+                    <ul>
+                      {% for fac in facChunk %}
+                        <li class="individual">
+                          <a href="{{fac.graphurl}}">{{fac.name}}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endfor %}
+                <div class="pagination menupage">
+                  <h3>page</h3>
+                  <ul>
+                    {% for facChunk in facList %}
+                      <li class="round"><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </section>
             </div>
           </div>
       	{% endfor %}
       </div>
     </div>
     <div id="orgtab">
+      <h3 class="selected-class">Organizations</h3>
       <div id="depttabs">
         {% for deptChunk in depts %}
           <div id="dept-{{loop.index}}">
@@ -62,7 +80,6 @@
       </div>
     </div>
   </div>
-</nav>
 </section>
 </div>
 {% endblock %}
