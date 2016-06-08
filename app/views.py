@@ -30,30 +30,37 @@ def chordViz(viztype, rabid, page=0):
 			'chord.html', pageLabel=pageLabel, legend=deptList,
 			deptMap=deptMap, vizkey=facultyList, vizdata=matrix)
 
-@app.route('/force')
-@app.route('/force/')
-def forceIndex():
-	allViz = ForceViz.query.all()
+@app.route('/<graphtype>')
+@app.route('/<graphtype>/')
+def forceIndex(graphtype):
+	if graphtype == "force":
+		allViz = ForceViz.query.all()
+		urlbase = "http://localhost:8000/force/"
+		pageTitle = "Force Graph"
+	elif graphtype == "chord":
+		allViz = ChordViz.query.all()
+		urlbase = "http://localhost:8000/chord/"
+		pageTitle = "Chord Graph"
 	forceFac = [ f.rabid for f in allViz if 'org-brown' not in f.rabid]
 	faculty = Faculty.query.filter(Faculty.rabid.in_(forceFac)).all()
 	forceDept = [f.rabid for f in allViz if 'org-brown' in f.rabid]
 	depts = Departments.query.filter(Departments.rabid.in_(forceDept)).all()
 	alphaFac = defaultdict(list)
 	for f in faculty:
-		graphurl = "http://localhost:8000/force/faculty/" + f.rabid[33:]
+		graphurl = urlbase + "faculty/" + f.rabid[33:]
 		alphaFac[f.fullname[0].upper()].append({"graphurl":graphurl, "name":f.fullname})
 	sortedFac = { k: sorted(v, key=lambda fac: fac["name"]) for k,v in alphaFac.items() }
 	for k, l in sortedFac.items():
 		sortedFac[k] = [ l[i:i+20] for i in range(0, len(l), 20) ]
-	sortedDepts = sorted([ { "graphurl": "http://localhost:8000/force/dept/"+d.rabid[33:],
+	sortedDepts = sorted([ { "graphurl": urlbase + "dept/"+d.rabid[33:],
 					"name":d.label } for d in depts ], key=lambda dept: dept["name"])
 	chunkedDepts = [ sortedDepts[i:i+20] for i in range(0, len(sortedDepts), 20) ]
-	return render_template('force_index.html',
+	return render_template('force_index.html', pageTitle=pageTitle,
 							faculty=sortedFac, depts=chunkedDepts)
 
 @app.route('/force/<viztype>/<rabid>')
 @app.route('/force/<viztype>/<rabid>/<page>')
-def forceViz(viztype, rabid, page=0):
+def indexPage(viztype, rabid, page=0):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)
 	vizData = ForceViz.query.filter_by(rabid=rabid, page=page).first()
 	legend = json.loads(vizData.legend)
