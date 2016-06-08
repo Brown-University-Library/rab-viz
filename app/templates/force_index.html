@@ -1,4 +1,22 @@
 {% extends "base.html" %}
+{% block pagecss %}
+<style>
+.individuals-in-class {
+    float: right;
+    width: 68%;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+    margin-right: 17px;
+    min-height: 170px;
+}
+nav.alpha-browse-container {
+    width: 619px;
+    float: left;
+    padding-left: 10px;
+    margin-left: 1px;
+}
+</style>
+{% endblock %}
 {% block content %}
 <div id="wrapper-content" role="main">
   <section id="menupage-intro" role="region">
@@ -14,7 +32,7 @@
     </nav>
     <div id="peopletab">
       <div id="facultytabs">
-        <nav id="alpha-browse-container" role="navigation">
+        <nav class="alpha-browse-container" role="navigation">
           <h3 class="selected-class">People</h3>
           <ul id="alpha-browse-individuals">
             {% for alpha in faculty.keys()|sort %}
@@ -25,7 +43,7 @@
       	{% for alpha, facList in faculty|dictsort %}
         	<div id="fac-{{alpha|lower}}">
             <div id="factab-alpha-{{alpha|lower}}">
-              <section id="individuals-in-class" role="region">
+              <section class="individuals-in-class" role="region">
                 <div class="pagination menupage">
                   <h3>page</h3>
                   <ul>
@@ -60,23 +78,37 @@
       </div>
     </div>
     <div id="orgtab">
-      <h3 class="selected-class">Organizations</h3>
+      <nav class="alpha-browse-container">
+        <h3 class="selected-class">Organizations</h3>
+      </nav>
       <div id="depttabs">
-        {% for deptChunk in depts %}
-          <div id="dept-{{loop.index}}">
-            {% for dept in deptChunk %}
-              <a href="{{dept.graphurl}}">{{dept.name}}</a><br/>
-            {% endfor %}
+        <section class="individuals-in-class" role="region">
+          <div class="pagination menupage">
+            <h3>page</h3>
+            <ul>
+              {% for deptChunk in depts %}
+                <li><a href="#dept-{{loop.index}}">{{loop.index}}</a></li>
+              {% endfor %}
+            </ul>
           </div>
-        {% endfor %}
-        <div class="pagination menupage">
-          <h3>page</h3>
-          <ul>
-            {% for deptChunk in depts %}
-              <li><a href="#dept-{{loop.index}}">{{loop.index}}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+          {% for deptChunk in depts %}
+            <div id="dept-{{loop.index}}">
+              <ul>
+                {% for dept in deptChunk %}
+                  <li class="individual"><a href="{{dept.graphurl}}">{{dept.name}}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endfor %}
+          <div class="pagination menupage">
+            <h3>page</h3>
+            <ul>
+              {% for deptChunk in depts %}
+                <li><a href="#dept-{{loop.index}}">{{loop.index}}</a></li>
+              {% endfor %}
+            </ul>
+          </div>
+        </section>
       </div>
     </div>
   </div>
