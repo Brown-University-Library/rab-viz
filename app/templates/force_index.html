@@ -63,14 +63,6 @@ nav.alpha-browse-container {
                     </ul>
                   </div>
                 {% endfor %}
-                <div class="pagination menupage">
-                  <h3>page</h3>
-                  <ul>
-                    {% for facChunk in facList %}
-                      <li class="round"><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
-                    {% endfor %}
-                  </ul>
-                </div>
               </section>
             </div>
           </div>
@@ -100,14 +92,6 @@ nav.alpha-browse-container {
               </ul>
             </div>
           {% endfor %}
-          <div class="pagination menupage">
-            <h3>page</h3>
-            <ul>
-              {% for deptChunk in depts %}
-                <li><a href="#dept-{{loop.index}}">{{loop.index}}</a></li>
-              {% endfor %}
-            </ul>
-          </div>
         </section>
       </div>
     </div>
