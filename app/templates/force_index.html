@@ -1,49 +1,61 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>Index</h1>
-  <div id="facultytabs">
+  <div id="ubertabs">
     <ul>
-      {% for alpha in faculty.keys()|sort %}
-        <li><a href="#fac-{{alpha|lower}}">{{alpha}}</a></li>
-      {% endfor %}
+      <li><a href="#peopletab">People</a></li>
+      <li><a href="#orgtab">Organizations</a></li>
     </ul>
-  	{% for alpha, facList in faculty|dictsort %}
-    	<div id="fac-{{alpha|lower}}">
-        <div id="factab-alpha-{{alpha|lower}}">
-          <h3>{{alpha}}</h3>
-          <ul>
-            {% for facChunk in facList %}
-              <li><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
-            {% endfor %}
-          </ul>
-          {% for facChunk in facList %}
-            <div id="fac-{{alpha|lower}}-{{loop.index}}">
-              {% for fac in facChunk %}
-                <a href="{{fac.graphurl}}">{{fac.name}}</a><br/>
+    <div id="peopletab">
+      <div id="facultytabs">
+        <ul>
+          {% for alpha in faculty.keys()|sort %}
+            <li><a href="#fac-{{alpha|lower}}">{{alpha}}</a></li>
+          {% endfor %}
+        </ul>
+      	{% for alpha, facList in faculty|dictsort %}
+        	<div id="fac-{{alpha|lower}}">
+            <div id="factab-alpha-{{alpha|lower}}">
+              <h3>{{alpha}}</h3>
+              <ul>
+                {% for facChunk in facList %}
+                  <li><a href="#fac-{{alpha|lower}}-{{loop.index}}">{{loop.index}}</a></li>
+                {% endfor %}
+              </ul>
+              {% for facChunk in facList %}
+                <div id="fac-{{alpha|lower}}-{{loop.index}}">
+                  {% for fac in facChunk %}
+                    <a href="{{fac.graphurl}}">{{fac.name}}</a><br/>
+                  {% endfor %}
+                </div>
               {% endfor %}
             </div>
-          {% endfor %}
-        </div>
+          </div>
+      	{% endfor %}
       </div>
-  	{% endfor %}
-  </div>
-  <div id="depttabs">
-    <ul>
-      {% for deptChunk in depts %}
-        <li><a href="#dept-{{loop.index}}">{{loop.index}}</a></li>
-      {% endfor %}
-    </ul>
-    {% for deptChunk in depts %}
-      <div id="dept-{{loop.index}}">
-        {% for dept in deptChunk %}
-          <a href="{{dept.graphurl}}">{{dept.name}}</a><br/>
+    </div>
+    <div id="orgtab">
+      <div id="depttabs">
+        <ul>
+          {% for deptChunk in depts %}
+            <li><a href="#dept-{{loop.index}}">{{loop.index}}</a></li>
+          {% endfor %}
+        </ul>
+        {% for deptChunk in depts %}
+          <div id="dept-{{loop.index}}">
+            {% for dept in deptChunk %}
+              <a href="{{dept.graphurl}}">{{dept.name}}</a><br/>
+            {% endfor %}
+          </div>
         {% endfor %}
       </div>
-    {% endfor %}
+    </div>
   </div>
 {% endblock %}
 {% block pagejs %}
   <script>
+    $(function() {
+      $("#ubertabs").tabs();
+    });
     $(function() {
       $("#facultytabs").tabs();
     });
