@@ -114,6 +114,9 @@ def forceViz(viztype, rabid, page=0):
 	tabbedFacs = [ {"tab": tabAbbv(chunk),
 					"faculty": chunk } for chunk in chunkedFacs ]
 	columnedDepts = chunkify(deptObjs, int(math.ceil(len(deptObjs)/3.0)))
+	if len(columnedDepts) < 3: # Needed for when len(deptObjs) == 4
+		straggler = columnedDepts[1].pop()
+		columnedDepts.append([straggler])
 	# if viztype=='dept':
 	# 	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
 	# elif viztype=='faculty':
