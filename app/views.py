@@ -79,11 +79,13 @@ def chordViz(viztype, rabid, page=0):
 @app.route('/force/<viztype>/<rabid>/<page>')
 def forceViz(viztype, rabid, page=0):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)
+	urlbase = "http://localhost:8000/force/"
 	vizData = ForceViz.query.filter_by(rabid=rabid, page=page).first()
 	vizKey = json.loads(vizData.legend)
 	allFaculty = Faculty.query.all()
 	allDepts = Departments.query.all()
 	facObjs = [ {"rabid": f.rabid,
+				"graphid": urlbase + "faculty/" + f.rabid[33:],
 				"name": f.fullname,
 				"abbv":f.abbrev + ".",
 				"aff":f.deptLabel,
@@ -116,6 +118,6 @@ def forceViz(viztype, rabid, page=0):
 	# elif viztype=='faculty':
 	# 	pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
 	return render_template(
-			'force.html', departments=deptObjs, faculty=facObjs,
+			'force.html', departments=deptObjs, faculty=tabbedFacs,
 			vizdata=forceData, linkDist=30, repel=-350,
 			crange=colorRange)

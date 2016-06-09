@@ -97,26 +97,40 @@
           </div>
         </div>
         <div class="col-md-3 sidebar operationsBox">
-          <div id="tabs">
+          <div id="factabs">
             <ul>
+              {% for tab in faculty %}
+                <li><a href="#factab-{{loop.index}}">{{tab.tab}}</a></li>
+              {% endfor %}
             </ul>
+            {% for tab in faculty %}
+              <div id="factab-{{loop.index}}">
+                <ul>
+                  {% for fac in tab.faculty %}
+                    <li>
+                      <a href="{{fac.graphid}}">{{fac.abbv}}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
           </div>
         </div>
       </div>
     </div>
     <script type="text/javascript">
 
-      var deptObjs = {{ departments|tojson|safe }};
-
       var graph = {{ vizdata|tojson|safe }};
+
+      var facObjs = {{faculty|tojson|safe}};
+
+      var deptObjs = {{ departments|tojson|safe }};
 
       var linkDist = {{linkDist|tojson|safe}};
 
       var repel = {{repel|tojson|safe}};
 
       var crange = {{crange|tojson|safe}};
-
-      var facObjs = {{faculty|tojson|safe}};
 
       var force_uri_base = "http://localhost:8000/force/";
 
@@ -180,7 +194,7 @@
         });
 
       $(function() {
-        $( "#tabs" ).tabs();
+        $( "#factabs" ).tabs();
       });
 
       function embiggen(d, size) {
@@ -235,41 +249,41 @@
         return cr;
       }
 
-      function buildFacultyTabs(targetDiv, facultyList) {
-        var fBox = $(targetDiv);
-        var tabCtrl = fBox.find("ul");
-        var chunkedFaculty = chunkList(facultyList, 20);
-        var facultyStacks = chunkList(chunkedFaculty, 2);
-        facultyStacks.forEach(function(stack) {
-          var tab = document.createElement("li");
-          var tabId = "tabs-"+facultyStacks.indexOf(stack).toString();
-          var tabLink = document.createElement("a");
-          var tabLabel;
-          var alpha1 = stack[0][0].name.charAt(0);
-          var alpha2 = stack[stack.length-1][stack[stack.length-1].length-1].name.charAt(0);
-          if (alpha1 === alpha2) {
-            tabLabel = alpha1;
-          } else {
-            tabLabel = alpha1 + " - " + alpha2;
-          }
-          tabLink.setAttribute("href", "#"+tabId);
-          tabLink.innerHTML = tabLabel;
-          tab.appendChild(tabLink);
-          tabCtrl.append(tab);
-          var stackDiv = document.createElement("div");
-          stackDiv.setAttribute("class","col-md-12");
-          stackDiv.setAttribute("id", tabId);
-          stack.forEach(function(colData) {
-            var col = document.createElement("div");
-            col.setAttribute("class","col-md-6");
-            col.setAttribute("id", tabId);
-            col = addRowsToColumn(colData, col, makeFacultyRow);
-            stackDiv.appendChild(col);
-          });
-          fBox.append(stackDiv);
-        });
-      }
-      buildFacultyTabs("#tabs", facObjs);
+      // function buildFacultyTabs(targetDiv, facultyList) {
+      //   var fBox = $(targetDiv);
+      //   var tabCtrl = fBox.find("ul");
+      //   var chunkedFaculty = chunkList(facultyList, 20);
+      //   var facultyStacks = chunkList(chunkedFaculty, 2);
+      //   facultyStacks.forEach(function(stack) {
+      //     var tab = document.createElement("li");
+      //     var tabId = "tabs-"+facultyStacks.indexOf(stack).toString();
+      //     var tabLink = document.createElement("a");
+      //     var tabLabel;
+      //     var alpha1 = stack[0][0].name.charAt(0);
+      //     var alpha2 = stack[stack.length-1][stack[stack.length-1].length-1].name.charAt(0);
+      //     if (alpha1 === alpha2) {
+      //       tabLabel = alpha1;
+      //     } else {
+      //       tabLabel = alpha1 + " - " + alpha2;
+      //     }
+      //     tabLink.setAttribute("href", "#"+tabId);
+      //     tabLink.innerHTML = tabLabel;
+      //     tab.appendChild(tabLink);
+      //     tabCtrl.append(tab);
+      //     var stackDiv = document.createElement("div");
+      //     stackDiv.setAttribute("class","col-md-12");
+      //     stackDiv.setAttribute("id", tabId);
+      //     stack.forEach(function(colData) {
+      //       var col = document.createElement("div");
+      //       col.setAttribute("class","col-md-6");
+      //       col.setAttribute("id", tabId);
+      //       col = addRowsToColumn(colData, col, makeFacultyRow);
+      //       stackDiv.appendChild(col);
+      //     });
+      //     fBox.append(stackDiv);
+      //   });
+      // }
+      // buildFacultyTabs("#tabs", facObjs);
 
       function buildLegend(targetDiv, deptList) {
         var lBox = $(targetDiv);
