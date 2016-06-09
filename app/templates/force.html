@@ -94,6 +94,15 @@
             </div>
           </div>
           <div id="legendColumns" class="row legendBox">
+            {% for column in departments%}
+              <div class="col-md-4">
+                <ul>
+                  {% for dept in column %}
+                    <li><a href="{{dept.graphid}}">{{dept.name}}</a></li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
           </div>
         </div>
         <div class="col-md-3 sidebar operationsBox">
@@ -107,7 +116,7 @@
               <div id="factab-{{loop.index}}">
                 <ul>
                   {% for fac in tab.faculty %}
-                    <li>
+                    <li id="faculty-{{fac.keyIndex}}" class="faculty-ctrl">
                       <a href="{{fac.graphid}}">{{fac.abbv}}</a>
                     </li>
                   {% endfor %}
@@ -285,18 +294,18 @@
       // }
       // buildFacultyTabs("#tabs", facObjs);
 
-      function buildLegend(targetDiv, deptList) {
-        var lBox = $(targetDiv);
-        var colLen = Math.ceil(deptList.length/3);
-        var chunkedDepts = chunkList(deptList, colLen);
-        chunkedDepts.forEach(function(stack) {
-          var col = document.createElement("div");
-          col.setAttribute("class","col-md-4");
-          col = addRowsToColumn(stack, col, makeLegendRow);
-          lBox.append(col);
-        });
-      }
-      buildLegend("#legendColumns", deptObjs);
+      // function buildLegend(targetDiv, deptList) {
+      //   var lBox = $(targetDiv);
+      //   var colLen = Math.ceil(deptList.length/3);
+      //   var chunkedDepts = chunkList(deptList, colLen);
+      //   chunkedDepts.forEach(function(stack) {
+      //     var col = document.createElement("div");
+      //     col.setAttribute("class","col-md-4");
+      //     col = addRowsToColumn(stack, col, makeLegendRow);
+      //     lBox.append(col);
+      //   });
+      // }
+      // buildLegend("#legendColumns", deptObjs);
 
     </script>
   </body>

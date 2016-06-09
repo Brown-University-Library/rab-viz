@@ -101,23 +101,24 @@ def forceViz(viztype, rabid, page=0):
 	deptKey = defaultdict(list)
 	for o in facObjs:
 		deptKey[o['aff']].append(o['keyIndex'])
-	deptObjs = [ {'rabid': d.rabid,
-				 'name': d.label,
-				 'keyIndex': deptKey[k]
+	deptObjs = [ {"rabid": d.rabid,
+				 "graphid": urlbase + "dept/" + d.rabid[33:],
+				 "name": k, #d.label,
+				 "keyIndex": deptKey[k]
 				 } for k in deptKey.keys()
 				 		for d in allDepts
 				 			if k in json.loads(d.useFor) ]
 	facObjs = sorted(facObjs, key=lambda kv: kv['name'])
 	deptObjs = sorted(deptObjs, key=lambda kv: kv['name'])
-	chunkedFacs = chunkify(facObjs, 40)
+	chunkedFacs = chunkify(facObjs, 30)
 	tabbedFacs = [ {"tab": tabAbbv(chunk),
 					"faculty": chunk } for chunk in chunkedFacs ]
-	chunkedDepts = chunkify(deptObjs, int(math.ceil(len(deptObjs)/3.0)))
+	columnedDepts = chunkify(deptObjs, int(math.ceil(len(deptObjs)/3.0)))
 	# if viztype=='dept':
 	# 	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
 	# elif viztype=='faculty':
 	# 	pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
 	return render_template(
-			'force.html', departments=deptObjs, faculty=tabbedFacs,
+			'force.html', departments=columnedDepts, faculty=tabbedFacs,
 			vizdata=forceData, linkDist=30, repel=-350,
 			crange=colorRange)
