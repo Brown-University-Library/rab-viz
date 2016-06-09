@@ -16,6 +16,8 @@ def index(graphtype):
 		allViz = ChordViz.query.all()
 		urlbase = "http://localhost:8000/chord/"
 		pageTitle = "Chord Graph"
+	else:
+		raise Exception("Something bad!")
 	forceFac = [ f.rabid for f in allViz if 'org-brown' not in f.rabid]
 	faculty = Faculty.query.filter(Faculty.rabid.in_(forceFac)).all()
 	forceDept = [f.rabid for f in allViz if 'org-brown' in f.rabid]
