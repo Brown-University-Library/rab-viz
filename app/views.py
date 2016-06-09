@@ -4,6 +4,7 @@ from app import app
 from .models import ChordViz, ForceViz, Faculty, Departments
 
 from collections import defaultdict
+import math
 
 colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(148,103,189)','rgb(214,39,40)','rgb(44,160,44)','rgb(255,127,14)',
@@ -12,6 +13,16 @@ colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(49,130,189)','rgb(49,163,84)','rgb(158,154,200)','rgb(253,141,60)',
 'rgb(116,196,118)','rgb(189,158,57)']
 
+def chunkify(tList, chunk):
+	return [ tList[i:i+chunk] for i in range(0, len(tList), chunk) ]
+
+def tabAbbv(chunk):
+	start = chunk[0]["name"][0]
+	end = chunk[-1]["name"][0]
+	if start == end:
+		return start
+	else:
+		return start+"-"+end
 
 @app.route('/<graphtype>')
 @app.route('/<graphtype>/')
@@ -74,7 +85,7 @@ def forceViz(viztype, rabid, page=0):
 	allDepts = Departments.query.all()
 	facObjs = [ {"rabid": f.rabid,
 				"name": f.fullname,
-				"abbv":f.abbrev,
+				"abbv":f.abbrev + ".",
 				"aff":f.deptLabel,
 				"keyIndex": vizKey.index(uri)
 				} for uri in vizKey
@@ -94,7 +105,12 @@ def forceViz(viztype, rabid, page=0):
 				 } for k in deptKey.keys()
 				 		for d in allDepts
 				 			if k in json.loads(d.useFor) ]
-	# facObjs = sorted(facObjs, key=lambda kv: kv['name'])
+	facObjs = sorted(facObjs, key=lambda kv: kv['name'])
+	deptObjs = sorted(deptObjs, key=lambda kv: kv['name'])
+	chunkedFacs = chunkify(facObjs, 40)
+	tabbedFacs = [ {"tab": tabAbbv(chunk),
+					"faculty": chunk } for chunk in chunkedFacs ]
+	chunkedDepts = chunkify(deptObjs, int(math.ceil(len(deptObjs)/3.0)))
 	# if viztype=='dept':
 	# 	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
 	# elif viztype=='faculty':
