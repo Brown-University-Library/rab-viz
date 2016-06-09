@@ -106,15 +106,9 @@
     </div>
     <script type="text/javascript">
 
-      var depts = {{ legend|tojson|safe }};
-
       var deptObjs = {{ departments|tojson|safe }};
 
-      var pageLabel = {{ pageLabel|tojson|safe }}
-
       var graph = {{ vizdata|tojson|safe }};
-
-      var facURIs = {{ facMap|tojson|safe }};
 
       var linkDist = {{linkDist|tojson|safe}};
 
@@ -129,7 +123,7 @@
       var width = 900,
           height = 800;
 
-      var color = d3.scale.ordinal().domain(depts).range(crange);
+      var color = d3.scale.ordinal().domain(deptObjs).range(crange);
 
       var force = d3.layout.force()
           .charge(repel)
@@ -154,22 +148,22 @@
         var node = svg.selectAll(".node")
             .data(graph.nodes)
           .enter().append("circle")
-            // .attr("class", "node")
-            .attr("class", function(d) {
-              return "node "+d.rabid.substring(33);
-            })
+            .attr("class", "node")
+            // .attr("class", function(d) {
+            //   return "node "+d.rabid.substring(33);
+            // })
             .attr("r", 10)
             .style("fill", function(d) { return color(d.group); })
-            .on("click", function(d) {
-                var facCode = facURIs[d.name].substring(33);
-                window.location.replace(force_uri_base + "faculty/" + facCode);
-            })
-            .on("mouseover", function(d) {
-                d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",20);
-            })
-            .on("mouseout", function(d) {
-                d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",10);
-            })
+            // .on("click", function(d) {
+            //     var facCode = facURIs[d.name].substring(33);
+            //     window.location.replace(force_uri_base + "faculty/" + facCode);
+            // })
+            // .on("mouseover", function(d) {
+            //     d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",20);
+            // })
+            // .on("mouseout", function(d) {
+            //     d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",10);
+            // })
             .call(force.drag);
 
         node.append("title")

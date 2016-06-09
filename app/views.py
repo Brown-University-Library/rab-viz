@@ -69,33 +69,37 @@ def chordViz(viztype, rabid, page=0):
 def forceViz(viztype, rabid, page=0):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)
 	vizData = ForceViz.query.filter_by(rabid=rabid, page=page).first()
-	legend = json.loads(vizData.legend)
+	vizKey = json.loads(vizData.legend)
 	allFaculty = Faculty.query.all()
 	allDepts = Departments.query.all()
-	facultyLookup = { f.rabid: [f.abbrev, f.deptLabel, f.rabid] for f in allFaculty }
-	nodes = [ {	"name": facultyLookup[uri][0],
-				"group": facultyLookup[uri][1],
-				"rabid": facultyLookup[uri][2] }
-					for uri in legend ]
+	facObjs = [ {"rabid": f.rabid,
+				"name": f.fullname,
+				"abbv":f.abbrev,
+				"aff":f.deptLabel,
+				"keyIndex": vizKey.index(uri)
+				} for uri in vizKey
+					for f in allFaculty
+						if uri == f.rabid ]
+	nodes = [ {	"name": facObj["name"],
+				"group": facObj["aff"]
+				} for facObj in facObjs ]
 	links = json.loads(vizData.links)
-	deptList = sorted(list({ n["group"] for n in nodes }))
+	forceData = { "nodes": nodes, "links": links }
+	deptKey = defaultdict(list)
+	for o in facObjs:
+		deptKey[o['aff']].append(o['keyIndex'])
 	deptObjs = [ {'rabid': d.rabid,
-				 'name': l} for l in deptList
-				 				for d in allDepts
-				 					if l in json.loads(d.useFor) ]
-	facMap = { f.abbrev: f.rabid for f in allFaculty if f.rabid in legend }
-	facObjs = [ {'rabid': f.rabid,
-				'name': f.fullname,
-				'abbv':f.abbrev,
-				'aff':f.deptLabel } for f in allFaculty
-										if f.rabid in legend ]
-	facObjs = sorted(facObjs, key=lambda kv: kv['name'])
-	vizdata = {"nodes": nodes, "links": links}
-	if viztype=='dept':
-		pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
-	elif viztype=='faculty':
-		pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
+				 'name': d.label,
+				 'keyIndex': deptKey[k]
+				 } for k in deptKey.keys()
+				 		for d in allDepts
+				 			if k in json.loads(d.useFor) ]
+	# facObjs = sorted(facObjs, key=lambda kv: kv['name'])
+	# if viztype=='dept':
+	# 	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
+	# elif viztype=='faculty':
+	# 	pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
 	return render_template(
-			'force.html', pageLabel=pageLabel, legend=deptList,
-			departments=deptObjs, facMap=facMap, faculty=facObjs, vizdata=vizdata,
-			linkDist=30, repel=-350, crange=colorRange)
+			'force.html', departments=deptObjs, faculty=facObjs,
+			vizdata=forceData, linkDist=30, repel=-350,
+			crange=colorRange)
