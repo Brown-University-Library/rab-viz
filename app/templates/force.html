@@ -81,6 +81,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/velocity.min.js') }}"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
   </head>
   <body>
@@ -203,8 +204,17 @@
         });
 
       $(function() {
-        $( "#factabs" ).tabs();
+        $("#factabs").tabs();
+        $(".faculty-ctrl")
+          .on('mouseenter', function() {
+            animateNode($(this));
+          });
       });
+
+      function animateNode(facultyCtrl) {
+        var facIndex = facultyCtrl.attr('id').split("faculty-")[1];
+        $(".node").eq(parseInt(facIndex)).velocity({ r: 20 });
+      }
 
       function embiggen(d, size) {
                 d3.select("#"+d.toLowerCase().replace(/[.',\s]/g,""))
