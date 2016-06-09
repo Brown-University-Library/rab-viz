@@ -3,12 +3,45 @@ from flask import render_template, json
 from app import app
 from .models import ChordViz, ForceViz, Faculty, Departments
 
+from collections import defaultdict
+
 colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(148,103,189)','rgb(214,39,40)','rgb(44,160,44)','rgb(255,127,14)',
 'rgb(31,119,180)','rgb(214,97,107)','rgb(206,109,189)','rgb(214,97,107)',
 'rgb(231,186,82)','rgb(181,207,107)','rgb(107,110,207)','rgb(230,85,13)',
 'rgb(49,130,189)','rgb(49,163,84)','rgb(158,154,200)','rgb(253,141,60)',
 'rgb(116,196,118)','rgb(189,158,57)']
+
+
+@app.route('/<graphtype>')
+@app.route('/<graphtype>/')
+def index(graphtype):
+	if graphtype == "force":
+		allViz = ForceViz.query.all()
+		urlbase = "http://localhost:8000/force/"
+		pageTitle = "Force Graph"
+	elif graphtype == "chord":
+		allViz = ChordViz.query.all()
+		urlbase = "http://localhost:8000/chord/"
+		pageTitle = "Chord Graph"
+	else:
+		raise Exception("Something bad!")
+	forceFac = [ f.rabid for f in allViz if 'org-brown' not in f.rabid]
+	faculty = Faculty.query.filter(Faculty.rabid.in_(forceFac)).all()
+	forceDept = [f.rabid for f in allViz if 'org-brown' in f.rabid]
+	depts = Departments.query.filter(Departments.rabid.in_(forceDept)).all()
+	alphaFac = defaultdict(list)
+	for f in faculty:
+		graphurl = urlbase + "faculty/" + f.rabid[33:]
+		alphaFac[f.fullname[0].upper()].append({"graphurl":graphurl, "name":f.fullname})
+	sortedFac = { k: sorted(v, key=lambda fac: fac["name"]) for k,v in alphaFac.items() }
+	for k, l in sortedFac.items():
+		sortedFac[k] = [ l[i:i+20] for i in range(0, len(l), 20) ]
+	sortedDepts = sorted([ { "graphurl": urlbase + "dept/"+d.rabid[33:],
+					"name":d.label } for d in depts ], key=lambda dept: dept["name"])
+	chunkedDepts = [ sortedDepts[i:i+20] for i in range(0, len(sortedDepts), 20) ]
+	return render_template('force_index.html', pageTitle=pageTitle,
+							faculty=sortedFac, depts=chunkedDepts)
 
 @app.route('/chord/<viztype>/<rabid>')
 @app.route('/chord/<viztype>/<rabid>/<page>')
