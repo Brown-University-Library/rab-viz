@@ -222,11 +222,15 @@
         var nodes = $(".node").filter(function (index) {
           return $.inArray(index, nodeKeys) > -1;
         });
+        var timer;
         deptCtrl
-          .on('mouseenter', function() {
-            focusSubNet(nodes);
-          })
-          .on('mouseleave', function() {
+          .hover(function() {
+            timer = setTimeout( function () {
+              focusSubNet(nodes)
+            }, 750);
+          },
+          function() {
+            clearTimeout(timer);
             unfocusSubNet(nodes);
           });
       }
