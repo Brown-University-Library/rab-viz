@@ -222,8 +222,13 @@
         var nodes = $(".node").filter(function (index) {
           return $.inArray(index, nodeKeys) > -1;
         });
-        console.log(nodeKeys);
-        console.log(nodes);
+        deptCtrl
+          .on('mouseenter', function() {
+            focusSubNet(nodes);
+          })
+          .on('mouseleave', function() {
+            unfocusSubNet(nodes);
+          });
       }
 
       function getDepartmentNodes(deptCtrl) {
@@ -248,13 +253,13 @@
       }
 
       function focusSubNet(subnet) {
-        subnet.addClass("subnet");
-        $(".node").not(".subnet").velocity({ opacity: 0.5 });
+        subnet.addClass("subnet").velocity({ r: 12 });
+        $(".node").not(".subnet").velocity({ r: 5 });
       }
 
       function unfocusSubNet(subnet) {
         subnet.removeClass("subnet");
-        $(".node").not(".subnet").velocity({ opacity: 1.0 });
+        $(".node").velocity({ r: 10 });
       }
 
     </script>
