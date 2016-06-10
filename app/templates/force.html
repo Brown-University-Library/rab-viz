@@ -207,13 +207,21 @@
         $("#factabs").tabs();
         $(".faculty-ctrl")
           .on('mouseenter', function() {
-            animateNode($(this));
+            growNode($(this));
+          })
+          .on('mouseleave', function() {
+            shrinkNode($(this));
           });
       });
 
-      function animateNode(facultyCtrl) {
+      function growNode(facultyCtrl) {
         var facIndex = facultyCtrl.attr('id').split("faculty-")[1];
         $(".node").eq(parseInt(facIndex)).velocity({ r: 20 });
+      }
+
+      function shrinkNode(facultyCtrl) {
+        var facIndex = facultyCtrl.attr('id').split("faculty-")[1];
+        $(".node").eq(parseInt(facIndex)).velocity({ r: 10 });
       }
 
       function embiggen(d, size) {
