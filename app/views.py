@@ -122,6 +122,8 @@ def forceViz(viztype, rabid, page=0):
 	# elif viztype=='faculty':
 	# 	pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
 	return render_template(
-			'force.html', departments=columnedDepts, faculty=tabbedFacs,
+			'force.html',
+			departments=columnedDepts, faculty=tabbedFacs,
+			deptObjs=deptObjs,
 			vizdata=forceData, linkDist=30, repel=-350,
 			crange=colorRange)

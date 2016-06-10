@@ -99,7 +99,7 @@
               <div class="col-md-4">
                 <ul>
                   {% for dept in column %}
-                    <li><a href="{{dept.graphid}}">{{dept.name}}</a></li>
+                    <li id="{{ dept.rabid }}" class="dept-ctrl"><a href="{{dept.graphid}}">{{dept.name}}</a></li>
                   {% endfor %}
                 </ul>
               </div>
@@ -130,11 +130,11 @@
     </div>
     <script type="text/javascript">
 
-      var graph = {{ vizdata|tojson|safe }};
-
       var facObjs = {{faculty|tojson|safe}};
 
-      var deptObjs = {{ departments|tojson|safe }};
+      var deptObjs = {{ deptObjs|tojson|safe }};
+
+      var graph = {{ vizdata|tojson|safe }};
 
       var linkDist = {{linkDist|tojson|safe}};
 
@@ -212,7 +212,30 @@
           .on('mouseleave', function() {
             shrinkNode($(this));
           });
+        $(".dept-ctrl").each(function () {
+            attachDepartmentNodes($(this));
+        });
       });
+
+      function attachDepartmentNodes(deptCtrl) {
+        var nodeKeys = getDepartmentNodes(deptCtrl);
+        var nodes = $(".node").filter(function (index) {
+          return $.inArray(index, nodeKeys) > -1;
+        });
+        console.log(nodeKeys);
+        console.log(nodes);
+      }
+
+      function getDepartmentNodes(deptCtrl) {
+        var rabid = deptCtrl.attr("id");
+        var nodeKeys = null;
+        for ( var i=0, len=deptObjs.length; i < len; i++) {
+            if (deptObjs[i].rabid === rabid) {
+              nodeKeys = deptObjs[i].keyIndex;
+            }
+        }
+        return nodeKeys;
+      }
 
       function growNode(facultyCtrl) {
         var facIndex = facultyCtrl.attr('id').split("faculty-")[1];
@@ -224,11 +247,15 @@
         $(".node").eq(parseInt(facIndex)).velocity({ r: 10 });
       }
 
-      function embiggen(d, size) {
-                d3.select("#"+d.toLowerCase().replace(/[.',\s]/g,""))
-                    .transition().duration(100)
-                        .style("font-size", size);
-            }
+      function focusSubNet(subnet) {
+        subnet.addClass("subnet");
+        $(".node").not(".subnet").velocity({ opacity: 0.5 });
+      }
+
+      function unfocusSubNet(subnet) {
+        subnet.removeClass("subnet");
+        $(".node").not(".subnet").velocity({ opacity: 1.0 });
+      }
 
     </script>
   </body>
