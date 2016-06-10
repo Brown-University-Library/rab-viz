@@ -71,7 +71,7 @@
     }
 */
 
-    .selected {
+    .slct-ctrl {
       background-color: #d3d3d3;
     }
 
@@ -178,21 +178,8 @@
             .data(graph.nodes)
           .enter().append("circle")
             .attr("class", "node")
-            // .attr("class", function(d) {
-            //   return "node "+d.rabid.substring(33);
-            // })
             .attr("r", 10)
             .style("fill", function(d) { return color(d.group); })
-            // .on("click", function(d) {
-            //     var facCode = facURIs[d.name].substring(33);
-            //     window.location.replace(force_uri_base + "faculty/" + facCode);
-            // })
-            // .on("mouseover", function(d) {
-            //     d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",20);
-            // })
-            // .on("mouseout", function(d) {
-            //     d3.select("#"+d.name.toLowerCase().replace(/[.',\s]/g,"")).transition().duration(100).attr("r",10);
-            // })
             .call(force.drag);
 
         node.append("title")
@@ -210,17 +197,46 @@
 
       $(function() {
         $("#factabs").tabs();
-        $(".faculty-ctrl")
-          .on('mouseenter', function() {
-            growNode($(this));
-          })
-          .on('mouseleave', function() {
-            shrinkNode($(this));
-          });
+        $(".faculty-ctrl").each(function () {
+            attachFacultyNodes($(this));
+        });
         $(".dept-ctrl").each(function () {
             attachDepartmentNodes($(this));
         });
       });
+
+      function attachFacultyNodes(facCtrl) {
+        var facIndex = parseInt(facCtrl.attr('id').split("faculty-")[1]);
+        var subnet = getFacultySubnet(facIndex);
+        subnet.push(facIndex);
+        var nodes = $(".node").filter(function (index) {
+          return $.inArray(index, subnet) > -1;
+        });
+        var facNode = $(".node").eq(facIndex);
+        var timer;
+        facCtrl
+          .hover(function() {
+            $(this).addClass("slct-ctrl");
+            timer = setTimeout( function () {
+              focusSubNet(nodes);
+            }, 750);
+          },
+          function() {
+            clearTimeout(timer);
+            $(this).removeClass("slct-ctrl");
+            unfocusSubNet(nodes);
+          });
+      }
+
+      function getFacultySubnet(facIndex) {
+        var nodeKeys = [];
+        for ( var i=0, len=graph.links.length; i < len; i++) {
+            if (graph.links[i].source.index === facIndex) {
+              nodeKeys.push(graph.links[i].target.index);
+            }
+        }
+        return nodeKeys;
+      }
 
       function attachDepartmentNodes(deptCtrl) {
         var nodeKeys = getDepartmentNodes(deptCtrl);
@@ -230,15 +246,14 @@
         var timer;
         deptCtrl
           .hover(function() {
-            $(this).addClass("selected");
-            clearTimeout(timer);
+            $(this).addClass("slct-ctrl");
             timer = setTimeout( function () {
-              focusSubNet(nodes)
+              focusSubNet(nodes);
             }, 750);
           },
           function() {
             clearTimeout(timer);
-            $(this).removeClass("selected");
+            $(this).removeClass("slct-ctrl");
             unfocusSubNet(nodes);
           });
       }
@@ -252,16 +267,6 @@
             }
         }
         return nodeKeys;
-      }
-
-      function growNode(facultyCtrl) {
-        var facIndex = facultyCtrl.attr('id').split("faculty-")[1];
-        $(".node").eq(parseInt(facIndex)).velocity({ r: 20 });
-      }
-
-      function shrinkNode(facultyCtrl) {
-        var facIndex = facultyCtrl.attr('id').split("faculty-")[1];
-        $(".node").eq(parseInt(facIndex)).velocity({ r: 10 });
       }
 
       function focusSubNet(subnet) {
