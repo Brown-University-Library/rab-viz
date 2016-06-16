@@ -93,11 +93,6 @@ def forceViz(viztype, rabid, page=0):
 				} for uri in vizKey
 					for f in allFaculty
 						if uri == f.rabid ]
-	nodes = [ {	"name": facObj["name"],
-				"group": facObj["aff"]
-				} for facObj in facObjs ]
-	links = json.loads(vizData.links)
-	forceData = { "nodes": nodes, "links": links }
 	deptKey = defaultdict(list)
 	for o in facObjs:
 		deptKey[o['aff']].append(o['keyIndex'])
@@ -108,9 +103,17 @@ def forceViz(viztype, rabid, page=0):
 				 } for k in deptKey.keys()
 				 		for d in allDepts
 				 			if k in json.loads(d.useFor) ]
+	nodes = [ {	"name": facObj["name"],
+				"group": deptObj["rabid"]
+				} for facObj in facObjs
+					for deptObj in deptObjs
+						if deptObj["name"] == facObj["aff"]]
+	links = json.loads(vizData.links)
+	forceData = { "nodes": nodes, "links": links }
 	facObjs = sorted(facObjs, key=lambda kv: kv['name'])
 	deptObjs = sorted(deptObjs, key=lambda kv: kv['name'])
-	chunkedFacs = chunkify(facObjs, 30)
+	deptNames = [d["rabid"] for d in deptObjs]
+	chunkedFacs = chunkify(facObjs, 20)
 	tabbedFacs = [ {"tab": tabAbbv(chunk),
 					"faculty": chunk } for chunk in chunkedFacs ]
 	columnedDepts = chunkify(deptObjs, int(math.ceil(len(deptObjs)/3.0)))
@@ -124,6 +127,6 @@ def forceViz(viztype, rabid, page=0):
 	return render_template(
 			'force.html',
 			departments=columnedDepts, faculty=tabbedFacs,
-			deptObjs=deptObjs,
+			deptNames=deptNames, deptObjs=deptObjs,
 			vizdata=forceData, linkDist=30, repel=-350,
 			crange=colorRange)

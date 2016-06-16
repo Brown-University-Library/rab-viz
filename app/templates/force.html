@@ -22,12 +22,49 @@
     stroke-opacity: .6;
   }
 
-  .legendBug {
+  a {
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .ui-tabs-nav {
+    text-align: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    line-height: 24px;
+  }
+
+  .ui-tabs-nav li {
+    margin: 0 5px;
+    padding: 0 5px;
+/*    border: 1px solid #AAA;*/
+    background-color: none;
+    display: inline-block;
+  }
+
+  .ui-tabs-nav li.ui-tabs-active {
+    background-color: #d3d3d3;
+    color: #000;
+  }
+
+/*  .bugHouse {
+    float: left;
+    height: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;    
+    box-sizing: border-box;
+  }*/
+
+  .deptBug {
     float: left;
     width: 10px;
     height: 10px;
     margin: 3px 5px;
-    /*border: 1px solid rgba(0, 0, 0, .2);*/
+    border: 1px solid rgba(0, 0, 0, .2);
   }
 
   .slct-ctrl {
@@ -48,7 +85,10 @@
             <div class="col-md-4">
               <ul>
                 {% for dept in column %}
-                  <li id="{{ dept.rabid }}" class="dept-ctrl"><a href="{{dept.graphid}}">{{dept.name}}</a></li>
+                  <li id="{{ dept.rabid }}" class="dept-ctrl">
+                    <span id="bug-{{dept.rabid}}" class="deptBug"></span>
+                    <a href="{{dept.graphid}}">{{dept.name}}</a>
+                  </li>
                 {% endfor %}
               </ul>
             </div>
@@ -86,6 +126,8 @@
 
     var deptObjs = {{ deptObjs|tojson|safe }};
 
+    var deptNames = {{ deptNames|tojson|safe }};
+
     var graph = {{ vizdata|tojson|safe }};
 
     var linkDist = {{linkDist|tojson|safe}};
@@ -94,12 +136,14 @@
 
     var crange = {{crange|tojson|safe}};
 
+    console.log(graph.nodes);
+
     var force_uri_base = "http://localhost:8000/force/";
 
     var width = 900,
         height = 800;
 
-    var color = d3.scale.ordinal().domain(deptObjs).range(crange);
+    var color = d3.scale.ordinal().domain(deptNames).range(crange);
 
     var force = d3.layout.force()
         .charge(repel)
@@ -144,6 +188,9 @@
 
     $(function() {
       $("#factabs").tabs();
+      $(".deptBug").each(function () {
+          setDeptColor($(this));
+      });
       $(".faculty-ctrl").each(function () {
           attachFacultyNodes($(this));
       });
@@ -151,6 +198,11 @@
           attachDepartmentNodes($(this));
       });
     });
+
+    function setDeptColor(deptBug) {
+      var group = deptBug.attr('id').substring(4);
+      deptBug.attr("style", "background: "+color(group));
+    }
 
     function attachFacultyNodes(facCtrl) {
       var facIndex = parseInt(facCtrl.attr('id').split("faculty-")[1]);
@@ -166,7 +218,7 @@
           $(this).addClass("slct-ctrl");
           timer = setTimeout( function () {
             focusSubNet(nodes);
-          }, 750);
+          }, 1000);
         },
         function() {
           clearTimeout(timer);
@@ -196,7 +248,7 @@
           $(this).addClass("slct-ctrl");
           timer = setTimeout( function () {
             focusSubNet(nodes);
-          }, 750);
+          }, 1000);
         },
         function() {
           clearTimeout(timer);
