@@ -8,14 +8,15 @@ def main(inDeptFile, inFacFile, targetDir):
 	if not os.path.exists(targetDir):
 		os.makedirs(targetDir)
 
-	depts = dict()
+	## Set default value
+	depts = {"http://vivo.brown.edu/individual/org-brown-univ": "Brown University"}
 	altLabels = {
 		"Earth, Environmental and Planetary Sciences":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept667",
 		"Geological Sciences":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept667",
 		"Brown University":
-			"",
+			"http://vivo.brown.edu/individual/org-brown-univ",
 		"Psychology":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept288",
 		"Humanities":
@@ -33,40 +34,42 @@ def main(inDeptFile, inFacFile, targetDir):
 		"Cognitive, Linguistic and Psychological Sciences":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept288",
 		"Admin General":
-			"",
+			"http://vivo.brown.edu/individual/org-brown-univ",
 		"Middle East Studies":
-			"",
+			"http://vivo.brown.edu/individual/org-brown-univ",
 		"Community Health":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept250",
 		"Population Studies":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept78",
 		"Development Studies":
-			"",
+			"http://vivo.brown.edu/individual/org-brown-univ",
 		"Physiology":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept55",
 		"Medical Science": #Pointed at Medicine
 			"http://vivo.brown.edu/individual/org-brown-univ-dept84",
 		"None":
-			"",
+			"http://vivo.brown.edu/individual/org-brown-univ",
 		"Renaissance and Early Modern Studies":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept32",
 		"Environment and Society":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept687",
 		"Public Policy":
-			"",
+			"http://vivo.brown.edu/individual/org-brown-univ",
 		"Clin Neurosciences (Neurosurg)":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept240",
 		"Dean of the College":
-			"",
+			"http://vivo.brown.edu/individual/org-brown-univ",
 		"Slavic Languages":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept669",
 		"Gender Studies":
-			"",
+			"http://vivo.brown.edu/individual/org-brown-univ",
 		"Cognitive and Linguistic Sciences":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept288",
 		"International Studies":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept748",
 		"Environmental Change Initiative":
+			"http://vivo.brown.edu/individual/org-brown-univ-dept687",
+		"Environmental Studies":
 			"http://vivo.brown.edu/individual/org-brown-univ-dept687",
 	}
 
