@@ -1,284 +1,230 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <style>
+{% extends "base.html" %}
+{% block pagecss %}
+<style>
+  /*body {
+    font: 10px sans-serif;
+    width: 1200px;
+    margin: 0 auto;
+  }
 
-    body {
-      font: 10px sans-serif;
-      width: 1200px;
-      margin: 0 auto;
-    }
+  header {
+    background-color: purple;
+    height: 120px;
+  }*/
 
-    header {
-      background-color: purple;
-      height: 120px;
-    }
+  .node {
+    stroke: #fff;
+    stroke-width: 1.5px;
+  }
 
-    .node {
-      stroke: #fff;
-      stroke-width: 1.5px;
-    }
+  .link {
+    stroke: #999;
+    stroke-opacity: .6;
+  }
 
-    .link {
-      stroke: #999;
-      stroke-opacity: .6;
-    }
+  .legendBug {
+    float: left;
+    width: 10px;
+    height: 10px;
+    margin: 3px 5px;
+    /*border: 1px solid rgba(0, 0, 0, .2);*/
+  }
 
-/*    .legendBox table {
-      width: 900px;
-    }
-
-    .column {
-      width: 30%;
-    }
-
-    .columnRow {
-      margin: 0 0 5px 0;
-      padding: 0 0 0 2em;
-      font-size: 1.3em;
-      vertical-align: top;
-      background-color: #FFF;
-    }*/
-
-    .legendBox .columnRow.selected {
-      background-color: rgba(128,128,128,0.5);
-    }
-    
-    .legendBug {
-      float: left;
-      width: 10px;
-      height: 10px;
-      margin: 3px 5px;
-      /*border: 1px solid rgba(0, 0, 0, .2);*/
-    }
-
-/*    .legendLabel {
-      float:right;
-    }*/
-
-/*    .graphBox {
-      width: 900px;
-    }
-
-    .legendBox {
-      width: 900px;
-    }*/
-
-/*    .operationsBox table {
-      width: 300px;
-      font-size: 1.5em;
-    }
-*/
-
-    .slct-ctrl {
-      background-color: #d3d3d3;
-    }
-
-    .operationsBox td {
-      vertical-align: top;
-    }
-
-    </style>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-<!--     <link rel="stylesheet" src="{{ url_for('static', filename='css/jquery-ui.structure.min.css') }}"></script> -->
-
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/velocity.min.js') }}"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-  </head>
-  <body>
-    <header class="page-header">
-    </header>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-9">
-          <div class="row">
-            <div class="col-md-12 graphBox">
-            </div>
-          </div>
-          <div id="legendColumns" class="row legendBox">
-            {% for column in departments%}
-              <div class="col-md-4">
-                <ul>
-                  {% for dept in column %}
-                    <li id="{{ dept.rabid }}" class="dept-ctrl"><a href="{{dept.graphid}}">{{dept.name}}</a></li>
-                  {% endfor %}
-                </ul>
-              </div>
-            {% endfor %}
+  .slct-ctrl {
+    background-color: #d3d3d3;
+  }
+</style>
+{% endblock %}
+{% block content %}
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-9">
+        <div class="row">
+          <div class="col-md-12 graphBox">
           </div>
         </div>
-        <div class="col-md-3 sidebar operationsBox">
-          <div id="factabs">
-            <ul>
-              {% for tab in faculty %}
-                <li><a href="#factab-{{loop.index}}">{{tab.tab}}</a></li>
-              {% endfor %}
-            </ul>
+        <div id="legendColumns" class="row legendBox">
+          {% for column in departments%}
+            <div class="col-md-4">
+              <ul>
+                {% for dept in column %}
+                  <li id="{{ dept.rabid }}" class="dept-ctrl"><a href="{{dept.graphid}}">{{dept.name}}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="col-md-3 sidebar">
+        <div id="factabs">
+          <ul>
             {% for tab in faculty %}
-              <div id="factab-{{loop.index}}">
-                <ul>
-                  {% for fac in tab.faculty %}
-                    <li id="faculty-{{fac.keyIndex}}" class="faculty-ctrl">
-                      <a href="{{fac.graphid}}">{{fac.abbv}}</a>
-                    </li>
-                  {% endfor %}
-                </ul>
-              </div>
+              <li><a href="#factab-{{loop.index}}">{{tab.tab}}</a></li>
             {% endfor %}
-          </div>
+          </ul>
+          {% for tab in faculty %}
+            <div id="factab-{{loop.index}}">
+              <ul>
+                {% for fac in tab.faculty %}
+                  <li id="faculty-{{fac.keyIndex}}" class="faculty-ctrl">
+                    <a href="{{fac.graphid}}">{{fac.abbv}}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endfor %}
         </div>
       </div>
     </div>
-    <script type="text/javascript">
+  </div>
+{% endblock %}
+{% block pagejs %}
+  <script type="text/javascript" src="{{ url_for('static', filename='js/velocity.min.js') }}"></script>
+  <script type="text/javascript">
 
-      var facObjs = {{faculty|tojson|safe}};
+    var facObjs = {{faculty|tojson|safe}};
 
-      var deptObjs = {{ deptObjs|tojson|safe }};
+    var deptObjs = {{ deptObjs|tojson|safe }};
 
-      var graph = {{ vizdata|tojson|safe }};
+    var graph = {{ vizdata|tojson|safe }};
 
-      var linkDist = {{linkDist|tojson|safe}};
+    var linkDist = {{linkDist|tojson|safe}};
 
-      var repel = {{repel|tojson|safe}};
+    var repel = {{repel|tojson|safe}};
 
-      var crange = {{crange|tojson|safe}};
+    var crange = {{crange|tojson|safe}};
 
-      var force_uri_base = "http://localhost:8000/force/";
+    var force_uri_base = "http://localhost:8000/force/";
 
-      var width = 900,
-          height = 800;
+    var width = 900,
+        height = 800;
 
-      var color = d3.scale.ordinal().domain(deptObjs).range(crange);
+    var color = d3.scale.ordinal().domain(deptObjs).range(crange);
 
-      var force = d3.layout.force()
-          .charge(repel)
-          .linkDistance(linkDist)
-          .size([(width - 300), height]);
+    var force = d3.layout.force()
+        .charge(repel)
+        .linkDistance(linkDist)
+        .size([(width - 300), height]);
 
-      var svg = d3.select("div.graphBox").append("svg")
-          .attr("width", width)
-          .attr("height", height);
+    var svg = d3.select("div.graphBox").append("svg")
+        .attr("width", width)
+        .attr("height", height);
 
-        force
-            .nodes(graph.nodes)
-            .links(graph.links)
-            .start();
+      force
+          .nodes(graph.nodes)
+          .links(graph.links)
+          .start();
 
-        var link = svg.selectAll(".link")
-            .data(graph.links)
-          .enter().append("line")
-            .attr("class", "link")
-            .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+      var link = svg.selectAll(".link")
+          .data(graph.links)
+        .enter().append("line")
+          .attr("class", "link")
+          .style("stroke-width", function(d) { return Math.sqrt(d.value); });
 
-        var node = svg.selectAll(".node")
-            .data(graph.nodes)
-          .enter().append("circle")
-            .attr("class", "node")
-            .attr("r", 10)
-            .style("fill", function(d) { return color(d.group); })
-            .call(force.drag);
+      var node = svg.selectAll(".node")
+          .data(graph.nodes)
+        .enter().append("circle")
+          .attr("class", "node")
+          .attr("r", 10)
+          .style("fill", function(d) { return color(d.group); })
+          .call(force.drag);
 
-        node.append("title")
-            .text(function(d) { return d.name; });
+      node.append("title")
+          .text(function(d) { return d.name; });
 
-        force.on("tick", function() {
-          link.attr("x1", function(d) { return d.source.x; })
-              .attr("y1", function(d) { return d.source.y; })
-              .attr("x2", function(d) { return d.target.x; })
-              .attr("y2", function(d) { return d.target.y; });
+      force.on("tick", function() {
+        link.attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; });
 
-          node.attr("cx", function(d) { return d.x; })
-              .attr("cy", function(d) { return d.y; });
-        });
-
-      $(function() {
-        $("#factabs").tabs();
-        $(".faculty-ctrl").each(function () {
-            attachFacultyNodes($(this));
-        });
-        $(".dept-ctrl").each(function () {
-            attachDepartmentNodes($(this));
-        });
+        node.attr("cx", function(d) { return d.x; })
+            .attr("cy", function(d) { return d.y; });
       });
 
-      function attachFacultyNodes(facCtrl) {
-        var facIndex = parseInt(facCtrl.attr('id').split("faculty-")[1]);
-        var subnet = getFacultySubnet(facIndex);
-        subnet.push(facIndex);
-        var nodes = $(".node").filter(function (index) {
-          return $.inArray(index, subnet) > -1;
+    $(function() {
+      $("#factabs").tabs();
+      $(".faculty-ctrl").each(function () {
+          attachFacultyNodes($(this));
+      });
+      $(".dept-ctrl").each(function () {
+          attachDepartmentNodes($(this));
+      });
+    });
+
+    function attachFacultyNodes(facCtrl) {
+      var facIndex = parseInt(facCtrl.attr('id').split("faculty-")[1]);
+      var subnet = getFacultySubnet(facIndex);
+      subnet.push(facIndex);
+      var nodes = $(".node").filter(function (index) {
+        return $.inArray(index, subnet) > -1;
+      });
+      var facNode = $(".node").eq(facIndex);
+      var timer;
+      facCtrl
+        .hover(function() {
+          $(this).addClass("slct-ctrl");
+          timer = setTimeout( function () {
+            focusSubNet(nodes);
+          }, 750);
+        },
+        function() {
+          clearTimeout(timer);
+          $(this).removeClass("slct-ctrl");
+          unfocusSubNet(nodes);
         });
-        var facNode = $(".node").eq(facIndex);
-        var timer;
-        facCtrl
-          .hover(function() {
-            $(this).addClass("slct-ctrl");
-            timer = setTimeout( function () {
-              focusSubNet(nodes);
-            }, 750);
-          },
-          function() {
-            clearTimeout(timer);
-            $(this).removeClass("slct-ctrl");
-            unfocusSubNet(nodes);
-          });
-      }
+    }
 
-      function getFacultySubnet(facIndex) {
-        var nodeKeys = [];
-        for ( var i=0, len=graph.links.length; i < len; i++) {
-            if (graph.links[i].source.index === facIndex) {
-              nodeKeys.push(graph.links[i].target.index);
-            }
-        }
-        return nodeKeys;
+    function getFacultySubnet(facIndex) {
+      var nodeKeys = [];
+      for ( var i=0, len=graph.links.length; i < len; i++) {
+          if (graph.links[i].source.index === facIndex) {
+            nodeKeys.push(graph.links[i].target.index);
+          }
       }
+      return nodeKeys;
+    }
 
-      function attachDepartmentNodes(deptCtrl) {
-        var nodeKeys = getDepartmentNodes(deptCtrl);
-        var nodes = $(".node").filter(function (index) {
-          return $.inArray(index, nodeKeys) > -1;
+    function attachDepartmentNodes(deptCtrl) {
+      var nodeKeys = getDepartmentNodes(deptCtrl);
+      var nodes = $(".node").filter(function (index) {
+        return $.inArray(index, nodeKeys) > -1;
+      });
+      var timer;
+      deptCtrl
+        .hover(function() {
+          $(this).addClass("slct-ctrl");
+          timer = setTimeout( function () {
+            focusSubNet(nodes);
+          }, 750);
+        },
+        function() {
+          clearTimeout(timer);
+          $(this).removeClass("slct-ctrl");
+          unfocusSubNet(nodes);
         });
-        var timer;
-        deptCtrl
-          .hover(function() {
-            $(this).addClass("slct-ctrl");
-            timer = setTimeout( function () {
-              focusSubNet(nodes);
-            }, 750);
-          },
-          function() {
-            clearTimeout(timer);
-            $(this).removeClass("slct-ctrl");
-            unfocusSubNet(nodes);
-          });
-      }
+    }
 
-      function getDepartmentNodes(deptCtrl) {
-        var rabid = deptCtrl.attr("id");
-        var nodeKeys = null;
-        for ( var i=0, len=deptObjs.length; i < len; i++) {
-            if (deptObjs[i].rabid === rabid) {
-              nodeKeys = deptObjs[i].keyIndex;
-            }
-        }
-        return nodeKeys;
+    function getDepartmentNodes(deptCtrl) {
+      var rabid = deptCtrl.attr("id");
+      var nodeKeys = null;
+      for ( var i=0, len=deptObjs.length; i < len; i++) {
+          if (deptObjs[i].rabid === rabid) {
+            nodeKeys = deptObjs[i].keyIndex;
+          }
       }
+      return nodeKeys;
+    }
 
-      function focusSubNet(subnet) {
-        subnet.addClass("subnet").velocity({ r: 12 });
-        $(".node").not(".subnet").velocity({ r: 5 });
-      }
+    function focusSubNet(subnet) {
+      subnet.addClass("subnet").velocity({ r: 12 });
+      $(".node").not(".subnet").velocity({ r: 5 });
+    }
 
-      function unfocusSubNet(subnet) {
-        subnet.removeClass("subnet");
-        $(".node").velocity({ r: 10 });
-      }
+    function unfocusSubNet(subnet) {
+      subnet.removeClass("subnet");
+      $(".node").velocity({ r: 10 });
+    }
 
-    </script>
-  </body>
-</html>
+  </script>
+{% endblock %}

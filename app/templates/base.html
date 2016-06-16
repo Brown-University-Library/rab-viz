@@ -2,6 +2,7 @@
 <html>
   <head>
     {% block head %}
+      <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/vitro.css') }}">
       <link rel="stylesheet" href="{{ url_for('static', filename='css/menupage.css') }}">
@@ -46,7 +47,10 @@
         </ul>
     </nav>
     {% endblock %}
-    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="content">
+      {% block content %}
+      {% endblock %}
+    </div>
     {% block footer %}
     <div id="footer">
       <footer role="contentinfo">
@@ -65,10 +69,11 @@
       </footer>
     </div>
     {% endblock %}
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
-    {% block pagejs %}{% endblock %}
+    {% block pagejs %}
+    {% endblock %}
   </body>
 </html>

@@ -24,8 +24,8 @@ def tabAbbv(chunk):
 	else:
 		return start+"-"+end
 
-@app.route('/<graphtype>')
 @app.route('/<graphtype>/')
+# @app.route('/<graphtype>/')
 def index(graphtype):
 	if graphtype == "force":
 		allViz = ForceViz.query.all()
