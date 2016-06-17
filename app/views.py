@@ -5,6 +5,7 @@ from .models import ChordViz, ForceViz, Faculty, Departments
 
 from collections import defaultdict
 import math
+import re
 
 colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(148,103,189)','rgb(214,39,40)','rgb(44,160,44)','rgb(255,127,14)',
@@ -24,6 +25,19 @@ def tabAbbv(chunk):
 	else:
 		return start+"-"+end
 
+def buildD3Index():
+	idx = defaultdict(list)
+	def indexer(k=None, v=None):
+		if (k is None and v is None):
+			return idx
+		else:
+			idx[k].append(v)
+	return indexer
+
+onlyAlphaNums = re.compile('[\W_]+')
+def sanitizeFisAffilation(aff):
+	return onlyAlphaNums.sub('', aff).lower()
+
 @app.route('/<graphtype>/')
 # @app.route('/<graphtype>/')
 def index(graphtype):
@@ -36,7 +50,7 @@ def index(graphtype):
 		urlbase = "http://localhost:8000/chord/"
 		pageTitle = "Chord Graph"
 	else:
-		raise Exception("Something bad!")
+		raise Exception("Bad graphtype: "+graphtype)
 	forceFac = [ f.rabid for f in allViz if 'org-brown' not in f.rabid]
 	faculty = Faculty.query.filter(Faculty.rabid.in_(forceFac)).all()
 	forceDept = [f.rabid for f in allViz if 'org-brown' in f.rabid]
@@ -88,31 +102,35 @@ def forceViz(viztype, rabid, page=0):
 				"graphid": urlbase + "faculty/" + f.rabid[33:],
 				"name": f.fullname,
 				"abbv":f.abbrev + ".",
-				"aff":f.deptLabel,
-				"keyIndex": vizKey.index(uri)
+				"aff":f.deptid,
+				# "keyIndex": vizKey.index(uri)
 				} for uri in vizKey
 					for f in allFaculty
 						if uri == f.rabid ]
-	deptKey = defaultdict(list)
+	facIndexer = buildD3Index()
+	for uri in vizKey:
+		facIndexer(uri, vizKey.index(uri))
+	facIndex = facIndexer()
+	# deptKey = defaultdict(list)
+	deptIndexer = buildD3Index()
 	for o in facObjs:
-		deptKey[o['aff']].append(o['keyIndex'])
+		deptIndexer(o['aff'], vizKey.index(o['rabid']))
+		# deptKey[o['aff']].append(o['keyIndex'])
+	deptIndex  = deptIndexer()
 	deptObjs = [ {"rabid": d.rabid,
 				 "graphid": urlbase + "dept/" + d.rabid[33:],
-				 "name": k, #d.label,
-				 "keyIndex": deptKey[k]
-				 } for k in deptKey.keys()
+				 "name": d.label,
+				 # "keyIndex": deptKey[k]
+				 } for uri in deptIndex.keys()
 				 		for d in allDepts
-				 			if k in json.loads(d.useFor) ]
+				 			if uri == d.rabid ]
 	nodes = [ {	"name": facObj["name"],
-				"group": deptObj["rabid"]
-				} for facObj in facObjs
-					for deptObj in deptObjs
-						if deptObj["name"] == facObj["aff"]]
+				"group": facObj["aff"]
+				} for facObj in facObjs ]
 	links = json.loads(vizData.links)
 	forceData = { "nodes": nodes, "links": links }
 	facObjs = sorted(facObjs, key=lambda kv: kv['name'])
 	deptObjs = sorted(deptObjs, key=lambda kv: kv['name'])
-	deptNames = [d["rabid"] for d in deptObjs]
 	chunkedFacs = chunkify(facObjs, 20)
 	tabbedFacs = [ {"tab": tabAbbv(chunk),
 					"faculty": chunk } for chunk in chunkedFacs ]
@@ -127,6 +145,7 @@ def forceViz(viztype, rabid, page=0):
 	return render_template(
 			'force.html',
 			departments=columnedDepts, faculty=tabbedFacs,
-			deptNames=deptNames, deptObjs=deptObjs,
+			facIndex=facIndex, deptIndex=deptIndex,
+			legend=deptIndex.keys(),
 			vizdata=forceData, linkDist=30, repel=-350,
 			crange=colorRange)

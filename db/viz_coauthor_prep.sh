@@ -22,7 +22,7 @@ rm $LOAD/*
 python $EXTRACT/scripts/download_rab_data.py
 
 #Identity Tables
-python $TRANSFORM/scripts/faculty_transform.py $EXTRACT/data/faculty.csv $LOAD
+python $TRANSFORM/scripts/faculty_transform.py $EXTRACT/data/faculty.csv $EXTRACT/data/departments.csv $LOAD
 python $TRANSFORM/scripts/affiliation_transform.py $EXTRACT/data/affiliations.csv $LOAD
 python $TRANSFORM/scripts/coauth_transform.py $EXTRACT/data/coauthors.csv $EXTRACT/data/faculty.csv $LOAD
 python $TRANSFORM/scripts/department_transform.py $EXTRACT/data/departments.csv $EXTRACT/data/faculty.csv $LOAD

@@ -7,7 +7,7 @@ class Faculty(db.Model):
 	fullname = db.Column(db.String())
 	abbrev = db.Column(db.String())
 	title  = db.Column(db.String())
-	deptLabel = db.Column(db.String())
+	deptid = db.Column(db.String())
 
 class Departments(db.Model):
 	rabid = db.Column(db.String, primary_key=True)

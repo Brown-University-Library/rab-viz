@@ -29,7 +29,7 @@ def main(dbDir, loadDir):
 			"file": os.path.join(loadDir,"faculty_data.csv"),
 			"table": "faculty",
 			"columns": ["rabid","lastname","firstname","fullname",
-						"abbrev","title","deptLabel"]
+						"abbrev","title","deptid"]
 		},
 		"departments": {
 			"file": os.path.join(loadDir,"departments_data.csv"),

@@ -106,7 +106,7 @@
             <div id="factab-{{loop.index}}">
               <ul>
                 {% for fac in tab.faculty %}
-                  <li id="faculty-{{fac.keyIndex}}" class="faculty-ctrl">
+                  <li id="{{fac.rabid}}" class="faculty-ctrl">
                     <a href="{{fac.graphid}}">{{fac.abbv}}</a>
                   </li>
                 {% endfor %}
@@ -124,9 +124,13 @@
 
     var facObjs = {{faculty|tojson|safe}};
 
-    var deptObjs = {{ deptObjs|tojson|safe }};
+    var deptObjs = {{ departments|tojson|safe }};
 
-    var deptNames = {{ deptNames|tojson|safe }};
+    var facIdxLookup = {{ facIndex|tojson|safe }};
+
+    var deptIdxLookup = {{ deptIndex|tojson|safe }};
+
+    var legend = {{legend|tojson|safe}};
 
     var graph = {{ vizdata|tojson|safe }};
 
@@ -143,7 +147,7 @@
     var width = 900,
         height = 800;
 
-    var color = d3.scale.ordinal().domain(deptNames).range(crange);
+    var color = d3.scale.ordinal().domain(legend).range(crange);
 
     var force = d3.layout.force()
         .charge(repel)
@@ -205,7 +209,8 @@
     }
 
     function attachFacultyNodes(facCtrl) {
-      var facIndex = parseInt(facCtrl.attr('id').split("faculty-")[1]);
+      var rabid = facCtrl.attr('id');
+      var facIndex = facIdxLookup[rabid][0];
       var subnet = getFacultySubnet(facIndex);
       subnet.push(facIndex);
       var nodes = $(".node").filter(function (index) {
@@ -259,12 +264,12 @@
 
     function getDepartmentNodes(deptCtrl) {
       var rabid = deptCtrl.attr("id");
-      var nodeKeys = null;
-      for ( var i=0, len=deptObjs.length; i < len; i++) {
-          if (deptObjs[i].rabid === rabid) {
-            nodeKeys = deptObjs[i].keyIndex;
-          }
-      }
+      var nodeKeys = deptIdxLookup[rabid];
+      // for ( var i=0, len=deptObjs.length; i < len; i++) {
+      //     if (deptObjs[i].rabid === rabid) {
+      //       nodeKeys = deptObjs[i].keyIndex;
+      //     }
+      // }
       return nodeKeys;
     }
 

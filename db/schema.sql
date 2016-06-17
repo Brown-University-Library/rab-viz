@@ -6,7 +6,8 @@ create table faculty (
     fullname text not null,
     abbrev text not null,
     title text not null,    
-    deptLabel text not null
+    deptid text not null,
+    FOREIGN KEY(deptid) REFERENCES department(rabid)
 );
 
 drop table if exists departments;
