@@ -34,9 +34,18 @@ def buildD3Index():
 			idx[k].append(v)
 	return indexer
 
-onlyAlphaNums = re.compile('[\W_]+')
-def sanitizeFisAffilation(aff):
-	return onlyAlphaNums.sub('', aff).lower()
+def rabidIndex(objList, dataList):
+	return [ obj.update(
+				("keyIndex",dataList.index(obj["rabid"]))
+				) for obj in objList ]
+
+def attrIndex(objList, attr, dataList):
+	idx = defaultdict(list)
+	for obj in objList:
+		idx[obj[attr]].append(obj["keyIndex"])
+
+	return [ (objList[attr], objList["keyIndex"])]
+
 
 @app.route('/<graphtype>/')
 # @app.route('/<graphtype>/')
@@ -99,11 +108,11 @@ def forceViz(viztype, rabid, page=0):
 	allFaculty = Faculty.query.all()
 	allDepts = Departments.query.all()
 	facObjs = [ {"rabid": f.rabid,
+				"shortid": f.rabid[33:],
 				"graphid": urlbase + "faculty/" + f.rabid[33:],
 				"name": f.fullname,
 				"abbv":f.abbrev + ".",
 				"aff":f.deptid,
-				# "keyIndex": vizKey.index(uri)
 				} for uri in vizKey
 					for f in allFaculty
 						if uri == f.rabid ]
@@ -111,16 +120,14 @@ def forceViz(viztype, rabid, page=0):
 	for uri in vizKey:
 		facIndexer(uri, vizKey.index(uri))
 	facIndex = facIndexer()
-	# deptKey = defaultdict(list)
 	deptIndexer = buildD3Index()
 	for o in facObjs:
 		deptIndexer(o['aff'], vizKey.index(o['rabid']))
-		# deptKey[o['aff']].append(o['keyIndex'])
 	deptIndex  = deptIndexer()
 	deptObjs = [ {"rabid": d.rabid,
+				 "shortid": d.rabid[33:],
 				 "graphid": urlbase + "dept/" + d.rabid[33:],
 				 "name": d.label,
-				 # "keyIndex": deptKey[k]
 				 } for uri in deptIndex.keys()
 				 		for d in allDepts
 				 			if uri == d.rabid ]
@@ -147,5 +154,7 @@ def forceViz(viztype, rabid, page=0):
 			departments=columnedDepts, faculty=tabbedFacs,
 			facIndex=facIndex, deptIndex=deptIndex,
 			legend=deptIndex.keys(),
-			vizdata=forceData, linkDist=30, repel=-350,
+			vizdata=forceData,
+			linkDist=40,
+			repel=(-90000/(len(facObjs)+20)**1.4),
 			crange=colorRange)
