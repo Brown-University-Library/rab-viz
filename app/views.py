@@ -14,26 +14,6 @@ colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(49,130,189)','rgb(49,163,84)','rgb(158,154,200)','rgb(253,141,60)',
 'rgb(116,196,118)','rgb(189,158,57)']
 
-def chunkify(tList, chunk):
-	return [ tList[i:i+chunk] for i in range(0, len(tList), chunk) ]
-
-def tabAbbv(chunk):
-	start = chunk[0]["name"][0]
-	end = chunk[-1]["name"][0]
-	if start == end:
-		return start
-	else:
-		return start+"-"+end
-
-def buildD3Index():
-	idx = defaultdict(list)
-	def indexer(k=None, v=None):
-		if (k is None and v is None):
-			return idx
-		else:
-			idx[k].append(v)
-	return indexer
-
 def joinFaculty(vizKey, urlbase, facSQL):
 	facObjs = [
 		{"rabid": f.rabid,
@@ -52,6 +32,7 @@ def joinFaculty(vizKey, urlbase, facSQL):
 def joinDepartments(facObjs, urlbase, deptSQL):
 	deptData = [ (fac['aff'], fac['facIdx'], fac['facNet'])
 					for fac in facObjs ]
+	depts = list({ p[0] for p in deptData})
 	deptObjs = [
 		{"rabid": d.rabid,
 		"shortid": d.rabid[33:],
@@ -59,9 +40,9 @@ def joinDepartments(facObjs, urlbase, deptSQL):
 		"name": d.label,
 		"deptNet": [],
 		"deptMembers": set(),
-		} for p in deptData
+		} for p in depts
 		 		for d in deptSQL
-		 			if p[0] == d.rabid ]
+		 			if p == d.rabid ]
 	for dept in deptObjs:
 		for p in deptData:
 			if dept["rabid"] == p[0]:
@@ -71,6 +52,32 @@ def joinDepartments(facObjs, urlbase, deptSQL):
 		dept["deptNet"] = list(dept["deptNet"])
 		dept["deptMembers"] = list(dept["deptMembers"])
 	return deptObjs
+
+def chunkify(tList, chunk):
+	return [ tList[i:i+chunk] for i in range(0, len(tList), chunk) ]
+
+def tabAbbv(chunk):
+	start = chunk[0]["name"][0]
+	end = chunk[-1]["name"][0]
+	if start == end:
+		return start
+	else:
+		return start+"-"+end
+
+def prepFacultyForDisplay(facObjs):
+	sortedFacs = sorted(facObjs, key=lambda kv: kv['name'])
+	chunkedFacs = chunkify(sortedFacs, 20)
+	tabbedFacs = [ {"tab": tabAbbv(chunk),
+					"faculty": chunk } for chunk in chunkedFacs ]
+	return tabbedFacs
+
+def prepDepartmentsForDisplay(deptObjs):
+	sortedDepts = sorted(deptObjs, key=lambda kv: kv['name'])
+	columnedDepts = chunkify(sortedDepts, int(math.ceil(len(sortedDepts)/3.0)))
+	if len(columnedDepts) < 3: # Needed for when len(deptObjs) == 4
+		straggler = columnedDepts[1].pop()
+		columnedDepts.append([straggler])
+	return columnedDepts
 
 @app.route('/<graphtype>/')
 # @app.route('/<graphtype>/')
@@ -139,27 +146,14 @@ def forceViz(viztype, rabid, page=0):
 			if l["source"] == fac["facIdx"]:
 				fac["facNet"].append(l["target"])
 	deptObjs = joinDepartments(facObjs, urlbase, allDepts)
-	facIndexer = buildD3Index()
-	for uri in vizKey:
-		facIndexer(uri, vizKey.index(uri))
-	facIndex = facIndexer()
-	deptIndexer = buildD3Index()
-	for o in facObjs:
-		deptIndexer(o['aff'], vizKey.index(o['rabid']))
-	deptIndex  = deptIndexer()
 	nodes = [ {	"name": facObj["name"],
 				"group": facObj["aff"]
 				} for facObj in facObjs ]
 	forceData = { "nodes": nodes, "links": links }
-	facObjs = sorted(facObjs, key=lambda kv: kv['name'])
-	deptObjs = sorted(deptObjs, key=lambda kv: kv['name'])
-	chunkedFacs = chunkify(facObjs, 20)
-	tabbedFacs = [ {"tab": tabAbbv(chunk),
-					"faculty": chunk } for chunk in chunkedFacs ]
-	columnedDepts = chunkify(deptObjs, int(math.ceil(len(deptObjs)/3.0)))
-	if len(columnedDepts) < 3: # Needed for when len(deptObjs) == 4
-		straggler = columnedDepts[1].pop()
-		columnedDepts.append([straggler])
+	tabbedFacs = prepFacultyForDisplay(facObjs)
+	columnedDepts = prepDepartmentsForDisplay(deptObjs)
+	facNodes = { fac["rabid"]: fac  for fac in facObjs }
+	deptNodes = { dept["rabid"]: dept  for dept in deptObjs }
 	# if viztype=='dept':
 	# 	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
 	# elif viztype=='faculty':
@@ -167,8 +161,8 @@ def forceViz(viztype, rabid, page=0):
 	return render_template(
 			'force.html',
 			departments=columnedDepts, faculty=tabbedFacs,
-			facIndex=facIndex, deptIndex=deptIndex,
-			legend=deptIndex.keys(),
+			facObjs=facNodes, deptObjs=deptNodes,
+			colorScale=deptNodes.keys(),
 			vizdata=forceData,
 			linkDist=40,
 			repel=(-90000/(len(facObjs)+20)**1.4),

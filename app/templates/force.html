@@ -127,15 +127,11 @@
   <script type="text/javascript" src="{{ url_for('static', filename='js/velocity.min.js') }}"></script>
   <script type="text/javascript">
 
-    var facObjs = {{faculty|tojson|safe}};
+    var facObjs = {{ facObjs|tojson|safe }};
 
-    var deptObjs = {{ departments|tojson|safe }};
+    var deptObjs = {{ deptObjs|tojson|safe }};
 
-    var facIdxLookup = {{ facIndex|tojson|safe }};
-
-    var deptIdxLookup = {{ deptIndex|tojson|safe }};
-
-    var legend = {{legend|tojson|safe}};
+    var colorScale = {{ colorScale|tojson|safe}};
 
     var graph = {{ vizdata|tojson|safe }};
 
@@ -145,14 +141,9 @@
 
     var crange = {{crange|tojson|safe}};
 
-    console.log(graph.nodes);
-
     var force_uri_base = "http://localhost:8000/force/";
 
-    // var width = 900,
-    //     height = 800;
-
-    var color = d3.scale.ordinal().domain(legend).range(crange);
+    var color = d3.scale.ordinal().domain(colorScale).range(crange);
 
     var force = d3.layout.force()
         .charge(repel)
@@ -160,8 +151,6 @@
         .size([800, 600]);
 
     var svg = d3.select("div.graphBox").append("svg");
-        // .attr("width", width)
-        // .attr("height", height);
 
       force
           .nodes(graph.nodes)
@@ -215,8 +204,8 @@
 
     function attachFacultyNodes(facCtrl) {
       var rabid = facCtrl.attr('id');
-      var facIndex = facIdxLookup[rabid][0];
-      var subnet = getFacultySubnet(facIndex);
+      var facIndex = facObjs[rabid]["facIdx"];
+      var subnet = facObjs[rabid]["facNet"];
       subnet.push(facIndex);
       var nodes = $(".node").filter(function (index) {
         return $.inArray(index, subnet) > -1;
@@ -237,18 +226,9 @@
         });
     }
 
-    function getFacultySubnet(facIndex) {
-      var nodeKeys = [];
-      for ( var i=0, len=graph.links.length; i < len; i++) {
-          if (graph.links[i].source.index === facIndex) {
-            nodeKeys.push(graph.links[i].target.index);
-          }
-      }
-      return nodeKeys;
-    }
-
     function attachDepartmentNodes(deptCtrl) {
-      var nodeKeys = getDepartmentNodes(deptCtrl);
+      var rabid = deptCtrl.attr("id");
+      var nodeKeys = deptObjs[rabid]["deptMembers"];
       var nodes = $(".node").filter(function (index) {
         return $.inArray(index, nodeKeys) > -1;
       });
@@ -265,17 +245,6 @@
           $(this).removeClass("slct-ctrl");
           unfocusSubNet(nodes);
         });
-    }
-
-    function getDepartmentNodes(deptCtrl) {
-      var rabid = deptCtrl.attr("id");
-      var nodeKeys = deptIdxLookup[rabid];
-      // for ( var i=0, len=deptObjs.length; i < len; i++) {
-      //     if (deptObjs[i].rabid === rabid) {
-      //       nodeKeys = deptObjs[i].keyIndex;
-      //     }
-      // }
-      return nodeKeys;
     }
 
     function focusSubNet(subnet) {
