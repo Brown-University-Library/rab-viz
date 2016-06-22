@@ -34,18 +34,43 @@ def buildD3Index():
 			idx[k].append(v)
 	return indexer
 
-def rabidIndex(objList, dataList):
-	return [ obj.update(
-				("keyIndex",dataList.index(obj["rabid"]))
-				) for obj in objList ]
+def joinFaculty(vizKey, urlbase, facSQL):
+	facObjs = [
+		{"rabid": f.rabid,
+		"shortid": f.rabid[33:],
+		"graphid": urlbase + "faculty/" + f.rabid[33:],
+		"name": f.fullname,
+		"abbv":f.abbrev + ".",
+		"aff":f.deptid,
+		"facIdx": vizKey.index(uri),
+		"facNet": []
+		} for uri in vizKey
+			for f in facSQL
+				if uri == f.rabid ]
+	return facObjs
 
-def attrIndex(objList, attr, dataList):
-	idx = defaultdict(list)
-	for obj in objList:
-		idx[obj[attr]].append(obj["keyIndex"])
-
-	return [ (objList[attr], objList["keyIndex"])]
-
+def joinDepartments(facObjs, urlbase, deptSQL):
+	deptData = [ (fac['aff'], fac['facIdx'], fac['facNet'])
+					for fac in facObjs ]
+	deptObjs = [
+		{"rabid": d.rabid,
+		"shortid": d.rabid[33:],
+		"graphid": urlbase + "dept/" + d.rabid[33:],
+		"name": d.label,
+		"deptNet": [],
+		"deptMembers": set(),
+		} for p in deptData
+		 		for d in deptSQL
+		 			if p[0] == d.rabid ]
+	for dept in deptObjs:
+		for p in deptData:
+			if dept["rabid"] == p[0]:
+				dept["deptMembers"].add(p[1])
+				dept["deptNet"].extend(p[2])
+	for dept in deptObjs:
+		dept["deptNet"] = list(dept["deptNet"])
+		dept["deptMembers"] = list(dept["deptMembers"])
+	return deptObjs
 
 @app.route('/<graphtype>/')
 # @app.route('/<graphtype>/')
@@ -105,17 +130,15 @@ def forceViz(viztype, rabid, page=0):
 	urlbase = "http://localhost:8000/force/"
 	vizData = ForceViz.query.filter_by(rabid=rabid, page=page).first()
 	vizKey = json.loads(vizData.legend)
+	links = json.loads(vizData.links)
 	allFaculty = Faculty.query.all()
 	allDepts = Departments.query.all()
-	facObjs = [ {"rabid": f.rabid,
-				"shortid": f.rabid[33:],
-				"graphid": urlbase + "faculty/" + f.rabid[33:],
-				"name": f.fullname,
-				"abbv":f.abbrev + ".",
-				"aff":f.deptid,
-				} for uri in vizKey
-					for f in allFaculty
-						if uri == f.rabid ]
+	facObjs = joinFaculty(vizKey, urlbase, allFaculty)
+	for fac in facObjs:
+		for l in links:
+			if l["source"] == fac["facIdx"]:
+				fac["facNet"].append(l["target"])
+	deptObjs = joinDepartments(facObjs, urlbase, allDepts)
 	facIndexer = buildD3Index()
 	for uri in vizKey:
 		facIndexer(uri, vizKey.index(uri))
@@ -124,17 +147,9 @@ def forceViz(viztype, rabid, page=0):
 	for o in facObjs:
 		deptIndexer(o['aff'], vizKey.index(o['rabid']))
 	deptIndex  = deptIndexer()
-	deptObjs = [ {"rabid": d.rabid,
-				 "shortid": d.rabid[33:],
-				 "graphid": urlbase + "dept/" + d.rabid[33:],
-				 "name": d.label,
-				 } for uri in deptIndex.keys()
-				 		for d in allDepts
-				 			if uri == d.rabid ]
 	nodes = [ {	"name": facObj["name"],
 				"group": facObj["aff"]
 				} for facObj in facObjs ]
-	links = json.loads(vizData.links)
 	forceData = { "nodes": nodes, "links": links }
 	facObjs = sorted(facObjs, key=lambda kv: kv['name'])
 	deptObjs = sorted(deptObjs, key=lambda kv: kv['name'])
