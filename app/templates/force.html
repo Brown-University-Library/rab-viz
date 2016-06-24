@@ -64,6 +64,23 @@
     box-sizing: border-box;
   }*/
 
+  #groupsBox {
+    border: 1px solid gray;
+    padding: 5px 5px 5px 10px;
+  }
+
+  #membersBox {
+    border: 1px solid gray;
+/*    padding: 5px 5px;*/
+  }
+
+  #thumb {
+    height: auto; 
+    width: auto; 
+    max-width: 100px; 
+    max-height: 100px;
+  }
+
   .deptBug {
     float: left;
     width: 10px;
@@ -85,7 +102,7 @@
           <div class="col-md-12 graphBox">
           </div>
         </div>
-        <div id="legendColumns" class="row legendBox">
+        <div id="groupsBox" class="row">
           {% for column in departments%}
             <div class="col-md-4">
               <ul>
@@ -100,24 +117,37 @@
           {% endfor %}
         </div>
       </div>
-      <div class="col-md-3 sidebar">
-        <div id="factabs">
-          <ul>
+      <div id="membersBox" class="col-md-3">
+        <div id="subjectDetails" class="row">
+          <div class="col-md-12">
+            {% if vizSubject.thumb %}
+              <img id="thumb" src="{{ vizSubject.thumb }}" />
+            {% endif %}
+            <h2>{{ vizSubject.name }}</h2>
+            {% if vizSubject.title %}
+              <h3>{{ vizSubject.title }}</h3>
+            {% endif %}
+          </div>
+        </div>
+        <div class="row">
+          <div id="factabs" class="col-md-12">
+            <ul>
+              {% for tab in faculty %}
+                <li><a href="#factab-{{loop.index}}">{{tab.tab}}</a></li>
+              {% endfor %}
+            </ul>
             {% for tab in faculty %}
-              <li><a href="#factab-{{loop.index}}">{{tab.tab}}</a></li>
+              <div id="factab-{{loop.index}}">
+                <ul>
+                  {% for fac in tab.faculty %}
+                    <li id="{{fac.rabid}}" class="faculty-ctrl">
+                      <a href="{{fac.graphid}}">{{fac.abbv}}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
             {% endfor %}
-          </ul>
-          {% for tab in faculty %}
-            <div id="factab-{{loop.index}}">
-              <ul>
-                {% for fac in tab.faculty %}
-                  <li id="{{fac.rabid}}" class="faculty-ctrl">
-                    <a href="{{fac.graphid}}">{{fac.abbv}}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-          {% endfor %}
+          </div>
         </div>
       </div>
     </div>

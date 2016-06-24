@@ -6,6 +6,8 @@ from .models import ChordViz, ForceViz, Faculty, Departments
 from collections import defaultdict
 import math
 import re
+import requests
+import os
 
 colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(148,103,189)','rgb(214,39,40)','rgb(44,160,44)','rgb(255,127,14)',
@@ -13,6 +15,8 @@ colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(231,186,82)','rgb(181,207,107)','rgb(107,110,207)','rgb(230,85,13)',
 'rgb(49,130,189)','rgb(49,163,84)','rgb(158,154,200)','rgb(253,141,60)',
 'rgb(116,196,118)','rgb(189,158,57)']
+
+dservURI = "https://vivo.brown.edu/services/data/v1/"
 
 def joinFaculty(vizKey, urlbase, facSQL):
 	facObjs = [
@@ -152,17 +156,26 @@ def forceViz(viztype, rabid, page=0):
 	forceData = { "nodes": nodes, "links": links }
 	tabbedFacs = prepFacultyForDisplay(facObjs)
 	columnedDepts = prepDepartmentsForDisplay(deptObjs)
-	facNodes = { fac["rabid"]: fac  for fac in facObjs }
-	deptNodes = { dept["rabid"]: dept  for dept in deptObjs }
-	# if viztype=='dept':
-	# 	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
-	# elif viztype=='faculty':
-	# 	pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
+	facObjLookup = { fac["rabid"]: fac  for fac in facObjs }
+	deptObjLookup = { dept["rabid"]: dept  for dept in deptObjs }
+	if viztype=='dept':
+		vizSbj = deptObjLookup[rabid]
+		dservType = 'ou'
+	elif viztype=='faculty':
+		vizSbj = facObjLookup[rabid]
+		dservType = 'faculty'
+	getDserv = os.path.join(dservURI, dservType, vizSbj["shortid"])
+	res = requests.get(getDserv)
+	if res.status_code == 200:
+		resData = res.json()["results"]
+		vizSbj["thumb"] = resData.get("thumbnail")
+		vizSbj["title"] = resData.get("title")
 	return render_template(
 			'force.html',
 			departments=columnedDepts, faculty=tabbedFacs,
-			facObjs=facNodes, deptObjs=deptNodes,
-			colorScale=deptNodes.keys(),
+			facObjs=facObjLookup, deptObjs=deptObjLookup,
+			vizSubject = vizSbj,
+			colorScale=deptObjLookup.keys(),
 			vizdata=forceData,
 			linkDist=40,
 			repel=(-90000/(len(facObjs)+20)**1.4),
