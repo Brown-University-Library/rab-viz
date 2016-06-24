@@ -97,12 +97,40 @@
 {% block content %}
   <div class="container">
     <div class="row">
-      <div class="col-md-9">
+      <div class="col-md-8">
         <div class="row">
           <div class="col-md-12 graphBox">
           </div>
         </div>
-        <div id="groupsBox" class="row">
+        <div id="factabs" class="row">
+          <div class="row">
+            <div class="col-md-12">
+              <ul>
+                {% for tab in faculty %}
+                  <li><a href="#factab-{{loop.index}}">{{tab.tab}}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+            {% for tab in faculty %}
+              <div id="factab-{{loop.index}}">
+                {% for col in tab.faculty %}
+                  <div class="col-md-3">
+                    <ul>
+                      {% for fac in col %}
+                        <li id="{{fac.rabid}}" class="faculty-ctrl">
+                          <a href="{{fac.graphid}}">{{fac.abbv}}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+<!--         <div id="groupsBox" class="row">
           {% for column in departments%}
             <div class="col-md-4">
               <ul>
@@ -115,9 +143,9 @@
               </ul>
             </div>
           {% endfor %}
-        </div>
+        </div> -->
       </div>
-      <div id="membersBox" class="col-md-3">
+      <div id="membersBox" class="col-md-4">
         <div id="subjectDetails" class="row">
           <div class="col-md-12">
             {% if vizSubject.thumb %}
@@ -127,26 +155,6 @@
             {% if vizSubject.title %}
               <h3>{{ vizSubject.title }}</h3>
             {% endif %}
-          </div>
-        </div>
-        <div class="row">
-          <div id="factabs" class="col-md-12">
-            <ul>
-              {% for tab in faculty %}
-                <li><a href="#factab-{{loop.index}}">{{tab.tab}}</a></li>
-              {% endfor %}
-            </ul>
-            {% for tab in faculty %}
-              <div id="factab-{{loop.index}}">
-                <ul>
-                  {% for fac in tab.faculty %}
-                    <li id="{{fac.rabid}}" class="faculty-ctrl">
-                      <a href="{{fac.graphid}}">{{fac.abbv}}</a>
-                    </li>
-                  {% endfor %}
-                </ul>
-              </div>
-            {% endfor %}
           </div>
         </div>
       </div>
