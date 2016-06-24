@@ -102,7 +102,7 @@
           <div class="col-md-12 graphBox">
           </div>
         </div>
-        <div id="factabs" class="row">
+        <div id="facTabs" class="row">
           <div class="row">
             <div class="col-md-12">
               <ul>
@@ -115,7 +115,7 @@
           <div class="row">
             {% for tab in faculty %}
               <div id="factab-{{loop.index}}">
-                {% for col in tab.faculty %}
+                {% for col in tab.tabContents %}
                   <div class="col-md-3">
                     <ul>
                       {% for fac in col %}
@@ -130,20 +130,6 @@
             {% endfor %}
           </div>
         </div>
-<!--         <div id="groupsBox" class="row">
-          {% for column in departments%}
-            <div class="col-md-4">
-              <ul>
-                {% for dept in column %}
-                  <li id="{{ dept.rabid }}" class="dept-ctrl">
-                    <span id="bug-{{dept.rabid}}" class="deptBug"></span>
-                    <a href="{{dept.graphid}}">{{dept.name}}</a>
-                  </li>
-                {% endfor %}
-              </ul>
-            </div>
-          {% endfor %}
-        </div> -->
       </div>
       <div id="membersBox" class="col-md-4">
         <div id="subjectDetails" class="row">
@@ -156,6 +142,30 @@
               <h3>{{ vizSubject.title }}</h3>
             {% endif %}
           </div>
+        </div>
+        <div id="deptTabs" class="row">
+          <div class="row">
+            <div class="col-md-12">
+              <ul>
+                {% for tab in departments %}
+                  <li><a href="#depttab-{{loop.index}}">{{tab.tab}}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+            {% for tab in departments %}
+              <div id="depttab-{{loop.index}}">
+                <ul>
+                  {% for dept in tab.tabContents %}
+                    <li id="{{ dept.rabid }}" class="dept-ctrl">
+                      <span id="bug-{{dept.rabid}}" class="deptBug"></span>
+                      <a href="{{dept.graphid}}">{{dept.name}}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
         </div>
       </div>
     </div>
@@ -223,7 +233,8 @@
       });
 
     $(function() {
-      $("#factabs").tabs();
+      $("#facTabs").tabs();
+      $("#deptTabs").tabs();
       $(".deptBug").each(function () {
           setDeptColor($(this));
       });

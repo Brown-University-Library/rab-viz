@@ -75,18 +75,10 @@ def tabAbbv(chunk):
 # 					"faculty": chunk } for chunk in chunkedFacs ]
 # 	return tabbedFacs
 
-def prepDepartmentsForDisplay(deptObjs):
-	sortedDepts = sorted(deptObjs, key=lambda kv: kv['name'])
-	columnedDepts = chunkify(sortedDepts, int(math.ceil(len(sortedDepts)/3.0)))
-	if len(columnedDepts) < 3: # Needed for when len(deptObjs) == 4
-		straggler = columnedDepts[1].pop()
-		columnedDepts.append([straggler])
-	return columnedDepts
-
-def prepTabsForDisplay(tabList):
-	tabChunks = chunkify(tabList, 12)
+def prepTabsForDisplay(tabList, tabSize):
+	tabChunks = chunkify(tabList, tabSize)
 	tabs = [ {"tab": tabAbbv(chunk),
-					"faculty": chunk } for chunk in tabChunks ]
+					"tabContents": chunk } for chunk in tabChunks ]
 	return tabs
 
 def prepColumnsForDisplay(colList, numCols):
@@ -95,11 +87,15 @@ def prepColumnsForDisplay(colList, numCols):
 
 def prepFacultyForDisplay(facObjs):
 	sortedFacs = sorted(facObjs, key=lambda kv: kv['name'])
-	tabs = prepTabsForDisplay(sortedFacs)
+	tabs = prepTabsForDisplay(sortedFacs, 12)
 	for tab in tabs:
-		tab["faculty"] = prepColumnsForDisplay(tab["faculty"], 4.0)
+		tab["tabContents"] = prepColumnsForDisplay(tab["tabContents"], 4.0)
 	return tabs
 
+def prepDepartmentsForDisplay(deptObjs):
+	sortedDepts = sorted(deptObjs, key=lambda kv: kv['name'])
+	tabs = prepTabsForDisplay(sortedDepts, 10)
+	return tabs
 
 @app.route('/<graphtype>/')
 # @app.route('/<graphtype>/')
@@ -173,9 +169,6 @@ def forceViz(viztype, rabid, page=0):
 				} for facObj in facObjs ]
 	forceData = { "nodes": nodes, "links": links }
 	tabbedFacs = prepFacultyForDisplay(facObjs)
-	for tab in tabbedFacs:
-		for faclist in tab["faculty"]:
-			print len(faclist), faclist
 	columnedDepts = prepDepartmentsForDisplay(deptObjs)
 	facObjLookup = { fac["rabid"]: fac  for fac in facObjs }
 	deptObjLookup = { dept["rabid"]: dept  for dept in deptObjs }
