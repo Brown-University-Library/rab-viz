@@ -131,22 +131,60 @@ def index(graphtype):
 @app.route('/chord/<viztype>/<rabid>/<page>')
 def chordViz(viztype, rabid, page=0):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)
+	urlbase = "http://localhost:8000/chord/"
 	vizData = ChordViz.query.filter_by(rabid=rabid, page=page).first()
-	legend = json.loads(vizData.legend)
+	vizKey = json.loads(vizData.legend)
 	matrix = json.loads(vizData.matrix)
 	allFaculty = Faculty.query.all()
 	allDepts = Departments.query.all()
-	facultyLookup = { f.rabid: [f.abbrev, f.deptLabel, f.rabid] for f in allFaculty }
-	facultyList = [ facultyLookup[f] for f in legend ]
-	deptList = list({ f[1] for f in facultyList })
-	deptMap = { l: d.rabid for l in deptList for d in allDepts if l in json.loads(d.useFor)  }
+	facObjs = joinFaculty(vizKey, urlbase, allFaculty)
+	for fac in facObjs:
+		ntData = matrix[fac['facIdx']]
+		for e, co in enumerate(ntData):
+			if co != 0:
+				fac["facNet"].append(e)
+	deptObjs = joinDepartments(facObjs, urlbase, allDepts)
+	nodes = [ {	"name": facObj["name"],
+				"group": facObj["aff"]
+				} for facObj in facObjs ]
+	tabbedFacs = prepFacultyForDisplay(facObjs)
+	columnedDepts = prepDepartmentsForDisplay(deptObjs)
+	facObjLookup = { fac["rabid"]: fac  for fac in facObjs }
+	facObjIndex = { fac["facIdx"]: fac for fac in facObjs }
+	deptObjLookup = { dept["rabid"]: dept  for dept in deptObjs }
 	if viztype=='dept':
-		pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
+		vizSbj = deptObjLookup[rabid]
+		dservType = 'ou'
 	elif viztype=='faculty':
-		pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
+		vizSbj = facObjLookup[rabid]
+		dservType = 'faculty'
+	getDserv = os.path.join(dservURI, dservType, vizSbj["shortid"])
+	res = requests.get(getDserv)
+	if res.status_code == 200:
+		resData = res.json()["results"]
+		vizSbj["thumb"] = resData.get("thumbnail")
+		vizSbj["title"] = resData.get("title")
+	# vizKey = json.loads(vizData.legend)
+	# matrix = json.loads(vizData.matrix)
+	# allFaculty = Faculty.query.all()
+	# allDepts = Departments.query.all()
+	# facultyLookup = { f.rabid: [f.abbrev, f.deptLabel, f.rabid] for f in allFaculty }
+	# facultyList = [ facultyLookup[f] for f in legend ]
+	# deptList = list({ f[1] for f in facultyList })
+	# deptMap = { l: d.rabid for l in deptList for d in allDepts if l in json.loads(d.useFor)  }
+	# if viztype=='dept':
+	# 	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
+	# elif viztype=='faculty':
+	# 	pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
+	print res
 	return render_template(
-			'chord.html', pageLabel=pageLabel, legend=deptList,
-			deptMap=deptMap, vizkey=facultyList, vizdata=matrix)
+			'chord.html',
+			departments=columnedDepts, faculty=tabbedFacs,
+			facObjs=facObjLookup, deptObjs=deptObjLookup,
+			vizSubject = vizSbj,
+			memberIndex = facObjIndex,
+			dataGroups=deptObjLookup.keys(),
+			vizdata=matrix)
 
 @app.route('/force/<viztype>/<rabid>')
 @app.route('/force/<viztype>/<rabid>/<page>')

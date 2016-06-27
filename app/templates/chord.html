@@ -1,170 +1,376 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <style>
+{% extends "base.html" %}
+{% block pagecss %}
+<style>
+  /*body {
+    font: 10px sans-serif;
+    width: 1200px;
+    margin: 0 auto;
+  }
 
-        body {
-          font: 10px sans-serif;
-        }
+  header {
+    background-color: purple;
+    height: 120px;
+  }*/
 
-        .chord path {
-          fill-opacity: .67;
-          stroke: #000;
-          stroke-width: .5px;
-        }
+  .chord path {
+    fill-opacity: .67;
+    stroke: #000;
+    stroke-width: .5px;
+  }
 
-        </style>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.12.4.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/d3-legend.min.js') }}"></script>
-    </head>
-    <body>
-        <script type="text/javascript">
 
-            var pageLabel = {{ pageLabel|tojson|safe }};
+  svg {
+    width: 100%;
+    height: 600px;
+  }
 
-            var lgnd = {{ legend|tojson|safe }};
+  a {
+    text-decoration: none;
+  }
 
-            var deptURIs = {{ deptMap|tojson|safe }};
+  a:hover {
+    text-decoration: underline;
+  }
 
-            var labels = {{ vizkey|tojson|safe }};
+  .ui-tabs-nav {
+    text-align: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    line-height: 24px;
+  }
+
+  .ui-tabs-nav li {
+    margin: 0 5px;
+    padding: 0 5px;
+/*    border: 1px solid #AAA;*/
+    background-color: none;
+    display: inline-block;
+  }
+
+  .ui-tabs-nav li.ui-tabs-active {
+    background-color: #d3d3d3;
+    color: #000;
+  }
+
+/*  .bugHouse {
+    float: left;
+    height: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;    
+    box-sizing: border-box;
+  }*/
+
+/*  #groupsBox {
+    border: 1px solid gray;
+    padding: 5px 5px 5px 10px;
+  }
+
+  #membersBox {
+    border: 1px solid gray;
+    padding: 5px 5px;
+  }*/
+
+  #thumb {
+    height: auto; 
+    width: auto; 
+    max-width: 100px; 
+    max-height: 100px;
+  }
+
+  .deptBug {
+    float: left;
+    width: 10px;
+    height: 10px;
+    margin: 3px 5px;
+    border: 1px solid rgba(0, 0, 0, .2);
+  }
+
+  .slct-ctrl {
+    background-color: #d3d3d3;
+  }
+</style>
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-12 graphBox">
+          </div>
+        </div>
+        <div id="facTabs">
+          <div class="row">
+            <div class="col-md-12">
+              <ul>
+                {% for tab in faculty %}
+                  <li><a href="#factab-{{loop.index}}">{{tab.tab}}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+            {% for tab in faculty %}
+              <div id="factab-{{loop.index}}">
+                {% for col in tab.tabContents %}
+                  <div class="col-md-3">
+                    <ul>
+                      {% for fac in col %}
+                        <li id="{{fac.rabid}}" class="faculty-ctrl">
+                          <a href="{{fac.graphid}}">{{fac.abbv}}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div id="membersBox" class="col-md-4">
+        <div id="subjectDetails" class="row">
+          <div class="col-md-12">
+            {% if vizSubject.thumb %}
+              <img id="thumb" src="{{ vizSubject.thumb }}" />
+            {% endif %}
+            <h2>{{ vizSubject.name }}</h2>
+            {% if vizSubject.title %}
+              <h3>{{ vizSubject.title }}</h3>
+            {% endif %}
+          </div>
+        </div>
+        <div id="deptTabs">
+          <div class="row">
+            <div class="col-md-12">
+              <ul>
+                {% for tab in departments %}
+                  <li><a href="#depttab-{{loop.index}}">{{tab.tab}}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="row">
+            {% for tab in departments %}
+              <div id="depttab-{{loop.index}}" class="col-md-12">
+                <ul>
+                  {% for dept in tab.tabContents %}
+                    <li id="{{ dept.rabid }}" class="dept-ctrl">
+                      <span id="bug-{{dept.rabid}}" class="deptBug"></span>
+                      <a href="{{dept.graphid}}">{{dept.name}}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block pagejs %}
+  <script type="text/javascript" src="{{ url_for('static', filename='js/velocity.min.js') }}"></script>
+  <script type="text/javascript">
+
+            var midx = {{ memberIndex|tojson|safe }};
+
+            var dgrps = {{ dataGroups|tojson|safe }};
 
             var matrix = {{ vizdata|tojson|safe }};
 
             var chord_uri_base = "http://localhost:8000/chord/";
 
-            var chord = d3.layout.chord()
-                    .padding(0.05)
-                    .sortSubgroups(d3.descending)
-                    .matrix(matrix);
             var svg_width = 1200;
             var svg_height = 900;
             var c_width  = 725;
             var c_height = 725;
             var padding = 175;
-            var inner_radius = Math.min(c_width, c_height) * 0.37;
-            var outer_radius = Math.min(c_width, c_height) * 0.39;
-            var fill = d3.scale.category20().domain(lgnd);
-            var legend = d3.legend.color().shape("circle")
-                .shapePadding(10)
-                .scale(fill)
-                .title("Departments")
-                .on("cellclick", function(d) {
-                    var deptCode = deptURIs[d].substring(33);
-                    window.location.replace(chord_uri_base + "dept/" + deptCode);
-                })
-                .on("cellover", function(d) {
-                    embiggen(d,15)
-                })
-                .on("cellout", function(d) {
-                    embiggen(d,10)
-                });
+
+            var innerRadius = Math.min(c_width, c_height) * 0.37;
+            var outerRadius = Math.min(c_width, c_height) * 0.39;
+
+            var fill = d3.scale.category20().domain(dgrps);
+
+            var chord = d3.layout.chord()
+                    .padding(0.05)
+                    .sortSubgroups(d3.descending)
+                    .sortChords(d3.descending);
+
+            var arc = d3.svg.arc()
+                  .innerRadius(innerRadius)
+                  .outerRadius(innerRadius + 20);
+
             var svg = d3.select('body').append('svg')
                     .attr('width', svg_width)
-                    .attr('height', svg_height);
-                    
-            var vizbody = svg.append('g').attr('transform', 'translate(' + (c_width + padding) / 2 + ',' + (c_height+padding) / 2 +')');
+                    .attr('height', svg_height)
+                    .append("g")
+                      .attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");;
 
-            svg.append("g").attr("class", "legend")
-                .attr("transform", 'translate(' + (svg_width - (svg_width - (c_width + padding))) + ',' + ((padding / 2) +30) +')');
+            chord.matrix(matrix);
 
-            vizbody.append('g').selectAll('path').data(chord.groups)
-                    .enter()
-                    .append('path').style('fill', function(val) { return fill(labels[val.index][1]); })
-                    .style('stroke', function(val) { return fill(labels[val.index][1]); })
-                    .attr('d', d3.svg.arc().innerRadius(inner_radius).outerRadius(outer_radius))
-                    .on("mouseover", fade(.05))
-                    .on("mouseout", fade(.8));
+            var g = svg.selectAll(".group")
+                .data(chord.groups)
+              .enter().append("g")
+                .attr("class", "group");
 
-            svg.append("g").append("svg:text")
-                .attr("transform", 'translate(' + (svg_width - (svg_width - (c_width + padding))) + ',' + padding / 2 +')')
-                .attr("style", "font-size: 3em; font-weight:bold;")
-                .text(function(d) {
-                        return pageLabel;
-                    });
+            g.append("path")
+                .style("fill", function(d) { return fill(d.index); })
+                .style("stroke", function(d) { return fill(d.index); })
+                .attr("d", arc);
 
-            var group_ticks = function (d) {
-                var k = (d.endAngle - d.startAngle) / d.value;
-                return d3.range(d.value / 2, d.value, d.value / 2).map(function (v) {
-                    return {
-                        angle: v * k + d.startAngle,
-                        label: Math.round(d.value)
-                    };
-                });
-            };
-            var chord_ticks = vizbody.append('g')
-                    .selectAll('g')
-                    .data(chord.groups)
-                    .enter().append('g')
-                    .selectAll('g')
-                    .data(group_ticks)
-                    .enter().append('g')
-                    .attr('transform', function (d) {
-                        return 'rotate(' + (d.angle * 180 / Math.PI - 90) + ') translate(' + outer_radius + ',0)';
-                    });
-            vizbody.append('g')
-                    .attr('class', 'chord')
-                    .selectAll('path')
-                    .data(chord.chords)
-                    .enter().append('path')
-                    .style('fill', function (d) { return fill(labels[d.target.index][1]); })
-                    .attr('d', d3.svg.chord().radius(inner_radius))
-                    .style('opacity', .8);
-            vizbody.append("g").selectAll(".arc")
-                    .data(chord.groups)
-                    .enter().append("svg:text")
-                    .attr("dy", ".35em")
-                    .attr("style", function(d) { return "font-size: 1em;"; } )
-                    .attr("text-anchor", function(d) { return ((d.startAngle + d.endAngle) / 2) > Math.PI ? "end" : null; })
-                    .attr("transform", function(d) {
-                        return "rotate(" + (((d.startAngle + d.endAngle) / 2) * 180 / Math.PI - 90) + ")"
-                                + "translate(" + (c_height *.40) + ")"
-                                + (((d.startAngle + d.endAngle) / 2) > Math.PI ? "rotate(180)" : "");
-                    })
-                    .text(function(d) {
-                        return labels[d.index][0];
-                    })
-                    .attr("id", function(d) {
-                         return labels[d.index][0].toLowerCase().replace(/[.'(),\s]/g,"")
-                    })
-                    .on("mouseover", fade(.05))
-                    .on("mouseover", function(d) {
-                        embiggen(labels[d.index][0],15)
-                    })
-                    .on("mouseout", fade(.8))
-                    .on("mouseout", function(d) {
-                        embiggen(labels[d.index][0],10)
-                    })
-                    .on("click", function(d) {
-                        var facCode = labels[d.index][2].substring(33);
-                        console.log(facCode);
-                        window.location.replace(chord_uri_base + "faculty/" + facCode);
-                    });
+            g.append("text")
+                .each(function(d) { d.angle = (d.startAngle + d.endAngle) / 2; })
+                .attr("dy", ".35em")
+                .attr("transform", function(d) {
+                  return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+                      + "translate(" + (innerRadius + 26) + ")"
+                      + (d.angle > Math.PI ? "rotate(180)" : "");
+                })
+                .style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+                .text(function(d) { return midx[d.index].name ; });
 
-            svg.select(".legend")
-                .call(legend);
+            svg.selectAll(".chord")
+                .data(chord.chords)
+              .enter().append("path")
+                .attr("class", "chord")
+                .style("stroke", function(d) { return d3.rgb(fill(d.source.index)).darker(); })
+                .style("fill", function(d) { return fill(d.source.index); })
+                .attr("d", d3.svg.chord().radius(innerRadius));
 
-            d3.selectAll(".legend .cell").each( function(d, i){
-                var label = this.textContent.toLowerCase().replace(/[.'(),\s]/g,"");
-                d3.select(this).attr("id", label);
-            });
+            // svg.append('g').selectAll('path').data(chord.groups)
+            //         .enter()
+            //         .append('path').style('fill', function(val) { return fill(labels[val.index][1]); })
+            //         .style('stroke', function(val) { return fill(labels[val.index][1]); })
+            //         .attr('d', d3.svg.arc().innerRadius(inner_radius).outerRadius(outer_radius))
+            //         .on("mouseover", fade(.05))
+            //         .on("mouseout", fade(.8));
+
+            // var group_ticks = function (d) {
+            //     var k = (d.endAngle - d.startAngle) / d.value;
+            //     return d3.range(d.value / 2, d.value, d.value / 2).map(function (v) {
+            //         return {
+            //             angle: v * k + d.startAngle,
+            //             label: Math.round(d.value)
+            //         };
+            //     });
+            // };
+
+            // var chord_ticks = svg.append('g')
+            //         .selectAll('g')
+            //         .data(chord.groups)
+            //         .enter().append('g')
+            //         .selectAll('g')
+            //         .data(group_ticks)
+            //         .enter().append('g')
+            //         .attr('transform', function (d) {
+            //             return 'rotate(' + (d.angle * 180 / Math.PI - 90) + ') translate(' + outer_radius + ',0)';
+            //         });
+            // svg.append('g')
+            //         .attr('class', 'chord')
+            //         .selectAll('path')
+            //         .data(chord.chords)
+            //         .enter().append('path')
+            //         .style('fill', function (d) { return fill(labels[d.target.index][1]); })
+            //         .attr('d', d3.svg.chord().radius(inner_radius))
+            //         .style('opacity', .8);
+            // svg.append("g").selectAll(".arc")
+            //         .data(chord.groups)
+            //         .enter().append("svg:text")
+            //         .attr("dy", ".35em")
+            //         .attr("style", function(d) { return "font-size: 1em;"; } )
+            //         .attr("text-anchor", function(d) { return ((d.startAngle + d.endAngle) / 2) > Math.PI ? "end" : null; })
+            //         .attr("transform", function(d) {
+            //             return "rotate(" + (((d.startAngle + d.endAngle) / 2) * 180 / Math.PI - 90) + ")"
+            //                     + "translate(" + (c_height *.40) + ")"
+            //                     + (((d.startAngle + d.endAngle) / 2) > Math.PI ? "rotate(180)" : "");
+            //         })
+            //         .text(function(d) {
+            //             return labels[d.index][0];
+            //         });
 
                 // Returns an event handler for fading a given chord group.
-            function fade(opacity) {
-              return function(g, i) {
-                vizbody.selectAll(".chord path")
-                    .filter(function(d) { return d.source.index != i && d.target.index != i; })
-                  .transition()
-                    .style("opacity", opacity);
-              };
-            }
+            // function fade(opacity) {
+            //   return function(g, i) {
+            //     vizbody.selectAll(".chord path")
+            //         .filter(function(d) { return d.source.index != i && d.target.index != i; })
+            //       .transition()
+            //         .style("opacity", opacity);
+            //   };
+            // }
 
-            function embiggen(d, size) {
-                d3.select("#"+d.toLowerCase().replace(/[.'(),\s]/g,""))
-                    .transition().duration(100)
-                        .style("font-size", size);
-            }
-        </script>
-    </body>
-</html>
+    $(function() {
+      $("#facTabs").tabs();
+      $("#deptTabs").tabs();
+      $(".deptBug").each(function () {
+          setDeptColor($(this));
+      });
+      $(".faculty-ctrl").each(function () {
+          attachFacultyNodes($(this));
+      });
+      $(".dept-ctrl").each(function () {
+          attachDepartmentNodes($(this));
+      });
+    });
+
+    function setDeptColor(deptBug) {
+      var group = deptBug.attr('id').substring(4);
+      deptBug.attr("style", "background: "+fill(group));
+    }
+
+    function attachFacultyNodes(facCtrl) {
+      var rabid = facCtrl.attr('id');
+      var facIndex = facObjs[rabid]["facIdx"];
+      var subnet = facObjs[rabid]["facNet"];
+      subnet.push(facIndex);
+      var nodes = $(".node").filter(function (index) {
+        return $.inArray(index, subnet) > -1;
+      });
+      var facNode = $(".node").eq(facIndex);
+      var timer;
+      facCtrl
+        .hover(function() {
+          $(this).addClass("slct-ctrl");
+          timer = setTimeout( function () {
+            focusSubNet(nodes);
+          }, 1000);
+        },
+        function() {
+          clearTimeout(timer);
+          $(this).removeClass("slct-ctrl");
+          unfocusSubNet(nodes);
+        });
+    }
+
+    function attachDepartmentNodes(deptCtrl) {
+      var rabid = deptCtrl.attr("id");
+      var nodeKeys = deptObjs[rabid]["deptMembers"];
+      var nodes = $(".node").filter(function (index) {
+        return $.inArray(index, nodeKeys) > -1;
+      });
+      var timer;
+      deptCtrl
+        .hover(function() {
+          $(this).addClass("slct-ctrl");
+          timer = setTimeout( function () {
+            focusSubNet(nodes);
+          }, 1000);
+        },
+        function() {
+          clearTimeout(timer);
+          $(this).removeClass("slct-ctrl");
+          unfocusSubNet(nodes);
+        });
+    }
+
+    function focusSubNet(subnet) {
+      subnet.addClass("subnet").velocity({ r: 12 });
+      $(".node").not(".subnet").velocity({ r: 5 });
+    }
+
+    function unfocusSubNet(subnet) {
+      subnet.removeClass("subnet");
+      $(".node").velocity({ r: 10 });
+    }
+
+  </script>
+{% endblock %}
