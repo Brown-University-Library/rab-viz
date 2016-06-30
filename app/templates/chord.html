@@ -332,7 +332,7 @@
     function attachFacultyNodes(facCtrl) {
       var rabid = facCtrl.attr('id');
       var facIndex = facObjs[rabid]["facIdx"];
-      var subnet = facObjs[rabid]["facNet"];
+      var subnet = [];
       subnet.push(facIndex);
       facCtrl
         .on("click", function() {
@@ -342,7 +342,7 @@
           } else {
             $(".faculty-ctrl").removeClass("clickedOn");
             $(this).addClass("clickedOn");
-            focusSubNet(facIndex);
+            focusSubNet(subnet);
           }
         })
         .hover(function() {
@@ -355,29 +355,30 @@
 
     function attachDepartmentNodes(deptCtrl) {
       var rabid = deptCtrl.attr("id");
-      var nodeKeys = deptObjs[rabid]["deptMembers"];
-      var nodes = $(".node").filter(function (index) {
-        return $.inArray(index, nodeKeys) > -1;
-      });
-      var timer;
+      var subnet = deptObjs[rabid]["deptMembers"];
       deptCtrl
+        .on("click", function() {
+          if ($(this).is(".clickedOn")) {
+            $(this).removeClass("clickedOn");
+            $(".chord").removeClass("fade");
+          } else {
+            $(".dept-ctrl").removeClass("clickedOn");
+            $(this).addClass("clickedOn");
+            focusSubNet(subnet);
+          }
+        })
         .hover(function() {
           $(this).addClass("slct-ctrl");
-          timer = setTimeout( function () {
-            focusSubNet(nodes);
-          }, 1000);
         },
         function() {
-          clearTimeout(timer);
           $(this).removeClass("slct-ctrl");
-          unfocusSubNet(nodes);
         });
     }
 
     function focusSubNet(subnet) {
       d3.selectAll(".chord").classed("fade", function (p) {
-        return p.source.index != subnet
-                && p.target.index != subnet;
+        return ($.inArray(p.source.index, subnet) == -1)  
+                && ($.inArray(p.target.index, subnet) == -1)
       });
     }
 
