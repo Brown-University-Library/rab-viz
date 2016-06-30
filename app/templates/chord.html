@@ -12,9 +12,13 @@
     height: 120px;
   }*/
 
-.chord {
-  fill-opacity: .67;
-}
+  .chord {
+    fill-opacity: .67;
+  }
+
+  path.fade {
+    display:none;
+  }
 
 
   svg {
@@ -231,7 +235,7 @@
                       + (d.angle > Math.PI ? "rotate(180)" : "");
                 })
                 .style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
-                .text(function(d) { return midx[d.index].name ; });
+                .text(function(d) { return midx[d.index].abbv ; });
 
             svg.selectAll(".chord")
                 .data(chord.chords)
@@ -326,22 +330,10 @@
       var facIndex = facObjs[rabid]["facIdx"];
       var subnet = facObjs[rabid]["facNet"];
       subnet.push(facIndex);
-      var nodes = $(".node").filter(function (index) {
-        return $.inArray(index, subnet) > -1;
-      });
-      var facNode = $(".node").eq(facIndex);
-      var timer;
       facCtrl
-        .hover(function() {
+        .on("dblclick", function() {
           $(this).addClass("slct-ctrl");
-          timer = setTimeout( function () {
-            focusSubNet(nodes);
-          }, 1000);
-        },
-        function() {
-          clearTimeout(timer);
-          $(this).removeClass("slct-ctrl");
-          unfocusSubNet(nodes);
+          focusSubNet(facIndex);
         });
     }
 
@@ -367,8 +359,10 @@
     }
 
     function focusSubNet(subnet) {
-      subnet.addClass("subnet").velocity({ r: 12 });
-      $(".node").not(".subnet").velocity({ r: 5 });
+      d3.selectAll(".chord").classed("fade", function (p) {
+        return p.source.index != subnet
+                && p.target.index != subnet;
+      });
     }
 
     function unfocusSubNet(subnet) {
