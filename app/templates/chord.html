@@ -91,6 +91,10 @@
   .slct-ctrl {
     background-color: #d3d3d3;
   }
+
+  .clickedOn {
+    background-color: #ffb00f;
+  }
 </style>
 {% endblock %}
 {% block content %}
@@ -331,9 +335,21 @@
       var subnet = facObjs[rabid]["facNet"];
       subnet.push(facIndex);
       facCtrl
-        .on("dblclick", function() {
+        .on("click", function() {
+          if ($(this).is(".clickedOn")) {
+            $(this).removeClass("clickedOn");
+            $(".chord").removeClass("fade");
+          } else {
+            $(".faculty-ctrl").removeClass("clickedOn");
+            $(this).addClass("clickedOn");
+            focusSubNet(facIndex);
+          }
+        })
+        .hover(function() {
           $(this).addClass("slct-ctrl");
-          focusSubNet(facIndex);
+        },
+        function() {
+          $(this).removeClass("slct-ctrl");
         });
     }
 
@@ -365,9 +381,8 @@
       });
     }
 
-    function unfocusSubNet(subnet) {
-      subnet.removeClass("subnet");
-      $(".node").velocity({ r: 10 });
+    function unfocusSubNet() {
+      
     }
 
   </script>
