@@ -123,7 +123,7 @@
                   <div class="col-md-3">
                     <ul>
                       {% for fac in col %}
-                        <li id="{{fac.rabid}}" class="faculty-ctrl">
+                        <li id="{{fac.rabid}}" class="viz-ctrl faculty-ctrl">
                           <a href="{{fac.graphid}}">{{fac.abbv}}</a>
                         </li>
                       {% endfor %}
@@ -163,7 +163,7 @@
               <div id="depttab-{{loop.index}}" class="col-md-12">
                 <ul>
                   {% for dept in tab.tabContents %}
-                    <li id="{{ dept.rabid }}" class="dept-ctrl">
+                    <li id="{{ dept.rabid }}" class="viz-ctrl dept-ctrl">
                       <span id="bug-{{dept.rabid}}" class="deptBug"></span>
                       <a href="{{dept.graphid}}">{{dept.name}}</a>
                     </li>
@@ -340,7 +340,7 @@
             $(this).removeClass("clickedOn");
             $(".chord").removeClass("fade");
           } else {
-            $(".faculty-ctrl").removeClass("clickedOn");
+            $(".viz-ctrl").removeClass("clickedOn");
             $(this).addClass("clickedOn");
             focusSubNet(subnet);
           }
@@ -362,7 +362,7 @@
             $(this).removeClass("clickedOn");
             $(".chord").removeClass("fade");
           } else {
-            $(".dept-ctrl").removeClass("clickedOn");
+            $(".viz-ctrl").removeClass("clickedOn");
             $(this).addClass("clickedOn");
             focusSubNet(subnet);
           }
