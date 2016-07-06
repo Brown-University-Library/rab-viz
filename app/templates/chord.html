@@ -16,10 +16,9 @@
     fill-opacity: .67;
   }
 
-  path.fade {
+  .fade {
     display:none;
   }
-
 
   svg {
     width: 100%;
@@ -331,18 +330,20 @@
 
     function attachFacultyNodes(facCtrl) {
       var rabid = facCtrl.attr('id');
-      var facIndex = facObjs[rabid]["facIdx"];
-      var subnet = [];
-      subnet.push(facIndex);
+      var focus = []; 
+      focus.push(facObjs[rabid]["facIdx"]);
+      var subnet = facObjs[rabid]["facNet"];
+      subnet.push(facObjs[rabid]["facIdx"]);
       facCtrl
         .on("click", function() {
           if ($(this).is(".clickedOn")) {
             $(this).removeClass("clickedOn");
             $(".chord").removeClass("fade");
+            $(".group text").removeClass("fade");
           } else {
             $(".viz-ctrl").removeClass("clickedOn");
             $(this).addClass("clickedOn");
-            focusSubNet(subnet);
+            focusSubNet(focus, subnet);
           }
         })
         .hover(function() {
@@ -355,16 +356,22 @@
 
     function attachDepartmentNodes(deptCtrl) {
       var rabid = deptCtrl.attr("id");
-      var subnet = deptObjs[rabid]["deptMembers"];
+      var focus = deptObjs[rabid]["deptMembers"];
+      console.log("focus: ",focus);
+      var subnet = deptObjs[rabid]["deptNet"];
+      console.log("subnet: ",subnet);
+      subnet = subnet.concat(focus);
+      console.log("concat: ",subnet);
       deptCtrl
         .on("click", function() {
+          $(".group text").removeClass("fade");
           if ($(this).is(".clickedOn")) {
             $(this).removeClass("clickedOn");
             $(".chord").removeClass("fade");
           } else {
             $(".viz-ctrl").removeClass("clickedOn");
             $(this).addClass("clickedOn");
-            focusSubNet(subnet);
+            focusSubNet(focus,subnet);
           }
         })
         .hover(function() {
@@ -375,11 +382,17 @@
         });
     }
 
-    function focusSubNet(subnet) {
+    function focusSubNet(focus, subnet) {
       d3.selectAll(".chord").classed("fade", function (p) {
-        return ($.inArray(p.source.index, subnet) == -1)  
-                && ($.inArray(p.target.index, subnet) == -1)
+        return ($.inArray(p.source.index, focus) == -1)  
+                && ($.inArray(p.target.index, focus) == -1)
       });
+      $(".group text").filter(function (index) {
+        return $.inArray(index, subnet) == -1;
+      }).addClass("fade");
+      // d3.selectAll(".group").classed("fade", function (p) {
+      //   return ($.inArray(p.index, subnet) == -1)
+      // });
     }
 
     function unfocusSubNet() {

@@ -53,8 +53,9 @@ def joinDepartments(facObjs, urlbase, deptSQL):
 				dept["deptMembers"].add(p[1])
 				dept["deptNet"].extend(p[2])
 	for dept in deptObjs:
-		dept["deptNet"] = list(dept["deptNet"])
 		dept["deptMembers"] = list(dept["deptMembers"])
+		dept["deptNet"] = list({d for d in dept["deptNet"]
+								if d not in dept["deptMembers"] })
 	return deptObjs
 
 def chunkify(tList, chunk):
