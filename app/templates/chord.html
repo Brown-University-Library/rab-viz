@@ -1,16 +1,6 @@
 {% extends "base.html" %}
 {% block pagecss %}
 <style>
-  /*body {
-    font: 10px sans-serif;
-    width: 1200px;
-    margin: 0 auto;
-  }
-
-  header {
-    background-color: purple;
-    height: 120px;
-  }*/
 
   .chord {
     fill-opacity: .67;
@@ -44,7 +34,6 @@
   .ui-tabs-nav li {
     margin: 0 5px;
     padding: 0 5px;
-/*    border: 1px solid #AAA;*/
     background-color: none;
     display: inline-block;
   }
@@ -53,24 +42,6 @@
     background-color: #d3d3d3;
     color: #000;
   }
-
-/*  .bugHouse {
-    float: left;
-    height: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;    
-    box-sizing: border-box;
-  }*/
-
-/*  #groupsBox {
-    border: 1px solid gray;
-    padding: 5px 5px 5px 10px;
-  }
-
-  #membersBox {
-    border: 1px solid gray;
-    padding: 5px 5px;
-  }*/
 
   #thumb {
     height: auto; 
@@ -248,67 +219,6 @@
                 .style("fill", function(d) { return fill(midx[d.target.index].aff); })
                 .attr("d", d3.svg.chord().radius(innerRadius));
 
-            // svg.append('g').selectAll('path').data(chord.groups)
-            //         .enter()
-            //         .append('path').style('fill', function(val) { return fill(labels[val.index][1]); })
-            //         .style('stroke', function(val) { return fill(labels[val.index][1]); })
-            //         .attr('d', d3.svg.arc().innerRadius(inner_radius).outerRadius(outer_radius))
-            //         .on("mouseover", fade(.05))
-            //         .on("mouseout", fade(.8));
-
-            // var group_ticks = function (d) {
-            //     var k = (d.endAngle - d.startAngle) / d.value;
-            //     return d3.range(d.value / 2, d.value, d.value / 2).map(function (v) {
-            //         return {
-            //             angle: v * k + d.startAngle,
-            //             label: Math.round(d.value)
-            //         };
-            //     });
-            // };
-
-            // var chord_ticks = svg.append('g')
-            //         .selectAll('g')
-            //         .data(chord.groups)
-            //         .enter().append('g')
-            //         .selectAll('g')
-            //         .data(group_ticks)
-            //         .enter().append('g')
-            //         .attr('transform', function (d) {
-            //             return 'rotate(' + (d.angle * 180 / Math.PI - 90) + ') translate(' + outer_radius + ',0)';
-            //         });
-            // svg.append('g')
-            //         .attr('class', 'chord')
-            //         .selectAll('path')
-            //         .data(chord.chords)
-            //         .enter().append('path')
-            //         .style('fill', function (d) { return fill(labels[d.target.index][1]); })
-            //         .attr('d', d3.svg.chord().radius(inner_radius))
-            //         .style('opacity', .8);
-            // svg.append("g").selectAll(".arc")
-            //         .data(chord.groups)
-            //         .enter().append("svg:text")
-            //         .attr("dy", ".35em")
-            //         .attr("style", function(d) { return "font-size: 1em;"; } )
-            //         .attr("text-anchor", function(d) { return ((d.startAngle + d.endAngle) / 2) > Math.PI ? "end" : null; })
-            //         .attr("transform", function(d) {
-            //             return "rotate(" + (((d.startAngle + d.endAngle) / 2) * 180 / Math.PI - 90) + ")"
-            //                     + "translate(" + (c_height *.40) + ")"
-            //                     + (((d.startAngle + d.endAngle) / 2) > Math.PI ? "rotate(180)" : "");
-            //         })
-            //         .text(function(d) {
-            //             return labels[d.index][0];
-            //         });
-
-                // Returns an event handler for fading a given chord group.
-            // function fade(opacity) {
-            //   return function(g, i) {
-            //     vizbody.selectAll(".chord path")
-            //         .filter(function(d) { return d.source.index != i && d.target.index != i; })
-            //       .transition()
-            //         .style("opacity", opacity);
-            //   };
-            // }
-
     $(function() {
       $("#facTabs").tabs();
       $("#deptTabs").tabs();
@@ -328,58 +238,53 @@
       deptBug.attr("style", "background: "+fill(group));
     }
 
+    // function clickInteraction(ctrlElement) {
+    //       $(".group text").removeClass("fade");
+    //       $(".chord").removeClass("fade");
+    //       if ($(this).is(".clickedOn")) {
+    //         $(this).removeClass("clickedOn");
+    //       } else {
+    //         $(".viz-ctrl").removeClass("clickedOn");
+    //         $(this).addClass("clickedOn");
+    //         focusSubNet(focus,subnet);
+    // }
+
+    function attachInteractivity(ctrlElement, ctrlFocus, ctrlNet) {
+      ctrlElement
+        .on("click", function() {
+          $(".group text").removeClass("fade");
+          $(".chord").removeClass("fade");
+          if ($(this).is(".clickedOn")) {
+            $(this).removeClass("clickedOn");
+          } else {
+            $(".viz-ctrl").removeClass("clickedOn");
+            $(this).addClass("clickedOn");
+            focusSubNet(ctrlFocus,ctrlNet);
+          }
+        })
+        .hover(function() {
+          $(this).addClass("slct-ctrl");
+        },
+        function() {
+          $(this).removeClass("slct-ctrl");
+        });  
+    }
+
     function attachFacultyNodes(facCtrl) {
       var rabid = facCtrl.attr('id');
       var focus = []; 
       focus.push(facObjs[rabid]["facIdx"]);
       var subnet = facObjs[rabid]["facNet"];
       subnet.push(facObjs[rabid]["facIdx"]);
-      facCtrl
-        .on("click", function() {
-          if ($(this).is(".clickedOn")) {
-            $(this).removeClass("clickedOn");
-            $(".chord").removeClass("fade");
-            $(".group text").removeClass("fade");
-          } else {
-            $(".viz-ctrl").removeClass("clickedOn");
-            $(this).addClass("clickedOn");
-            focusSubNet(focus, subnet);
-          }
-        })
-        .hover(function() {
-          $(this).addClass("slct-ctrl");
-        },
-        function() {
-          $(this).removeClass("slct-ctrl");
-        });
+      attachInteractivity(facCtrl, focus, subnet);
     }
 
     function attachDepartmentNodes(deptCtrl) {
       var rabid = deptCtrl.attr("id");
       var focus = deptObjs[rabid]["deptMembers"];
-      console.log("focus: ",focus);
       var subnet = deptObjs[rabid]["deptNet"];
-      console.log("subnet: ",subnet);
       subnet = subnet.concat(focus);
-      console.log("concat: ",subnet);
-      deptCtrl
-        .on("click", function() {
-          $(".group text").removeClass("fade");
-          if ($(this).is(".clickedOn")) {
-            $(this).removeClass("clickedOn");
-            $(".chord").removeClass("fade");
-          } else {
-            $(".viz-ctrl").removeClass("clickedOn");
-            $(this).addClass("clickedOn");
-            focusSubNet(focus,subnet);
-          }
-        })
-        .hover(function() {
-          $(this).addClass("slct-ctrl");
-        },
-        function() {
-          $(this).removeClass("slct-ctrl");
-        });
+      attachInteractivity(deptCtrl, focus, subnet);
     }
 
     function focusSubNet(focus, subnet) {
