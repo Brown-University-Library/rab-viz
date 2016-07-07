@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-DB=$HOME/db
+DB=$GRAPH_APP_HOME/db
 ETL=$DB/etl
 EXTRACT=$ETL/extract 
 TRANSFORM=$ETL/transform
 LOAD=$ETL/load
 
-cd $HOME
+cd $GRAPH_APP_HOME
 #source $HOME/local-env.sh
 
 #Confirm old files/dirs for cleaning
