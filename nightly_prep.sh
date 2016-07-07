@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 
-HOME=/work/viz
 DB=$HOME/db
 ETL=$DB/etl
 EXTRACT=$ETL/extract 
@@ -9,7 +8,7 @@ TRANSFORM=$ETL/transform
 LOAD=$ETL/load
 
 cd $HOME
-source $HOME/local-env.sh
+#source $HOME/local-env.sh
 
 #Confirm old files/dirs for cleaning
 touch $DB/visualizations.db
