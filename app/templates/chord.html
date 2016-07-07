@@ -238,21 +238,10 @@
       deptBug.attr("style", "background: "+fill(group));
     }
 
-    // function clickInteraction(ctrlElement) {
-    //       $(".group text").removeClass("fade");
-    //       $(".chord").removeClass("fade");
-    //       if ($(this).is(".clickedOn")) {
-    //         $(this).removeClass("clickedOn");
-    //       } else {
-    //         $(".viz-ctrl").removeClass("clickedOn");
-    //         $(this).addClass("clickedOn");
-    //         focusSubNet(focus,subnet);
-    // }
-
     function attachInteractivity(ctrlElement, ctrlFocus, ctrlNet) {
       ctrlElement
         .on("click", function() {
-          $(".group text").removeClass("fade");
+          $(".group text").removeClass("fade");//.css('fill', 'none');
           $(".chord").removeClass("fade");
           if ($(this).is(".clickedOn")) {
             $(this).removeClass("clickedOn");
@@ -260,6 +249,9 @@
             $(".viz-ctrl").removeClass("clickedOn");
             $(this).addClass("clickedOn");
             focusSubNet(ctrlFocus,ctrlNet);
+            // $(".group text").filter(function (index) {
+            //   return $.inArray(index, ctrlFocus) > -1;
+            // }).css('fill', '#ffb00f');
           }
         })
         .hover(function() {
