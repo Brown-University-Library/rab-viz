@@ -1,14 +1,15 @@
 #!/bin/bash
 set -e
 
-DB=$GRAPH_APP_HOME/db
+APP_HOME=${PWD}
+DB=$APP_HOME/db
 ETL=$DB/etl
 EXTRACT=$ETL/extract 
 TRANSFORM=$ETL/transform
 LOAD=$ETL/load
 
-cd $GRAPH_APP_HOME
-#source $HOME/local-env.sh
+cd $APP_HOME
+source $APP_HOME/local-env.sh
 
 #Confirm old files/dirs for cleaning
 touch $DB/visualizations.db
