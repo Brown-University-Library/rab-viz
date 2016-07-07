@@ -1,5 +1,6 @@
 import os
 import csv
+import sys
 
 from rdflib import ConjunctiveGraph
 from rdflib.query import ResultException
@@ -12,7 +13,6 @@ vstore = ConjunctiveGraph('SPARQLStore')
 vstore.open(endpoint)
 vstore.namespace_manager = ns_mgr
 
-targetDir = "/work/viz/db/etl/extract/data"
 queryTemplate = "SELECT {0} WHERE {{{1}}}"
 
 jobs = [
@@ -77,7 +77,7 @@ def queryRAB(rq):
         logging.info("No results found for query: {0}".format(rq))
         return Graph()
 
-def main():
+def main(targetDir):
   for job in jobs:
     query = queryTemplate.format(job['select'], job['where'])
     resp = queryRAB(query)
@@ -87,4 +87,4 @@ def main():
       wrtr.writerows(resp)
 
 if __name__ == "__main__":
-  main()
+  main(sys.argv[1])

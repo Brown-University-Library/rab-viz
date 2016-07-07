@@ -16,7 +16,8 @@ colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(49,130,189)','rgb(49,163,84)','rgb(158,154,200)','rgb(253,141,60)',
 'rgb(116,196,118)','rgb(189,158,57)']
 
-dservURI = "https://vivo.brown.edu/services/data/v1/"
+dservURI = os.getenv("VIVO_DATA_SERVICE")
+graphservURI = os.getenv("VIVO_GRAPH_SERVICE")
 
 def joinFaculty(vizKey, urlbase, facSQL):
 	facObjs = [
@@ -103,11 +104,11 @@ def prepDepartmentsForDisplay(deptObjs):
 def index(graphtype):
 	if graphtype == "force":
 		allViz = ForceViz.query.all()
-		urlbase = "http://localhost:8000/force/"
+		urlbase = graphservURI + "force/"
 		pageTitle = "Force Graph"
 	elif graphtype == "chord":
 		allViz = ChordViz.query.all()
-		urlbase = "http://localhost:8000/chord/"
+		urlbase = graphservURI + "chord/"
 		pageTitle = "Chord Graph"
 	else:
 		raise Exception("Bad graphtype: "+graphtype)
@@ -191,7 +192,7 @@ def chordViz(viztype, rabid, page=0):
 @app.route('/force/<viztype>/<rabid>/<page>')
 def forceViz(viztype, rabid, page=0):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)
-	urlbase = "http://localhost:8000/force/"
+	urlbase = graphservURI + "force/"
 	vizData = ForceViz.query.filter_by(rabid=rabid, page=page).first()
 	vizKey = json.loads(vizData.legend)
 	links = json.loads(vizData.links)

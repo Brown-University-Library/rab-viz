@@ -1,16 +1,20 @@
 #!/bin/bash
 set -e
 
-DB=/work/viz/db
-ETL=/work/viz/db/etl
-EXTRACT=/work/viz/db/etl/extract 
-TRANSFORM=/work/viz/db/etl/transform
-LOAD=/work/viz/db/etl/load
-
-HOME=/work/viz/
+DB=$HOME/db
+ETL=$DB/etl
+EXTRACT=$ETL/extract 
+TRANSFORM=$ETL/transform
+LOAD=$ETL/load
 
 cd $HOME
-source $HOME/local-env.sh
+#source $HOME/local-env.sh
+
+#Confirm old files/dirs for cleaning
+touch $DB/visualizations.db
+touch $EXTRACT/data/faculty.csv
+touch $TRANSFORM/data/roster_data.csv
+touch $LOAD/author_json_data.csv
 
 #Clean out old data
 rm $DB/visualizations.db
@@ -19,7 +23,7 @@ rm $TRANSFORM/data/*
 rm $LOAD/*
 
 #Download data from RAB
-python $EXTRACT/scripts/download_rab_data.py
+python $EXTRACT/scripts/download_rab_data.py $EXTRACT/data
 
 #Identity Tables
 python $TRANSFORM/scripts/faculty_transform.py $EXTRACT/data/faculty.csv $EXTRACT/data/departments.csv $LOAD
