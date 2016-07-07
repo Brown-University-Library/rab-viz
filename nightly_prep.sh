@@ -1,13 +1,12 @@
 #!/bin/bash
 set -e
 
-DB=/work/viz/db
-ETL=/work/viz/db/etl
-EXTRACT=/work/viz/db/etl/extract 
-TRANSFORM=/work/viz/db/etl/transform
-LOAD=/work/viz/db/etl/load
-
-HOME=/work/viz/
+HOME=/work/viz
+DB=$HOME/db
+ETL=$DB/etl
+EXTRACT=$ETL/extract 
+TRANSFORM=$ETL/transform
+LOAD=$ETL/load
 
 cd $HOME
 source $HOME/local-env.sh
