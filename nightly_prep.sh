@@ -11,6 +11,12 @@ LOAD=$ETL/load
 cd $HOME
 source $HOME/local-env.sh
 
+#Confirm old files/dirs for cleaning
+touch $DB/visualizations.db
+touch $EXTRACT/data/faculty.csv
+touch $TRANSFORM/data/roster_data.csv
+touch $LOAD/author_json_data.csv
+
 #Clean out old data
 rm $DB/visualizations.db
 rm $EXTRACT/data/*
@@ -18,7 +24,7 @@ rm $TRANSFORM/data/*
 rm $LOAD/*
 
 #Download data from RAB
-python $EXTRACT/scripts/download_rab_data.py
+python $EXTRACT/scripts/download_rab_data.py $EXTRACT/data
 
 #Identity Tables
 python $TRANSFORM/scripts/faculty_transform.py $EXTRACT/data/faculty.csv $EXTRACT/data/departments.csv $LOAD
