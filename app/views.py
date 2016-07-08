@@ -16,8 +16,8 @@ colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(49,130,189)','rgb(49,163,84)','rgb(158,154,200)','rgb(253,141,60)',
 'rgb(116,196,118)','rgb(189,158,57)']
 
-dservURI = os.getenv("VIVO_DATA_SERVICE")
-graphservURI = os.getenv("VIVO_GRAPH_SERVICE")
+dservURI = app.config["VIVO_DATA_SERVICE"]
+graphservURI = app.config["VIVO_GRAPH_SERVICE"]
 
 def joinFaculty(vizKey, urlbase, facSQL):
 	facObjs = [
