@@ -133,7 +133,7 @@ def index(graphtype):
 @app.route('/chord/<viztype>/<rabid>/<page>')
 def chordViz(viztype, rabid, page=0):
 	rabid = "http://vivo.brown.edu/individual/{0}".format(rabid)
-	urlbase = "http://localhost:8000/chord/"
+	urlbase = graphservURI + "chord/"
 	vizData = ChordViz.query.filter_by(rabid=rabid, page=page).first()
 	vizKey = json.loads(vizData.legend)
 	matrix = json.loads(vizData.matrix)
