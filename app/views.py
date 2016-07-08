@@ -16,6 +16,7 @@ colorRange = ['rgb(23,190,207)','rgb(188,189,34)','rgb(227,119,194)',
 'rgb(49,130,189)','rgb(49,163,84)','rgb(158,154,200)','rgb(253,141,60)',
 'rgb(116,196,118)','rgb(189,158,57)']
 
+vivoURL = app.config["VIVO_URL"]
 dservURI = app.config["VIVO_DATA_SERVICE"]
 graphservURI = app.config["VIVO_GRAPH_SERVICE"]
 
@@ -126,7 +127,7 @@ def index(graphtype):
 	sortedDepts = sorted([ { "graphurl": urlbase + "dept/"+d.rabid[33:],
 					"name":d.label } for d in depts ], key=lambda dept: dept["name"])
 	chunkedDepts = [ sortedDepts[i:i+20] for i in range(0, len(sortedDepts), 20) ]
-	return render_template('force_index.html', pageTitle=pageTitle,
+	return render_template('force_index.html', vivoURL=vivoURL, pageTitle=pageTitle,
 							faculty=sortedFac, depts=chunkedDepts)
 
 @app.route('/chord/<viztype>/<rabid>')
@@ -180,7 +181,7 @@ def chordViz(viztype, rabid, page=0):
 	# 	pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
 	print res
 	return render_template(
-			'chord.html',
+			'chord.html', vivoURL=vivoURL,
 			departments=columnedDepts, faculty=tabbedFacs,
 			facObjs=facObjLookup, deptObjs=deptObjLookup,
 			vizSubject = vizSbj,
@@ -225,7 +226,7 @@ def forceViz(viztype, rabid, page=0):
 		vizSbj["thumb"] = resData.get("thumbnail")
 		vizSbj["title"] = resData.get("title")
 	return render_template(
-			'force.html',
+			'force.html', vivoURL=vivoURL,
 			departments=columnedDepts, faculty=tabbedFacs,
 			facObjs=facObjLookup, deptObjs=deptObjLookup,
 			vizSubject = vizSbj,
