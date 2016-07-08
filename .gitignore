@@ -3,3 +3,5 @@ ENV/
 *.csv
 *.db
 local-env.sh
+apache/project_httpd.conf
+venv/
