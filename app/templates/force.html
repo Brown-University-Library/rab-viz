@@ -92,6 +92,10 @@
   .slct-ctrl {
     background-color: #d3d3d3;
   }
+
+  .clickedOn {
+    background-color: #ffb00f;
+  }
 </style>
 {% endblock %}
 {% block content %}
@@ -120,7 +124,7 @@
                   <div class="col-md-3">
                     <ul>
                       {% for fac in col %}
-                        <li id="{{fac.rabid}}" class="faculty-ctrl">
+                        <li id="{{fac.rabid}}" class="viz-ctrl faculty-ctrl">
                           <a href="{{fac.graphid}}">{{fac.abbv}}</a>
                         </li>
                       {% endfor %}
@@ -160,7 +164,7 @@
               <div id="depttab-{{loop.index}}" class="col-md-12">
                 <ul>
                   {% for dept in tab.tabContents %}
-                    <li id="{{ dept.rabid }}" class="dept-ctrl">
+                    <li id="{{ dept.rabid }}" class="viz-ctrl dept-ctrl">
                       <span id="bug-{{dept.rabid}}" class="deptBug"></span>
                       <a href="{{dept.graphid}}">{{dept.name}}</a>
                     </li>
@@ -253,59 +257,54 @@
       deptBug.attr("style", "background: "+color(group));
     }
 
-    function attachFacultyNodes(facCtrl) {
-      var rabid = facCtrl.attr('id');
-      var facIndex = facObjs[rabid]["facIdx"];
-      var subnet = facObjs[rabid]["facNet"];
-      subnet.push(facIndex);
-      var nodes = $(".node").filter(function (index) {
-        return $.inArray(index, subnet) > -1;
-      });
-      var facNode = $(".node").eq(facIndex);
-      var timer;
-      facCtrl
+    function attachInteractivity(ctrlElement, ctrlFocus, ctrlNet) {
+      ctrlElement
+        .on("click", function() {
+          $(".node").removeClass("subnet");
+          if ($(this).is(".clickedOn")) {
+            $(".node").velocity({ r: 10 });
+            $(this).removeClass("clickedOn");
+          } else {
+            $(".viz-ctrl").removeClass("clickedOn");
+            $(this).addClass("clickedOn");
+            focusSubNet(ctrlFocus,ctrlNet);
+            // $(".group text").filter(function (index) {
+            //   return $.inArray(index, ctrlFocus) > -1;
+            // }).css('fill', '#ffb00f');
+          }
+        })
         .hover(function() {
           $(this).addClass("slct-ctrl");
-          timer = setTimeout( function () {
-            focusSubNet(nodes);
-          }, 1000);
         },
         function() {
-          clearTimeout(timer);
           $(this).removeClass("slct-ctrl");
-          unfocusSubNet(nodes);
-        });
+        });  
+    }
+
+    function attachFacultyNodes(facCtrl) {
+      var rabid = facCtrl.attr('id');
+      var focus = []; 
+      focus.push(facObjs[rabid]["facIdx"]);
+      var subnet = facObjs[rabid]["facNet"];
+      subnet.push(facObjs[rabid]["facIdx"]);
+      attachInteractivity(facCtrl, focus, subnet);
     }
 
     function attachDepartmentNodes(deptCtrl) {
       var rabid = deptCtrl.attr("id");
-      var nodeKeys = deptObjs[rabid]["deptMembers"];
+      var focus = deptObjs[rabid]["deptMembers"];
+      var subnet = deptObjs[rabid]["deptNet"];
+      subnet = subnet.concat(focus);
+      attachInteractivity(deptCtrl, focus, subnet);
+    }
+
+    function focusSubNet(focus, subnet) {
+      subnet.push(focus);
       var nodes = $(".node").filter(function (index) {
-        return $.inArray(index, nodeKeys) > -1;
+        return $.inArray(index, subnet) > -1;
       });
-      var timer;
-      deptCtrl
-        .hover(function() {
-          $(this).addClass("slct-ctrl");
-          timer = setTimeout( function () {
-            focusSubNet(nodes);
-          }, 1000);
-        },
-        function() {
-          clearTimeout(timer);
-          $(this).removeClass("slct-ctrl");
-          unfocusSubNet(nodes);
-        });
-    }
-
-    function focusSubNet(subnet) {
-      subnet.addClass("subnet").velocity({ r: 12 });
+      nodes.addClass("subnet").velocity({ r: 12 });
       $(".node").not(".subnet").velocity({ r: 5 });
-    }
-
-    function unfocusSubNet(subnet) {
-      subnet.removeClass("subnet");
-      $(".node").velocity({ r: 10 });
     }
 
   </script>
