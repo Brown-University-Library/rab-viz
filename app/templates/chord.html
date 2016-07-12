@@ -202,7 +202,7 @@
             g.append("text")
                 .each(function(d) { d.angle = (d.startAngle + d.endAngle) / 2; })
                 .attr("dy", ".35em")
-                .attr("style", function(d) { return "font-size: 0.8em;"; } )
+                .attr("style", function(d) { return "font-size: 10px;"; } )
                 .attr("transform", function(d) {
                   return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
                       + "translate(" + (innerRadius + 26) + ")"
@@ -241,7 +241,8 @@
     function attachInteractivity(ctrlElement, ctrlFocus, ctrlNet) {
       ctrlElement
         .on("click", function() {
-          $(".group text").removeClass("fade");//.css('fill', 'none');
+          $(".group text").velocity({ fontSize: "10px"});
+          $(".group text").removeClass("fade");
           $(".chord").removeClass("fade");
           if ($(this).is(".clickedOn")) {
             $(this).removeClass("clickedOn");
@@ -249,9 +250,6 @@
             $(".viz-ctrl").removeClass("clickedOn");
             $(this).addClass("clickedOn");
             focusSubNet(ctrlFocus,ctrlNet);
-            // $(".group text").filter(function (index) {
-            //   return $.inArray(index, ctrlFocus) > -1;
-            // }).css('fill', '#ffb00f');
           }
         })
         .hover(function() {
@@ -287,9 +285,9 @@
       $(".group text").filter(function (index) {
         return $.inArray(index, subnet) == -1;
       }).addClass("fade");
-      // d3.selectAll(".group").classed("fade", function (p) {
-      //   return ($.inArray(p.index, subnet) == -1)
-      // });
+      $(".group text").filter(function (index) {
+        return $.inArray(index, focus) > -1;
+      }).velocity({ fontSize: "14px"});
     }
 
     function unfocusSubNet() {
