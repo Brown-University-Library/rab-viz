@@ -220,7 +220,7 @@
         .attr("id","solid");
 
       filter.append("feFlood")
-        .attr("flood-color","#CCC");
+        .attr("flood-color","#d3d3d3");
 
       filter.append("feComposite")
         .attr("in","SourceGraphic");
@@ -322,14 +322,18 @@
       });
       nodes.addClass("subnet").velocity({ r: 12 });
       $(".node").not(".subnet").velocity({ r: 5 });
+      var nodes = $(".node").filter(function (index) {
+        return $.inArray(index, focus) > -1;
+      });
       nodes.each(function() {
         var title = $(this).find("title").text();
-        var horizontal = parseFloat($(this).attr("cx"))+10;
-        var vertical = parseFloat($(this).attr("cy"))+10;
+        var horizontal = parseFloat($(this).attr("cx"));
+        var vertical = parseFloat($(this).attr("cy"))+12;
         d3.select("svg").append("text")
           .attr("x", horizontal.toString())
           .attr("y", vertical.toString())
-          .attr("font-size", "10px")
+          .attr("font-size", "12px")
+          .attr("fill", "#a33646")
           .classed("nodeTitleDisplay", true)
           .classed("filteredSVGText", true)
           .text(title);
