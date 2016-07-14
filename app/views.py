@@ -71,13 +71,6 @@ def tabAbbv(chunk):
 	else:
 		return start+"-"+end
 
-# def prepFacultyForDisplay(facObjs):
-# 	sortedFacs = sorted(facObjs, key=lambda kv: kv['name'])
-# 	chunkedFacs = chunkify(sortedFacs, 20)
-# 	tabbedFacs = [ {"tab": tabAbbv(chunk),
-# 					"faculty": chunk } for chunk in chunkedFacs ]
-# 	return tabbedFacs
-
 def prepTabsForDisplay(tabList, tabSize):
 	tabChunks = chunkify(tabList, tabSize)
 	tabs = [ {"tab": tabAbbv(chunk),
@@ -161,25 +154,16 @@ def chordViz(viztype, rabid, page=0):
 	elif viztype=='faculty':
 		vizSbj = facObjLookup[rabid]
 		dservType = 'faculty'
+	profileURL = os.path.join(vivoURL, "display", vizSbj["shortid"])
+	forceURL = os.path.join(graphservURI, "force", dservType, vizSbj["shortid"])
+	vizSbj["profileURL"] = profileURL
+	vizSbj["otherVizURL"] = forceURL
 	getDserv = os.path.join(dservURI, dservType, vizSbj["shortid"])
 	res = requests.get(getDserv)
 	if res.status_code == 200:
 		resData = res.json()["results"]
 		vizSbj["thumb"] = resData.get("thumbnail")
 		vizSbj["title"] = resData.get("title")
-	# vizKey = json.loads(vizData.legend)
-	# matrix = json.loads(vizData.matrix)
-	# allFaculty = Faculty.query.all()
-	# allDepts = Departments.query.all()
-	# facultyLookup = { f.rabid: [f.abbrev, f.deptLabel, f.rabid] for f in allFaculty }
-	# facultyList = [ facultyLookup[f] for f in legend ]
-	# deptList = list({ f[1] for f in facultyList })
-	# deptMap = { l: d.rabid for l in deptList for d in allDepts if l in json.loads(d.useFor)  }
-	# if viztype=='dept':
-	# 	pageLabel = [ d.label for d in allDepts if d.rabid == rabid ][0]
-	# elif viztype=='faculty':
-	# 	pageLabel = [ f.fullname for f in allFaculty if f.rabid == rabid ][0]
-	print res
 	return render_template(
 			'chord.html', vivoURL=vivoURL,
 			departments=columnedDepts, faculty=tabbedFacs,
@@ -219,6 +203,10 @@ def forceViz(viztype, rabid, page=0):
 	elif viztype=='faculty':
 		vizSbj = facObjLookup[rabid]
 		dservType = 'faculty'
+	profileURL = os.path.join(vivoURL, "display", vizSbj["shortid"])
+	chordURL = os.path.join(graphservURI, "chord", dservType, vizSbj["shortid"])
+	vizSbj["profileURL"] = profileURL
+	vizSbj["otherVizURL"] = chordURL
 	getDserv = os.path.join(dservURI, dservType, vizSbj["shortid"])
 	res = requests.get(getDserv)
 	if res.status_code == 200:
