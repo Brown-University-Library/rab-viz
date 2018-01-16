@@ -6,3 +6,4 @@ local-env.sh
 apache/
 venv/
 config.py
+rab-viz/config/development.py
