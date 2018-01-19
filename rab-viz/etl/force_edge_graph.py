@@ -87,4 +87,4 @@ for fac_g in sumx:
 	g = sumx[fac_g]
 	with open('data/' + shortid + '.json', 'w') as out:
 		data = networkx.node_link_data(g)
-		json.dump(data, out, sort_keys=True, indent=4)
+		json.dump(data, out)
