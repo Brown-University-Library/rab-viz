@@ -3,7 +3,7 @@ import csv
 import sys
 import requests
 
-from config.development import settings as config
+from config.settings import config
 from jobs import faculty, departments
 
 adminEmail = config['ADMIN_EMAIL']
@@ -24,7 +24,7 @@ def query_vivo_api(query):
     else:
         return ''
 
-def main(targetDir):
+def main():
     for job in rab_jobs:
         resp = query_vivo_api(job.query)
         destination = os.path.join(destinationDir, job.destination)
@@ -33,4 +33,4 @@ def main(targetDir):
           wrtr.writerows(resp)
 
 if __name__ == "__main__":
-  main(sys.argv[1])
+    main()
