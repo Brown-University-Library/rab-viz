@@ -2,7 +2,7 @@ query = """
     PREFIX bcite:    <http://vivo.brown.edu/ontology/citation#>
     PREFIX blocal:   <http://vivo.brown.edu/ontology/vivo-brown/>
     PREFIX vivo:     <http://vivoweb.org/ontology/core#>
-    SELECT ?fac1 ?fac2 ?cite",
+    SELECT ?fac1 ?fac2 ?cite
     WHERE {
         ?cite a bcite:Citation .
         ?cite bcite:hasContributor ?fac1 .
