@@ -4,12 +4,17 @@ import json
 from collections import defaultdict
 import os
 
-with open('coauthors.csv','r') as c:
+from config.settings import config
+
+dataDir = os.path.join(config['DATA_DIR'],'raw')
+graphDir = os.path.join(config['DATA_DIR'],'coauth_graphs')
+
+with open( os.path.join(dataDir,'coauthors.csv'), 'r' ) as c:
 	rdr = csv.reader(c)
 	header = next(rdr)
 	coauths = [ row for row in rdr ]
 
-with open('faculty.csv','r') as f:
+with open( os.path.join(dataDir,'faculty.csv'), 'r' ) as f:
 	rdr = csv.reader(f)
 	header = next(rdr)
 	fac_data = { row[0] : { 'name' : row[3], 'dept': row[5] } for row in rdr }
@@ -85,6 +90,7 @@ with open('index.html', 'w') as gdx:
 for fac_g in sumx:
 	shortid = fac_g[33:]
 	g = sumx[fac_g]
-	with open('data/' + shortid + '.json', 'w') as out:
+	destination = os.path.join(graphDir, shortid + '.json')
+	with open(destination, 'w') as out:
 		data = networkx.node_link_data(g)
 		json.dump(data, out)

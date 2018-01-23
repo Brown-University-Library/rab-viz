@@ -1,6 +1,8 @@
 *.pyc
 ENV/
 *.csv
+*.json
+*.html
 *.db
 local-env.sh
 apache/
