@@ -1,4 +1,5 @@
 import os
+import io
 import csv
 import sys
 import requests
@@ -14,7 +15,7 @@ destinationDir = os.path.join(config['DATA_DIR'], 'raw')
 rab_jobs  = [ faculty, departments ]
 
 def process_response(rawText):
-    rdr = csv.reader(rawText)
+    rdr = csv.reader( io.StringIO(rawText) )
     return [ row for row in rdr ]
 
 
@@ -35,7 +36,7 @@ def main():
         data = process_response(resp)
         destination = os.path.join(destinationDir, job.destination)
         with open(destination,'w') as dataout:
-          wrtr = csv.writer(dataout, delimiter=",")
+          wrtr = csv.writer(dataout)
           wrtr.writerows(data)
 
 if __name__ == "__main__":
