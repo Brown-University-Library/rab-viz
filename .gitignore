@@ -3,6 +3,6 @@
 *.json
 *.html
 *.db
-apache/
+apache/*.conf
 venv/
-rab-viz/config/settings.py
+settings.py
