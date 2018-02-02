@@ -1,4 +1,4 @@
-import csv
+from rabviz.etl.extract import validators
 
 query = """
     PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
@@ -18,3 +18,13 @@ query = """
     """
 
 destination = "faculty.csv"
+
+
+def validate(rows):
+    test_head = [ 'id', 'last', 'first', 'label', 'title', 'org' ]
+    validated = validators.validate_header(rows, test_head)
+    required_fields = [ test_head.index(i) for i in test_head[:-1] ]
+    validated = [ validators.validate_required(row, required_fields)
+                    for row in validated ]
+    validated = [ validators.validate_uri(row, 0) for row in validated ]
+    return validated

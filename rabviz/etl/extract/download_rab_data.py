@@ -3,6 +3,7 @@ import io
 import csv
 import sys
 import requests
+import logging
 
 from config.settings import config
 from jobs import faculty, departments, affiliations, coauthors
@@ -34,10 +35,24 @@ def main():
     for job in rab_jobs:
         resp = query_vivo_api(job.query)
         data = process_response(resp)
+        validated = job.validate(data)
+        if len(validated) == 1
+            and isinstance(validated[0], validators.Invalid) :
+            logging.error("Invalid dataset: " + job.__name__)
+            continue
+        invalid = [ (e, row._msg) for e, row in enumerate(validated)
+                    if isinstance(row, validators.Invalid) ]
+        valid = [ row for row in validated
+                    if not isinstance(row, validators.Invalid) ]
+        if invalid != []:
+            for i in invalid:
+                logging.log(
+                    "Invalid data::{0} line {1}: {2}").format(
+                        job.__name__, i[0], [1] ) 
         destination = os.path.join(destinationDir, job.destination)
         with open(destination,'w') as dataout:
           wrtr = csv.writer(dataout)
-          wrtr.writerows(data)
+          wrtr.writerows(valid)
 
 if __name__ == "__main__":
     main()

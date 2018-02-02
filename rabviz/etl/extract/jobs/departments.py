@@ -1,3 +1,5 @@
+from rabviz.etl.extract import validators
+
 query = """
 	PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
 	PREFIX blocal:   <http://vivo.brown.edu/ontology/vivo-brown/>
@@ -12,3 +14,10 @@ query = """
 """
 
 destination = "departments.csv"
+
+def validate(rows):
+	header = [ 'dept', 'name' ]
+	validated = validators.validate_header(rows, header)
+	validated = validators.validate_uri(validated, 0)
+	validated = validators.validate_unique(validated, 0)
+	return validated

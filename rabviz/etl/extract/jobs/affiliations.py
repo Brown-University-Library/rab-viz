@@ -1,3 +1,5 @@
+from rabviz.etl.extract import validators
+
 query = """
 	PREFIX blocal:   <http://vivo.brown.edu/ontology/vivo-brown/>
 	PREFIX vivo:     <http://vivoweb.org/ontology/core#>
@@ -12,3 +14,10 @@ query = """
 """
 
 destination = "affiliations.csv"
+
+def validate(rows):
+	header = [ 'id', 'dept', 'rank' ]
+    validated = validators.validate_header(rows, header)
+    validated = [ validators.validate_uri(row, 0) for row in validated ]
+    validated = [ validators.validate_uri(row, 1) for row in validated ]
+    return validated
