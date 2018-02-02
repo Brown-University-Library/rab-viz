@@ -1,4 +1,4 @@
-from rabviz.etl.extract import validators
+import validators
 
 query = """
     PREFIX bcite:    <http://vivo.brown.edu/ontology/citation#>

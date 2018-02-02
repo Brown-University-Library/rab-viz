@@ -3,6 +3,7 @@
 *.json
 *.html
 *.db
+*.log
 apache/*.conf
 venv/
 settings.py
