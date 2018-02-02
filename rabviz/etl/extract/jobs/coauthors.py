@@ -22,8 +22,8 @@ destination = "coauthors.csv"
 def validate(rows):
     header = [ 'fac1', 'fac2', 'cite' ]
     validated = validators.validate_header(rows, header)
-    validated = [ validators.validate_uri(row, 0) for row in validated ]
-    validated = [ validators.validate_uri(row, 1) for row in validated ]
-    validated = [ validators.validate_uri(row, 2) for row in validated ]
+    validated = [ validators.validate_shortid_uri(row, 0) for row in validated ]
+    validated = [ validators.validate_shortid_uri(row, 1) for row in validated ]
+    validated = [ validators.validate_rab_uri(row, 2) for row in validated ]
     validated = validators.validate_column_equality(validated, 0, 1)
     return validated

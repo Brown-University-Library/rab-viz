@@ -18,6 +18,6 @@ destination = "affiliations.csv"
 def validate(rows):
     header = [ 'id', 'dept', 'rank' ]
     validated = validators.validate_header(rows, header)
-    validated = [ validators.validate_uri(row, 0) for row in validated ]
-    validated = [ validators.validate_uri(row, 1) for row in validated ]
+    validated = [ validators.validate_shortid_uri(row, 0) for row in validated ]
+    validated = [ validators.validate_rab_uri(row, 1) for row in validated ]
     return validated

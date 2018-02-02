@@ -26,5 +26,5 @@ def validate(rows):
     required_fields = [ test_head.index(i) for i in test_head[:-1] ]
     validated = [ validators.validate_required(row, required_fields)
                     for row in validated ]
-    validated = [ validators.validate_uri(row, 0) for row in validated ]
+    validated = [ validators.validate_shortid_uri(row, 0) for row in validated ]
     return validated

@@ -54,7 +54,13 @@ def validate_required(row, required):
     return [ r for r in row ]
 
 @data_validator
-def validate_uri(row, idx):
+def validate_shortid_uri(row, idx):
     uri_re = re.compile('^http://vivo.brown.edu/individual/[a-z0-9]{2,10}$')
+    assert uri_re.match(row[idx])
+    return [ r for r in row ]
+
+@data_validator
+def validate_rab_uri(row, idx):
+    uri_re = re.compile('^http://vivo.brown.edu/individual/[a-z0-9\-]{2,}$')
     assert uri_re.match(row[idx])
     return [ r for r in row ]
