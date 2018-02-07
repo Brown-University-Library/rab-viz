@@ -6,91 +6,67 @@ import os
 
 from config.settings import config
 
-dataDir = os.path.join(config['DATA_DIR'],'raw')
-graphDir = os.path.join(config['DATA_DIR'],'coauth_graphs')
 
-with open( os.path.join(dataDir,'coauthors.csv'), 'r' ) as c:
-	rdr = csv.reader(c)
-	header = next(rdr)
-	coauths = [ row for row in rdr ]
+def build_total_graph(rows):
+    graph = networkx.Graph()
+    for row in rows:
+        if graph.has_edge(row[0], row[1]):
+            graph[row[0]][row[1]]['weight'] += 1
+        else:
+            graph.add_edge(row[0],row[1], weight=1)
+    return graph
 
-with open( os.path.join(dataDir,'faculty.csv'), 'r' ) as f:
-	rdr = csv.reader(f)
-	header = next(rdr)
-	fac_data = { row[0] : { 'name' : row[3], 'dept': row[5] } for row in rdr }
+def get_individual_faculty_graph(graph, faculty_uri, depth=2):
+    nodes = { faculty_uri }
+    for d in range(depth):
+        for n in nodes:
+            neighbors = { b for b in iter(graph[n]) }
+            nodes = nodes | neighbors
+    subgraph = networkx.Graph(graph.subgraph(nodes))
+    return subgraph
 
-wx = defaultdict(networkx.Graph)
-for co in coauths:
-	if wx[co[0]].has_edge(co[0],co[1]):
-		wx[co[0]][co[0]][co[1]]['weight'] += 1
-	else:
-		wx[co[0]].add_edge(co[0],co[1], weight=1)
+def row_reducer(row, indexer=[]):
+    return [ row[i] for i in indexer ]
 
-sumx = dict()
-for fac in wx:
-	g = wx[fac].copy()
-	nds = list(g.nodes)
-	# nds.remove(fac)
-	for n in nds:
-		co_g = wx[n]
-		g = networkx.compose(g, co_g)
-	sumx[fac] = g
-	new_nodes = list(sumx[fac].nodes)
-	for w in new_nodes:
-		sumx[fac].add_node(w, group=fac_data[w]['dept'], name=fac_data[w]['name'])
+def data_indexer(data, index=0):
+    return { row[index] : row for row in data }
 
-html = """
-<html>
-	<head>
-		<style>
-			h3 {{
-				margin-bottom: 0;
-			}}
-			ul {{
-				margin-top: 0;
-				list-style-type: none;
-			}}
-			dt, dd {{
-				display: inline;
-			}}
-		</style>
-	</head>
-	<body>
-		{0}
-	</body>
-</html>
-"""
+def add_node_attributes(graph, attribute_map):
+    faculty = [ f for f in graph.nodes() ]
+    faculty_attrs = [ attribute_map[f] for f in faculty ]
+    for f in faculty_attrs:
+        graph.add_node(f[0], group=f[1], name=f[2])
+    return graph
 
-target = "file://{0}/edge_graph.html".format( os.path.abspath('.') )
-link = """
-	<h3>
-		<a href="edge_graph.html?faculty={1}">{2}</a>
-	</h3>
-	<ul>
-		<li>
-			<dl>
-				<dt>Local</dt>
-				<dd>{3}</dd>
-			</dl>
-		</li>
-		<li>
-			<dl>
-				<dt>Extended</dt>
-				<dd>{4}</dd>
-			</dl>
-		</li>
-	</ul>	
-"""
-links = "\n".join(
-	[ link.format( target, shortid[33:], sumx[shortid].node[shortid]['name'],
-		len(wx[shortid]), len(sumx[shortid])) for shortid in sumx ])
-with open('index.html', 'w') as gdx:
-	gdx.write(html.format(links))
+def main():
+    extractDir = os.path.join(config['DATA_DIR'],'extract')
+    graphDir = os.path.join(
+        config['DATA_DIR'], 'transform', 'force_edge_graphs')
 
-for fac_g in sumx:
-	shortid = fac_g[33:]
-	g = sumx[fac_g]
-	destination = os.path.join(graphDir, shortid + '.json')
-	with open(destination, 'w') as out:
-		data = networkx.node_link_data(g)
-		json.dump(data, out)
+    with open( os.path.join(extractDir,'coauthors.csv'), 'r' ) as c:
+        rdr = csv.reader(c)
+        header = next(rdr)
+        coauth_data = [ row for row in rdr ]
+
+    with open( os.path.join(extractDir,'faculty.csv'), 'r' ) as f:
+        rdr = csv.reader(f)
+        header = next(rdr)
+        fac_data = [ row for row in rdr ]
+
+    faculty_attrs = [ row_reducer(row, [0,3,5]) for row in fac_data ]
+    faculty_index = data_indexer(faculty_attrs, 0)
+
+    coauth_graph = build_total_graph(coauth_data)
+    graph_with_attrs = add_node_attributes(coauth_graph, faculty_index)
+
+    faculty_list = { row_reducer(row, [0])[0] for row in coauth_data }
+    for f in faculty_list:
+        subgraph = get_individual_faculty_graph(graph_with_attrs, f)
+        shortid = f[33:]
+        destination = os.path.join(graphDir, shortid + '.json')
+        with open(destination, 'w') as out:
+            data = networkx.node_link_data(subgraph)
+            json.dump(data, out)
+
+if __name__ == "__main__":
+    main()
