@@ -1,4 +1,4 @@
-import validators
+from etl.validate import validate_data, validate_dataset
 
 query = """
 	PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
@@ -17,7 +17,7 @@ destination = "departments.csv"
 
 def validate(rows):
 	header = [ 'dept', 'name' ]
-	validated = validators.validate_header(rows, header)
-	validated = [ validators.validate_rab_uri(row, 0) for row in validated ]
-	validated = validators.validate_unique(validated, 0)
+	validated = validate_dataset.header(rows, header)
+	validated = [ validate_data.rab_uri(row, 0) for row in validated ]
+	validated = validate_dataset.unique(validated, 0)
 	return validated

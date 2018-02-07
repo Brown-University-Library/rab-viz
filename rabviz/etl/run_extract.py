@@ -6,8 +6,7 @@ import requests
 import logging
 
 from config.settings import config
-import validators
-from jobs import faculty, departments, affiliations, coauthors
+from etl.extract import faculty, departments, affiliations, coauthors
 
 logging.basicConfig(
     filename=os.path.join(config['LOG_DIR'],'example.log'),
@@ -42,14 +41,13 @@ def main():
         resp = query_vivo_api(job.query)
         data = process_response(resp)
         validated = job.validate(data)
-        if ( len(validated) == 1 and 
-                isinstance(validated[0], validators.Invalid) ) :
+        if ( len(validated) == 1 and getattr(validated[0], "invalid", False) ) :
             logging.error("Invalid dataset: " + job.__name__)
             continue
         invalid = [ (e, row._msg) for e, row in enumerate(validated)
-                    if isinstance(row, validators.Invalid) ]
+                    if getattr(row, "invalid", False) ]
         valid = [ row for row in validated
-                    if not isinstance(row, validators.Invalid) ]
+                    if not getattr(row, "invalid", False) ]
         if invalid != []:
             for i in invalid:
                 logging.debug(

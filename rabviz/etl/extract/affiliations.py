@@ -1,4 +1,4 @@
-import validators
+from etl.validate import validate_data, validate_dataset
 
 query = """
 	PREFIX blocal:   <http://vivo.brown.edu/ontology/vivo-brown/>
@@ -17,7 +17,7 @@ destination = "affiliations.csv"
 
 def validate(rows):
     header = [ 'id', 'dept', 'rank' ]
-    validated = validators.validate_header(rows, header)
-    validated = [ validators.validate_shortid_uri(row, 0) for row in validated ]
-    validated = [ validators.validate_rab_uri(row, 1) for row in validated ]
+    validated = validate_dataset.header(rows, header)
+    validated = [ validate_data.shortid_uri(row, 0) for row in validated ]
+    validated = [ validate_data.rab_uri(row, 1) for row in validated ]
     return validated

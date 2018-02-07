@@ -1,4 +1,4 @@
-import validators
+from etl.validate import validate_data, validate_dataset
 
 query = """
     PREFIX bcite:    <http://vivo.brown.edu/ontology/citation#>
@@ -21,9 +21,9 @@ destination = "coauthors.csv"
 
 def validate(rows):
     header = [ 'fac1', 'fac2', 'cite' ]
-    validated = validators.validate_header(rows, header)
-    validated = [ validators.validate_shortid_uri(row, 0) for row in validated ]
-    validated = [ validators.validate_shortid_uri(row, 1) for row in validated ]
-    validated = [ validators.validate_rab_uri(row, 2) for row in validated ]
-    validated = validators.validate_column_equality(validated, 0, 1)
+    validated = validate_dataset.header(rows, header)
+    validated = [ validate_data.shortid_uri(row, 0) for row in validated ]
+    validated = [ validate_data.shortid_uri(row, 1) for row in validated ]
+    validated = [ validate_data.rab_uri(row, 2) for row in validated ]
+    validated = validate_dataset.column_equality(validated, 0, 1)
     return validated

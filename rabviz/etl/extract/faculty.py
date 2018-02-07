@@ -1,4 +1,4 @@
-import validators
+from etl.validate import validate_data, validate_dataset
 
 query = """
     PREFIX rdfs:     <http://www.w3.org/2000/01/rdf-schema#>
@@ -22,9 +22,9 @@ destination = "faculty.csv"
 
 def validate(rows):
     test_head = [ 'id', 'last', 'first', 'label', 'title', 'org' ]
-    validated = validators.validate_header(rows, test_head)
+    validated = validate_dataset.header(rows, test_head)
     required_fields = [ test_head.index(i) for i in test_head[:-1] ]
-    validated = [ validators.validate_required(row, required_fields)
+    validated = [ validate_data.required(row, required_fields)
                     for row in validated ]
-    validated = [ validators.validate_shortid_uri(row, 0) for row in validated ]
+    validated = [ validate_data.shortid_uri(row, 0) for row in validated ]
     return validated
