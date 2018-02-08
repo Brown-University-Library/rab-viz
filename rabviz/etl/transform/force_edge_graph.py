@@ -1,23 +1,36 @@
 import networkx
 import csv
 import json
-from collections import defaultdict
 import os
 
 from config.settings import config
 
 
-def build_total_graph(rows):
+def unique_on_fields(data, fields=[]):
+    wrapped = [ (frozenset([ row[field] for field in fields ]), row)
+                    for row in data ]
+    checked = set()
+    filtered = []
+    for w in wrapped:
+        if w[0] in checked:
+            continue
+        else:
+            filtered.append(w[1])
+            checked.add(w[0])
+    return filtered
+
+def build_total_graph(data):
     graph = networkx.Graph()
-    for row in rows:
+    unique_data = unique_on_fields(data, [0,1,2])
+    for row in unique_data:
         if graph.has_edge(row[0], row[1]):
             graph[row[0]][row[1]]['weight'] += 1
         else:
             graph.add_edge(row[0],row[1], weight=1)
     return graph
 
-def get_individual_faculty_graph(graph, faculty_uri, depth=2):
-    nodes = { faculty_uri }
+def get_subgraph_by_node(graph, node, depth=2):
+    nodes = { node }
     for d in range(depth):
         for n in nodes:
             neighbors = { b for b in iter(graph[n]) }
@@ -31,11 +44,11 @@ def row_reducer(row, indexer=[]):
 def data_indexer(data, index=0):
     return { row[index] : row for row in data }
 
-def add_node_attributes(graph, attribute_map):
-    faculty = [ f for f in graph.nodes() ]
-    faculty_attrs = [ attribute_map[f] for f in faculty ]
-    for f in faculty_attrs:
-        graph.add_node(f[0], group=f[1], name=f[2])
+def add_node_attributes(graph, node_attribute_lookup):
+    nodes = [ n for n in graph.nodes() ]
+    nodes_with_attrs = [ node_attribute_lookup[n] for n in nodes ]
+    for n in nodes_with_attrs:
+        graph.add_node(n[0], name=n[1], group=n[2])
     return graph
 
 def main():
@@ -59,9 +72,9 @@ def main():
     coauth_graph = build_total_graph(coauth_data)
     graph_with_attrs = add_node_attributes(coauth_graph, faculty_index)
 
-    faculty_list = { row_reducer(row, [0])[0] for row in coauth_data }
+    faculty_list = [ n for n in graph_with_attrs.nodes() ]
     for f in faculty_list:
-        subgraph = get_individual_faculty_graph(graph_with_attrs, f)
+        subgraph = get_subgraph_by_node(graph_with_attrs, f)
         shortid = f[33:]
         destination = os.path.join(graphDir, shortid + '.json')
         with open(destination, 'w') as out:
