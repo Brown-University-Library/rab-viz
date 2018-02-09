@@ -2,6 +2,8 @@ import networkx
 import csv
 import json
 import os
+import redis
+import json
 
 from config.settings import config
 
@@ -73,13 +75,16 @@ def main():
     graph_with_attrs = add_node_attributes(coauth_graph, faculty_index)
 
     faculty_list = [ n for n in graph_with_attrs.nodes() ]
+    redis_server = redis.StrictRedis(host='localhost', port=6379, db=0)
     for f in faculty_list:
         subgraph = get_subgraph_by_node(graph_with_attrs, f)
-        shortid = f[33:]
-        destination = os.path.join(graphDir, shortid + '.json')
-        with open(destination, 'w') as out:
-            data = networkx.node_link_data(subgraph)
-            json.dump(data, out)
+        data = networkx.node_link_data(subgraph)
+        redis_server.execute_command('JSON.SET', f, '.', json.dumps(data))
+        # shortid = f[33:]
+        # destination = os.path.join(graphDir, shortid + '.json')
+        # with open(destination, 'w') as out:
+        #     data = networkx.node_link_data(subgraph)
+        #     json.dump(data, out)
 
 if __name__ == "__main__":
     main()
