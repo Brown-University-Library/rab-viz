@@ -7,8 +7,8 @@ import pymongo
 from config.settings import config
 
 app = Flask(__name__)
-mongo = pymongo.MongoClient('localhost', 27017)
-mongo_db = mongo.get_database('rabviz')
+mongo = pymongo.MongoClient(config['MONGO_URI'])
+mongo_db = mongo.get_database(config['MONGO_DB'])
 
 @app.route('/')
 def base_index():

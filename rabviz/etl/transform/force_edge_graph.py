@@ -54,9 +54,10 @@ def add_node_attributes(graph, node_attribute_lookup):
     return graph
 
 def main():
-    extractDir = os.path.join(config['DATA_DIR'],'extract')
-    graphDir = os.path.join(
-        config['DATA_DIR'], 'transform', 'force_edge_graphs')
+    extractDir = config['EXTRACT_DIR']
+    mongo = pymongo.MongoClient(config['MONGO_URI'])
+    viz_db = mongo.get_database(config['MONGO_DB'])
+    viz_coll = viz_db['forceEdge']
 
     with open( os.path.join(extractDir,'coauthors.csv'), 'r' ) as c:
         rdr = csv.reader(c)
@@ -75,19 +76,11 @@ def main():
     graph_with_attrs = add_node_attributes(coauth_graph, faculty_index)
 
     faculty_list = [ n for n in graph_with_attrs.nodes() ]
-    mongo_client = pymongo.MongoClient('localhost', 27017)
-    viz_db = mongo_client.get_database('rabviz')
-    viz_coll = viz_db['forceEdge']
     for f in faculty_list:
         subgraph = get_subgraph_by_node(graph_with_attrs, f)
         data = networkx.node_link_data(subgraph)
         viz_coll.replace_one({ 'rabid': f },
             { 'rabid': f, 'data': data }, True)
-        # shortid = f[33:]
-        # destination = os.path.join(graphDir, shortid + '.json')
-        # with open(destination, 'w') as out:
-        #     data = networkx.node_link_data(subgraph)
-        #     json.dump(data, out)
 
 if __name__ == "__main__":
     main()
