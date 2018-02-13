@@ -16,7 +16,7 @@ logging.basicConfig(
 adminEmail = config['ADMIN_EMAIL']
 adminPass = config['ADMIN_PASSWORD']
 queryAPI = config['RAB_QUERY_API']
-destinationDir = os.path.join(config['DATA_DIR'], 'raw')
+destinationDir = config['EXTRACT_DIR']
 
 rab_jobs  = [ faculty, departments, affiliations, coauthors ]
 
