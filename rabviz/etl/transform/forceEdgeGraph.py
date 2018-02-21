@@ -1,12 +1,9 @@
 import networkx
-import csv
-import json
-import os
-import pymongo
-import json
 
-from config.settings import config
-
+collection_name = 'forceEdgeGraph'
+key_field = 'rabid'
+value_field = 'data'
+input_files = ['faculty.csv', 'coauthors.csv']
 
 def unique_on_fields(data, fields=[]):
     wrapped = [ (frozenset([ row[field] for field in fields ]), row)
@@ -53,34 +50,26 @@ def add_node_attributes(graph, node_attribute_lookup):
         graph.add_node(n[0], name=n[1], group=n[2])
     return graph
 
-def main():
-    extractDir = config['EXTRACT_DIR']
-    mongo = pymongo.MongoClient(config['MONGO_URI'])
-    viz_db = mongo.get_database(config['MONGO_DB'])
-    viz_coll = viz_db['forceEdge']
+def key_graph_by_node(node, graph):
+    subgraph = get_subgraph_by_node(graph, node)
+    data = networkx.node_link_data(subgraph)
+    return data
 
-    with open( os.path.join(extractDir,'coauthors.csv'), 'r' ) as c:
-        rdr = csv.reader(c)
-        header = next(rdr)
-        coauth_data = [ row for row in rdr ]
+def data_generator(keys, data, func):
+    i = 0
+    while i < len(keys):
+        key = keys[i]
+        key_data = func(key, data)
+        yield (key, key_data)
+        i += 1    
 
-    with open( os.path.join(extractDir,'faculty.csv'), 'r' ) as f:
-        rdr = csv.reader(f)
-        header = next(rdr)
-        fac_data = [ row for row in rdr ]
-
-    faculty_attrs = [ row_reducer(row, [0,3,5]) for row in fac_data ]
+def transform(facultyData, coauthorData):
+    faculty_attrs = [ row_reducer(row, [0,3,5]) for row in facultyData ]
     faculty_index = data_indexer(faculty_attrs, 0)
 
-    coauth_graph = build_total_graph(coauth_data)
-    graph_with_attrs = add_node_attributes(coauth_graph, faculty_index)
+    coauth_graph = build_total_graph(coauthorData)
+    graph_with_attrs = add_node_attributes(coauth_graph, faculty_index)    
 
     faculty_list = [ n for n in graph_with_attrs.nodes() ]
-    for f in faculty_list:
-        subgraph = get_subgraph_by_node(graph_with_attrs, f)
-        data = networkx.node_link_data(subgraph)
-        viz_coll.replace_one({ 'rabid': f },
-            { 'rabid': f, 'data': data }, True)
 
-if __name__ == "__main__":
-    main()
+    return data_generator(faculty_list, graph_with_attrs, key_graph_by_node)
