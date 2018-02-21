@@ -1,4 +1,5 @@
 import networkx
+from transform import utils
 
 collection_name = 'forceEdgeGraph'
 key_field = 'rabid'
@@ -37,12 +38,6 @@ def get_subgraph_by_node(graph, node, depth=2):
     subgraph = networkx.Graph(graph.subgraph(nodes))
     return subgraph
 
-def row_reducer(row, indexer=[]):
-    return [ row[i] for i in indexer ]
-
-def data_indexer(data, index=0):
-    return { row[index] : row for row in data }
-
 def add_node_attributes(graph, node_attribute_lookup):
     nodes = [ n for n in graph.nodes() ]
     nodes_with_attrs = [ node_attribute_lookup[n] for n in nodes ]
@@ -55,21 +50,12 @@ def key_graph_by_node(node, graph):
     data = networkx.node_link_data(subgraph)
     return data
 
-def data_generator(keys, data, func):
-    i = 0
-    while i < len(keys):
-        key = keys[i]
-        key_data = func(key, data)
-        yield (key, key_data)
-        i += 1    
-
 def transform(facultyData, coauthorData):
-    faculty_attrs = [ row_reducer(row, [0,3,5]) for row in facultyData ]
-    faculty_index = data_indexer(faculty_attrs, 0)
-
+    faculty_attrs = [ utils.row_reducer(row, [0,3,5]) for row in facultyData ]
+    faculty_index = utils.data_indexer(faculty_attrs, 0)
     coauth_graph = build_total_graph(coauthorData)
-    graph_with_attrs = add_node_attributes(coauth_graph, faculty_index)    
-
+    graph_with_attrs = add_node_attributes(coauth_graph, faculty_index)
     faculty_list = [ n for n in graph_with_attrs.nodes() ]
-
-    return data_generator(faculty_list, graph_with_attrs, key_graph_by_node)
+    gnrtr =  utils.data_generator(
+        faculty_list, graph_with_attrs, key_graph_by_node)
+    return gnrtr
