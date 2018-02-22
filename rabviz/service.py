@@ -18,9 +18,9 @@ def base_index():
 def edge_index():
 	return "Edgegraph !"
 
-@app.route('/edgegraph/<shortid>')
-def edgegraph(shortid):
-    coll = mongo_db['forceEdge']
+@app.route('/<viz>/<shortid>')
+def get_viz_data_by_shortid(viz, shortid):
+    coll = mongo_db[viz]
     data = coll.find_one({"rabid": "http://vivo.brown.edu/individual/{0}".format(shortid)})
     if data:
         return jsonify(data['data'])
