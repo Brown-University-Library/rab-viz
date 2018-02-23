@@ -14,8 +14,9 @@ mongo_db = mongo.get_database(config['MONGO_DB'])
 def graph_index():
     base_url = request.base_url
     graph_options = mongo_db.collection_names()
+    reserved = [ 'system.indexes' ]
     return jsonify({ opt: '{0}{1}/'.format(base_url, opt)
-                        for opt in graph_options })
+                        for opt in graph_options if opt not in reserved })
 
 @app.route('/<viz>/')
 def graph_subject_index(viz):
