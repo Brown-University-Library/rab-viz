@@ -1,9 +1,12 @@
+import datetime
+
 def data_generator(keys, data, func):
     i = 0
     while i < len(keys):
         key = keys[i]
         key_data = func(key, data)
-        yield (key, key_data)
+        ts = datetime.datetime.now()
+        yield (key, ts, key_data)
         i += 1
 
 def row_reducer(row, indexer=[]):

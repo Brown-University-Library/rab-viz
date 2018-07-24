@@ -7,3 +7,5 @@
 apache/*.conf
 venv/
 settings.py
+.envrc
+.direnv/

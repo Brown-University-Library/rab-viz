@@ -36,9 +36,10 @@ def main():
             datasets.append(data)
 
         data_generator = job.transform(*datasets)
-        for key, trans_data in data_generator:
+        for key, timestamp, trans_data in data_generator:
             viz_coll.replace_one({ coll_key: key },
-                { coll_key: key, coll_val: trans_data }, True)
+                { 'updated': timestamp,
+                    coll_key: key, coll_val: trans_data }, True)
 
 
 if __name__ == "__main__":
