@@ -34,7 +34,9 @@ def get_viz_data_by_shortid(viz, shortid):
     coll = mongo_db[viz]
     data = coll.find_one({"rabid": "http://vivo.brown.edu/individual/{0}".format(shortid)})
     if data:
-        return jsonify(data['data'])
+        return jsonify({
+            'data': data['data'],
+            'updated': data['updated'].strftime('%Y-%m-%d') })
     else:
         return jsonify({})
 
