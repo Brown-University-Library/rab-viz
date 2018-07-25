@@ -6,13 +6,14 @@ import pymongo
 
 from config.settings import config
 from etl.transform import forceEdgeGraph, chordDiagram
+from etl.transform import collaboratorGraph
 
 logging.basicConfig(
     filename=os.path.join(config['LOG_DIR'],'example.log'),
     format='%(asctime)-15s %(message)s',
     level=logging.DEBUG)
 
-rab_jobs  = [ forceEdgeGraph, chordDiagram ]
+rab_jobs  = [ forceEdgeGraph, chordDiagram, collaboratorGraph ]
 
 def load_csv(fileName):
     with open(fileName, 'r' ) as f:

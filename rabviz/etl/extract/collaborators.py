@@ -6,6 +6,10 @@ query = """
     WHERE
     {
           ?faculty vivo:hasCollaborator ?collaborator. 
+          ?faculty a vivo:FacultyMember .
+          ?faculty a blocal:BrownThing .
+          ?collaborator a vivo:FacultyMember .
+          ?collaborator a blocal:BrownThing .
     }
     """
 

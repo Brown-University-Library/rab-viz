@@ -6,7 +6,8 @@ import requests
 import logging
 
 from config.settings import config
-from etl.extract import faculty, departments, affiliations, coauthors
+from etl.extract import faculty, departments, affiliations
+from etl.extract import coauthors, collaborators
 
 logging.basicConfig(
     filename=os.path.join(config['LOG_DIR'],'example.log'),
@@ -18,7 +19,8 @@ adminPass = config['ADMIN_PASSWORD']
 queryAPI = config['RAB_QUERY_API']
 destinationDir = config['EXTRACT_DIR']
 
-rab_jobs  = [ faculty, departments, affiliations, coauthors ]
+rab_jobs  = [ faculty, departments, affiliations,
+    coauthors, collaborators ]
 
 def process_response(rawText):
     rdr = csv.reader( io.StringIO(rawText) )

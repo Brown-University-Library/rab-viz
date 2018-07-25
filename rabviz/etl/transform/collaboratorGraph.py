@@ -6,27 +6,10 @@ key_field = 'rabid'
 value_field = 'graph'
 input_files = ['faculty.csv', 'collaborators.csv']
 
-def unique_on_fields(data, fields=[]):
-    wrapped = [ (frozenset([ row[field] for field in fields ]), row)
-                    for row in data ]
-    checked = set()
-    filtered = []
-    for w in wrapped:
-        if w[0] in checked:
-            continue
-        else:
-            filtered.append(w[1])
-            checked.add(w[0])
-    return filtered
-
 def build_total_graph(data):
-    graph = networkx.Graph()
-    unique_data = unique_on_fields(data, [0,1])
-    for row in unique_data:
-        if graph.has_edge(row[0], row[1]):
-            graph[row[0]][row[1]]['weight'] += 1
-        else:
-            graph.add_edge(row[0],row[1], weight=1)
+    graph = networkx.DiGraph()
+    for row in data:
+        graph.add_edge(row[0],row[1], weight=1)
     return graph
 
 def get_subgraph_by_node(graph, node, depth=2):
