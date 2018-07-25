@@ -2,6 +2,7 @@ from etl.validate import validate_data, validate_dataset
 
 query = """
     PREFIX vivo:     <http://vivoweb.org/ontology/core#>
+    PREFIX blocal:   <http://vivo.brown.edu/ontology/vivo-brown/>
     SELECT ?faculty ?collaborator
     WHERE
     {

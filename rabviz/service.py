@@ -31,12 +31,18 @@ def graph_subject_index(viz):
 
 @app.route('/<viz>/<shortid>')
 def get_viz_data_by_shortid(viz, shortid):
+    data_structure = request.args.get('ds',None) 
     coll = mongo_db[viz]
-    data = coll.find_one({"rabid": "http://vivo.brown.edu/individual/{0}".format(shortid)})
+    data = coll.find_one(
+        {"rabid": "http://vivo.brown.edu/individual/{0}".format(shortid)})
     if data:
-        return jsonify({
-            'data': data['data'],
-            'updated': data['updated'].strftime('%Y-%m-%d') })
+        data['updated'] = data['updated'].strftime('%Y-%m-%d')
+        del data['_id']
+        if data_structure:
+            return jsonify({ 'data': data[data_structure],
+                'updated': data['updated'] })
+        else:
+            return jsonify(data)
     else:
         return jsonify({})
 
