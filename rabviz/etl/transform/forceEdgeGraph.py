@@ -42,7 +42,7 @@ def add_node_attributes(graph, node_attribute_lookup):
     nodes = [ n for n in graph.nodes() ]
     nodes_with_attrs = [ node_attribute_lookup[n] for n in nodes ]
     for n in nodes_with_attrs:
-        graph.add_node(n[0], name=n[1], group=n[2])
+        graph.add_node(n[0], name=n[1], group=n[2], title=n[3])
     return graph
 
 def key_graph_by_node(node, graph):
@@ -51,7 +51,7 @@ def key_graph_by_node(node, graph):
     return data
 
 def transform(facultyData, coauthorData):
-    faculty_attrs = [ utils.row_reducer(row, [0,3,5]) for row in facultyData ]
+    faculty_attrs = [ utils.row_reducer(row, [0,3,5,4]) for row in facultyData ]
     faculty_index = utils.data_indexer(faculty_attrs, 0)
     coauth_graph = build_total_graph(coauthorData)
     graph_with_attrs = add_node_attributes(coauth_graph, faculty_index)
