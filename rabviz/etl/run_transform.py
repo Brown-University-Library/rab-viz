@@ -5,7 +5,7 @@ import logging
 import pymongo
 
 from config.settings import config
-from etl.transform import forceEdgeGraph, chordDiagram
+from etl.transform import coauthorGraph, coauthorMatrix
 from etl.transform import collaboratorGraph
 
 logging.basicConfig(
@@ -13,7 +13,7 @@ logging.basicConfig(
     format='%(asctime)-15s %(message)s',
     level=logging.DEBUG)
 
-rab_jobs  = [ forceEdgeGraph, chordDiagram, collaboratorGraph ]
+rab_jobs  = [ coauthorGraph, coauthorMatrix, collaboratorGraph ]
 
 def load_csv(fileName):
     with open(fileName, 'r' ) as f:
@@ -38,9 +38,9 @@ def main():
 
         data_generator = job.transform(*datasets)
         for key, timestamp, trans_data in data_generator:
-            viz_coll.replace_one({ coll_key: key },
-                { 'updated': timestamp,
-                    coll_key: key, coll_val: trans_data }, True)
+            viz_coll.update_one({ coll_key: key },
+                {'$set' : { 'updated': timestamp, coll_key: key,
+                coll_val: trans_data } }, upsert=True)
 
 
 if __name__ == "__main__":

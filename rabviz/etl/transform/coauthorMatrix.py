@@ -1,9 +1,9 @@
 import networkx
 from transform import utils
 
-collection_name = 'chordDiagram'
+collection_name = 'coauthors'
 key_field = 'rabid'
-value_field = 'data'
+value_field = 'matrix'
 input_files = ['faculty.csv', 'coauthors.csv']
 
 def unique_on_fields(data, fields=[]):
