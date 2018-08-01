@@ -14,3 +14,6 @@ def row_reducer(row, indexer=[]):
 
 def data_indexer(data, index=0):
     return { row[index] : row for row in data }
+
+def data_filter(data, column, val):
+    return [ d for d in data if d[column] == val ]

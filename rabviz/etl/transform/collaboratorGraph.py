@@ -18,7 +18,7 @@ def get_subgraph_by_node(graph, node, depth=2):
         for n in nodes:
             neighbors = { b for b in iter(graph[n]) }
             nodes = nodes | neighbors
-    subgraph = networkx.Graph(graph.subgraph(nodes))
+    subgraph = networkx.DiGraph(graph.subgraph(nodes))
     return subgraph
 
 def add_node_attributes(graph, node_attribute_lookup):

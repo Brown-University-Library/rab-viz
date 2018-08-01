@@ -11,28 +11,37 @@ mongo = pymongo.MongoClient(config['MONGO_URI'])
 mongo_db = mongo.get_database(config['MONGO_DB'])
 
 @app.route('/')
-def graph_index():
+def collection_index():
+    # Returns a list of available data collections
+    # Ex: coauthors, collaborators
     base_url = request.base_url
     graph_options = mongo_db.collection_names()
     reserved = [ 'system.indexes' ]
     return jsonify({ opt: '{0}{1}/'.format(base_url, opt)
                         for opt in graph_options if opt not in reserved })
 
-@app.route('/<viz>/')
-def graph_subject_index(viz):
+@app.route('/<collection>/')
+def collection_key_index(collection):
+    # Returns a list of links to individual documents
+    # in each collection, keyed on VIVO URI, with link
+    # to document within collection using base_url
     base_url = request.base_url
     try:
-        coll = mongo_db[viz]
+        coll = mongo_db[collection]
     except:
         return {}
     all_docs = coll.find()
     data = { doc['rabid'] : base_url + doc['rabid'][33:] for doc in all_docs}
     return jsonify(data)
 
-@app.route('/<viz>/<shortid>')
-def get_viz_data_by_shortid(viz, shortid):
+@app.route('/<collection>/<shortid>')
+def get_document_data_by_shortid(collection, shortid):
+    # Return a document from a collection
+    # by shortID. Optional parameter "ds"
+    # returns the document data in a particular
+    # structure; ie matrix, graph
     data_structure = request.args.get('ds',None) 
-    coll = mongo_db[viz]
+    coll = mongo_db[collection]
     data = coll.find_one(
         {"rabid": "http://vivo.brown.edu/individual/{0}".format(shortid)})
     if data:
