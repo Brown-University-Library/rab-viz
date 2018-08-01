@@ -30,6 +30,6 @@ def shortid_uri(row, idx):
 
 @data_validator
 def rab_uri(row, idx):
-    uri_re = re.compile('^http://vivo.brown.edu/individual/[a-z0-9\-]{2,}$')
+    uri_re = re.compile('^http://vivo.brown.edu/individual/[a-z0-9-]{2,}$')
     assert uri_re.match(row[idx])
     return [ r for r in row ]

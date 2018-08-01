@@ -19,7 +19,6 @@ rab_jobs  = [ coauthorGraph, coauthorMatrix,
 def load_csv(fileName):
     with open(fileName, 'r' ) as f:
         rdr = csv.reader(f)
-        header = next(rdr)
         data = [ row for row in rdr ]
     return data
 
