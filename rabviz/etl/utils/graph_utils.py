@@ -1,23 +1,15 @@
 import networkx
 
-def unique_on_fields(data, fields=[]):
-    wrapped = [ (frozenset([ row[field] for field in fields ]), row)
-                    for row in data ]
-    checked = set()
-    filtered = []
-    for w in wrapped:
-        if w[0] in checked:
-            continue
-        else:
-            filtered.append(w[1])
-            checked.add(w[0])
-    return filtered
-
-def build_total_graph(data):
-    graph = networkx.Graph()
-    unique_data = unique_on_fields(data, [0,1,2])
-    for row in unique_data:
-        if graph.has_edge(row[0], row[1]):
+def build_graph_from_rows(nodeRows=[], edgeRows=[],
+        weighted=True, directed=False):
+    if directed:
+        graph = networkx.DiGraph()
+    else:
+        graph = networkx.Graph()
+    for row in nodeRows:
+        graph.add_node(row[0])
+    for row in edgeRows:
+        if graph.has_edge(row[0], row[1]) and weighted:
             graph[row[0]][row[1]]['weight'] += 1
         else:
             graph.add_edge(row[0],row[1], weight=1)
@@ -29,18 +21,15 @@ def get_subgraph_by_node(graph, node, depth=2):
         for n in nodes:
             neighbors = { b for b in iter(graph[n]) }
             nodes = nodes | neighbors
-    subgraph = networkx.Graph(graph.subgraph(nodes))
+    if isinstance(graph, networkx.DiGraph):
+        subgraph = networkx.DiGraph(graph.subgraph(nodes))
+    else:
+        subgraph = networkx.Graph(graph.subgraph(nodes))
     return subgraph
 
 def add_node_attributes(graph, node_attribute_lookup):
     nodes = [ n for n in graph.nodes() ]
-    nodes_with_attrs = [ node_attribute_lookup[n] for n in nodes ]
-    for n in nodes_with_attrs:
-        graph.add_node(n[0], name=n[1], group=n[2], title=n[3])
-    return graph
-
-def build_directed_graph(data):
-    graph = networkx.DiGraph()
-    for row in data:
-        graph.add_edge(row[0],row[1], weight=1)
+    for node in nodes:
+        attrs = node_attribute_lookup[node]
+        graph.add_node(node, **attrs)
     return graph
