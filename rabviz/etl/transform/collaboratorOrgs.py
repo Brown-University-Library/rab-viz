@@ -13,6 +13,8 @@ def key_graph_by_node_group(groupNodesIndex):
         for node in groupNodesIndex[group]:
             subgraph = graph_utils.get_subgraph_by_node(graph, node, depth=1)
             merged_graph = networkx.compose(merged_graph, subgraph)
+        for node in groupNodesIndex[group]:
+            merged_graph.nodes[node]['level'] = 0
         data = networkx.node_link_data(merged_graph)
         return data
     return data_func
@@ -21,14 +23,15 @@ def transform(facultyData, collaboratorData,
         affiliationsData, departmentData):
     faculty_attrs = [ data_utils.row_reducer(row, [0,3,5,4])
         for row in facultyData ]
-    fac_attrs_index = data_utils.data_indexer(faculty_attrs, 0, pop=True)
+    with_level = [ row + [1] for row in faculty_attrs ]
+    fac_attrs_index = data_utils.data_indexer(with_level, 0, pop=True)
     labelled_index = { 
-        fac: data_utils.data_labeller(attr, ['name','group','title'])
+        fac: data_utils.data_labeller(attr, ['name','group','title','level'])
             for fac, attr in fac_attrs_index.items() }
     unique_collabs = data_utils.unique_on_fields(
         collaboratorData, [0,1])
     collab_graph = graph_utils.build_graph_from_rows(
-        nodeRows=faculty_attrs, edgeRows=unique_collabs,
+        nodeRows=with_level, edgeRows=unique_collabs,
         weighted=False, directed=True)
     graph_with_attrs = graph_utils.add_node_attributes(collab_graph,
         labelled_index)
