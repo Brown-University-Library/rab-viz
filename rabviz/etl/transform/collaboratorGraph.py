@@ -7,7 +7,7 @@ value_field = 'graph'
 input_files = ['faculty.csv', 'collaborators.csv']
 
 def key_graph_by_node(node, graph):
-    subgraph = graph_utils.get_subgraph_by_node(graph, node)
+    subgraph = graph_utils.get_subgraph_by_node(graph, node, track_depth=True)
     data = networkx.node_link_data(subgraph)
     return data
 
