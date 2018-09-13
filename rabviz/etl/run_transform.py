@@ -24,11 +24,12 @@ def load_csv(fileName):
 
 def main():
     extractDir = config['EXTRACT_DIR']
-    mongo = pymongo.MongoClient(config['MONGO_URI'])
-    viz_db = mongo.get_database(config['MONGO_DB'])
+    mongo = pymongo.MongoClient(config['MONGO_URI'], config['MONGO_PORT'])
+    mongo_db = mongo.get_database(config['MONGO_DB'])
+    auth = mongo_db.authenticate(config['MONGO_USER'], config['MONGO_PASSWORD'])
 
     for job in rab_jobs:
-        viz_coll = viz_db[ job.collection_name ]
+        viz_coll = mongo_db[ job.collection_name ]
         coll_key = job.key_field
         coll_val = job.value_field
 

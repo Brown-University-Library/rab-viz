@@ -7,15 +7,17 @@ import pymongo
 from config.settings import config
 
 app = Flask(__name__)
-mongo = pymongo.MongoClient(config['MONGO_URI'])
+mongo = pymongo.MongoClient(config['MONGO_URI'], config['MONGO_PORT'])
 mongo_db = mongo.get_database(config['MONGO_DB'])
+auth = mongo_db.authenticate(
+    config['MONGO_USER'], config['MONGO_PASSWORD'])
 
 @app.route('/')
 def collection_index():
     # Returns a list of available data collections
     # Ex: coauthors, collaborators
     base_url = request.base_url
-    graph_options = mongo_db.collection_names()
+    graph_options = mongo_db.list_collection_names()
     reserved = [ 'system.indexes' ]
     return jsonify({ opt: '{0}{1}/'.format(base_url, opt)
                         for opt in graph_options if opt not in reserved })

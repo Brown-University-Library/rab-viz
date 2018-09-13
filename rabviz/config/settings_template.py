@@ -6,7 +6,10 @@ config = {
     'ADMIN_EMAIL' : '',
     'ADMIN_PASSWORD' : '',
     'MONGO_URI' : '',
-    'MONGO_DB' : ''
+    'MONGO_PORT' : 0,
+    'MONGO_DB' : '',
+    'MONGO_USER': '',
+    'MONGO_PASSWORD': ''
 }
 
 config['DATA_DIR'] = os.path.join(config['APP_ROOT'], 'data')
