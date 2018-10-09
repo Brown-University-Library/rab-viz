@@ -10,9 +10,9 @@ from etl.extract import faculty, departments, affiliations
 from etl.extract import coauthors, collaborators
 
 logging.basicConfig(
-    filename=os.path.join(config['LOG_DIR'],'example.log'),
+    filename=os.path.join(config['LOG_DIR'],'etl.log'),
     format='%(asctime)-15s %(message)s',
-    level=logging.DEBUG)
+    level=logging.INFO)
 
 adminEmail = config['ADMIN_EMAIL']
 adminPass = config['ADMIN_PASSWORD']
@@ -40,6 +40,7 @@ def query_vivo_api(query):
 
 def main():
     for job in rab_jobs:
+        logging.info("Begin: " + job.__name__)
         resp = query_vivo_api(job.query)
         data = process_response(resp)
         validated = job.validate(data)
@@ -59,6 +60,7 @@ def main():
         with open(destination,'w') as dataout:
           wrtr = csv.writer(dataout)
           wrtr.writerows(valid)
+        logging.info("Completed: " + job.__name__)
 
 if __name__ == "__main__":
     main()

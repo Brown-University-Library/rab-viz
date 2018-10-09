@@ -4,6 +4,7 @@
 *.html
 *.db
 *.log
+*.sh
 apache/*.conf
 venv/
 settings.py
