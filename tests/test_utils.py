@@ -76,5 +76,22 @@ class TestGraphUtils(unittest.TestCase):
         with self.assertRaises(KeyError):
             graph_utils.add_node_attributes(graph, attributes)
 
+    def test_clean_null_graphs(self):
+        data = [ [ 1, 2, 'a' ], [ 2, 1, 'b' ], [ 2, 1, 'a' ],
+                    [ 1, 3, 'c' ], [ 4, 5, 'd' ] ]
+        graph = graph_utils.build_graph_from_rows(
+            edgeRows=data, directed=True)
+        subgraph = graph_utils.get_subgraph_by_node(graph, 5)
+        data = networkx.node_link_data(subgraph)
+        self.assertEqual( data['links'], [] )
+        self.assertEqual( len(data['nodes']), 1 )
+        cleaned = graph_utils.clean_null_graph(data)
+        self.assertEqual( cleaned, {} )
+
+        subgraph = graph_utils.get_subgraph_by_node(graph, 4)
+        data = networkx.node_link_data(subgraph)
+        cleaned = graph_utils.clean_null_graph(data)
+        self.assertEqual( data, cleaned )
+
 if __name__ == "__main__":
     unittest.main()

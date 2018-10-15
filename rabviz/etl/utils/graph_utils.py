@@ -39,3 +39,9 @@ def add_node_attributes(graph, node_attribute_lookup):
         attrs = node_attribute_lookup[node]
         graph.add_node(node, **attrs)
     return graph
+
+def clean_null_graph(data):
+    if data['links'] == [] and len(data['nodes']) == 1:
+        return {}
+    else:
+        return data

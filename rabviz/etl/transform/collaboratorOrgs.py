@@ -16,7 +16,8 @@ def key_graph_by_node_group(groupNodesIndex):
         for node in groupNodesIndex[group]:
             merged_graph.nodes[node]['level'] = 0
         data = networkx.node_link_data(merged_graph)
-        return data
+        cleaned = graph_utils.clean_null_graph(data)
+        return cleaned
     return data_func
 
 def transform(facultyData, collaboratorData,
