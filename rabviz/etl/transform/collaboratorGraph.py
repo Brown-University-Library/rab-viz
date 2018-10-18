@@ -18,10 +18,8 @@ def transform(facultyData, collaboratorData):
     labelled_index = { 
         fac: data_utils.data_labeller(attr, ['name','group','title'])
             for fac, attr in fac_attrs_index.items() }
-    unique_collabs = data_utils.unique_on_fields(
-        collaboratorData, [0,1])
     collab_graph = graph_utils.build_graph_from_rows(
-        edgeRows=unique_collabs,
+        edgeRows=collaboratorData,
         weighted=False, directed=True)
     graph_with_attrs = graph_utils.add_node_attributes(collab_graph,
         labelled_index)
